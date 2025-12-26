@@ -1,91 +1,82 @@
-// بيانات الأنشطة حرفياً من كتاب الطالب
-const bookData = [
-    {
-        id: 1,
-        title: "النشاط (1-1): دالة الطباعة",
-        details: "الهدف: استخدام دالة print لإخراج نصوص. \nالمطلوب: اكتب برنامجاً يطبع جملة 'أنا أحب سلطنة عمان'.",
-        hint: "استخدم print('النص هنا') ولا تنسَ علامات التنصيص.",
-        keywords: ["print"]
-    },
-    {
-        id: 2,
-        title: "النشاط (1-4): العمليات الحسابية",
-        details: "الهدف: إجراء عمليات حسابية. \nالمطلوب: عرف متغير x بقيمة 10 ومتغير y بقيمة 5، ثم اطبع ناتج ضربهما.",
-        hint: "استخدم x = 10 و y = 5 ثم print(x * y).",
-        keywords: ["=", "*", "print"]
-    },
-    {
-        id: 3,
-        title: "النشاط (1-5): دالة الإدخال",
-        details: "الهدف: استقبال البيانات. \nالمطلوب: اطلب من المستخدم إدخال اسمه باستخدام input ثم اطبع رسالة ترحيب باسمه.",
-        hint: "استخدم name = input('ما اسمك؟') ثم print('مرحباً', name).",
-        keywords: ["input", "print"]
-    }
+// محرك الذكاء الاصطناعي لمحاكاة الاستجابة الذكية
+const AI_KNOWLEDGE = {
+    "print": "دالة print() هي أداة بايثون للتحدث. أي شيء تضعه داخل القوسين (سواء نص بين ' ' أو رقم) سيظهر في المخرجات. مثال: print('مدرسة صلالة').",
+    "input": "دالة input() هي طريقة بايثون لسؤال المستخدم. البرنامج يتوقف وينتظر منك كتابة شيء. ملاحظة مهمة: كل ما تكتبه في input يعتبره بايثون 'نصاً'.",
+    "variable": "المتغير هو مثل الصندوق (مخزن). نعطيه اسماً ونضع فيه قيمة. مثال: score = 95. هنا score هو اسم الصندوق.",
+    "int": "دالة int() هي محول سحري، تحول النصوص (التي تشبه الأرقام) إلى أرقام حقيقية لنتمكن من جمعها أو ضربها.",
+    "error": "لا تقلق من الخطأ! الأخطاء هي التي تصنع المبرمجين. تأكد من إغلاق الأقواس أو مراجعة علامات التنصيص."
+};
+
+const ACTIVITIES = [
+    { id: 1, title: "نشاط (1-1): الترحيب", desc: "اكتب برنامجاً يطبع اسم مدرستك الجميلة 'صلالة الشرقية'.", hint: "استخدم دالة print واكتب الاسم داخل علامات تنصيص." },
+    { id: 2, title: "نشاط (1-3): الجمع الذكي", desc: "عرف متغيرين x و y واجمع قيمتهما واطبع النتيجة.", hint: "عرف x = 5 ثم y = 10 ثم اطبع x + y." }
 ];
 
-let activeActivity = null;
+let selectedTask = null;
 
-// تشغيل الأزرار
-function runCode() {
-    window.runPythonEngine(); // استدعاء محرك بايثون
+// تحميل الأنشطة
+function initPlatform() {
+    const list = document.getElementById('activities-list');
+    ACTIVITIES.forEach(act => {
+        const div = document.createElement('div');
+        div.className = 'act-item';
+        div.innerHTML = `<i class="fa-solid fa-code"></i> ${act.title}`;
+        div.onclick = () => {
+            selectedTask = act;
+            document.getElementById('current-task-name').innerText = act.title;
+            document.getElementById('code-editor').value = "";
+            addChatMessage("ai", `رائع! لقد اخترت ${act.title}. المطلوب هو: ${act.desc}. أنا بانتظارك لتبدأ البرمجة!`);
+        };
+        list.appendChild(div);
+    });
 }
 
-function getHint() {
-    if (!activeActivity) {
-        addChat("bot", "من فضلك اختر نشاطاً أولاً لأعطيك تلميحاً.");
+// طلب مساعدة ذكية (Smart Hint)
+function requestSmartHint() {
+    if (!selectedTask) {
+        addChatMessage("ai", "من فضلك اختر نشاطاً من القائمة الجمنى أولاً لكي أتمكن من مساعدتك.");
         return;
     }
-    addChat("bot", "💡 تلميح للنشاط: " + activeActivity.hint);
+    addChatMessage("ai", `تلميح لهذا النشاط: ${selectedTask.hint}`);
 }
 
-// تحميل الأنشطة في القائمة الجانبية
-const container = document.getElementById('activities-container');
-bookData.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'activity-card';
-    div.innerHTML = `<h4>${item.title}</h4><small>انقر لعرض التفاصيل</small>`;
-    div.onclick = () => {
-        activeActivity = item;
-        document.getElementById('current-task-title').innerText = item.title;
-        document.getElementById('task-description').innerText = item.details;
-        addChat("bot", `بدأنا ${item.title}. سأراقب كودك الآن لمساعدتك.`);
-    };
-    container.appendChild(div);
-});
+// معالجة الدردشة (Gemini/ChatGPT Style)
+function processAISearch() {
+    const input = document.getElementById('ai-user-input');
+    const query = input.value.trim();
+    if (!query) return;
 
-// المساعد الذكي (Chatbot)
-function askAI() {
-    const input = document.getElementById('user-input');
-    const msg = input.value.trim();
-    if (!msg) return;
-
-    addChat("user", msg);
+    addChatMessage("user", query);
     input.value = "";
 
-    // منطق الرد الذكي (Simplified AI Logic)
-    let response = "";
-    const lowMsg = msg.toLowerCase();
+    // ذكاء اصطناعي محاكي (Semantic Search)
+    setTimeout(() => {
+        let response = "سؤال ممتاز! بصفتي مساعدك الذكي في مدرسة صلالة الشرقية، إليك الإجابة: ";
+        const q = query.toLowerCase();
 
-    if (lowMsg.includes("print") || lowMsg.includes("طباعة")) {
-        response = "دالة print() هي أهم دالة في بايثون، نستخدمها لعرض المعلومات. مثال: print('مرحباً صلالة'). هل تريدني أن أكتب لك كوداً كاملاً؟";
-    } else if (lowMsg.includes("input") || lowMsg.includes("إدخال")) {
-        response = "دالة input() تسمح للمستخدم بالكتابة للبرنامج. دائماً تذكر أن البيانات التي تأتي منها تكون 'نصاً' (String).";
-    } else if (lowMsg.includes("متغير") || lowMsg.includes("variable")) {
-        response = "المتغير هو مثل الصندوق، تخزن فيه قيمة (رقم أو نص) لتعود إليها لاحقاً. مثال: score = 100.";
-    } else if (lowMsg.includes("حل") || lowMsg.includes("مساعدة")) {
-        response = activeActivity ? `لحل هذا النشاط، جرب البدء بـ: ${activeActivity.keywords[0]}.` : "اختر نشاطاً وسأساعدك في حله فوراً.";
-    } else {
-        response = "أنا معك يا بطل مدرسة صلالة الشرقية! سؤالك جميل، بايثون لغة سهلة، هل تريد شرحاً لدرس معين في الكتاب؟";
-    }
+        if (q.includes("print") || q.includes("طباعة")) response += AI_KNOWLEDGE.print;
+        else if (q.includes("input") || q.includes("ادخال")) response += AI_KNOWLEDGE.input;
+        else if (q.includes("متغير")) response += AI_KNOWLEDGE.variable;
+        else if (q.includes("خطأ")) response += AI_KNOWLEDGE.error;
+        else if (q.includes("مرحبا") || q.includes("سلام")) response = "أهلاً بك يا بطل! أنا تِقني، مساعدك الذكي. كيف يمكنني مساعدتك في تعلم بايثون اليوم؟";
+        else response = "هذا سؤال تقني دقيق! بايثون لغة رائعة، هل تقصد السؤال عن الدوال الأساسية مثل print أو input؟ يمكنني أيضاً مساعدتك في حل أنشطة الكتاب.";
 
-    setTimeout(() => addChat("bot", response), 500);
+        addChatMessage("ai", response);
+    }, 600);
 }
 
-function addChat(role, text) {
-    const chatFlow = document.getElementById('chat-flow');
+// التعامل مع مفتاح Enter
+function handleKeyPress(e) {
+    if (e.key === 'Enter') processAISearch();
+}
+
+function addChatMessage(role, text) {
+    const window = document.getElementById('chat-window');
     const div = document.createElement('div');
-    div.className = `bubble ${role === 'bot' ? 'bot-msg' : 'user-msg'}`;
+    div.className = `msg ${role === 'ai' ? 'ai-msg' : 'user-msg'}`;
     div.innerText = text;
-    chatFlow.appendChild(div);
-    chatFlow.scrollTop = chatFlow.scrollHeight;
+    window.appendChild(div);
+    window.scrollTop = window.scrollHeight;
 }
+
+initPlatform();
