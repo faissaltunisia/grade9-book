@@ -1,42 +1,61 @@
 :root {
     --oman-red: #d92027; --oman-green: #007e33; --tech-blue: #004a99;
-    --dark: #1e1e1e; --ai-gold: #ffc107;
+    --dark: #1e1e1e; --ai-gold: #ffeb3b;
 }
 
-body { font-family: 'Tajawal', sans-serif; margin: 0; background: #f0f2f5; direction: rtl; overflow: hidden; }
+body { font-family: 'Tajawal', sans-serif; margin: 0; background: #f0f2f5; direction: rtl; overflow: hidden; height: 100vh; }
+
+/* شاشة الترحيب */
+.welcome-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, var(--tech-blue), #001a33); z-index: 3000; display: flex; align-items: center; justify-content: center; transition: 0.6s; }
+.welcome-card { background: white; padding: 40px; border-radius: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 85%; max-width: 400px; }
+.oman-logo { width: 70px; margin-bottom: 20px; }
+.start-btn { background: var(--oman-red); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; }
 
 /* الهيدر */
-.main-header { height: 65px; background: white; border-bottom: 3px solid var(--oman-red); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; }
+.main-header { height: 60px; background: white; border-bottom: 3px solid var(--oman-red); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; }
 .header-titles h1 { font-size: 0.9rem; margin: 0; color: var(--tech-blue); }
-.header-titles span { font-size: 0.7rem; color: var(--oman-green); font-weight: bold; }
+.header-titles span { font-size: 0.7rem; color: var(--oman-green); }
 
-/* المحرر والمراقب */
-.editor-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; }
-#editor { flex: 1; background: var(--dark); color: #adff2f; padding: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem; border: none; outline: none; border-radius: 8px; }
+/* القائمة والدروس */
+.sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+.unit-title { background: #f8f9fa; padding: 10px; font-weight: bold; color: var(--tech-blue); border-bottom: 1px solid #ddd; }
+.lesson-link { padding: 10px 20px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid #f1f1f1; transition: 0.3s; }
+.lesson-link:hover { background: #e3f2fd; }
 
-/* فقاعة المراقب الآلي */
-.hint-bubble { position: absolute; top: 20px; left: 20px; background: var(--ai-gold); color: #000; padding: 10px 15px; border-radius: 10px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10; animation: bounce 1s infinite; }
+/* المحرر */
+.editor-area { flex: 1; display: flex; flex-direction: column; background: white; padding: 10px; }
+.editor-container { flex: 1; position: relative; }
+#editor { width: 100%; height: 100%; background: var(--dark); color: #adff2f; padding: 15px; border-radius: 10px; font-family: 'Consolas', monospace; font-size: 1.1rem; border: none; outline: none; resize: none; }
+.terminal { height: 120px; background: #000; color: #fff; margin-top: 10px; border-radius: 10px; padding: 10px; overflow-y: auto; font-family: monospace; }
 
-/* زر المساعدة السحرية */
-.help-btn { background: linear-gradient(45deg, #673ab7, #e91e63); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-left: 10px; transition: 0.3s; }
-.help-btn:hover { transform: scale(1.05); }
+/* فقاعة المراقب */
+.hint-bubble { position: absolute; top: 10px; left: 10px; background: var(--ai-gold); color: #000; padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 100; animation: float 2s infinite; }
 
-/* الكتاب التفاعلي */
-.book-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-.book-content { background: #fff; width: 90%; height: 80%; border-radius: 20px; position: relative; padding: 20px; overflow: hidden; }
-.page-container { height: 85%; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
-.page-3d { width: 100%; max-width: 500px; padding: 40px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee; transition: 0.6s transform-style; transform: rotateY(0deg); }
+/* المساعد AI */
+.ai-chat-box { width: 320px; background: #e5ddd5; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+.chat-flow { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.msg { padding: 8px 12px; border-radius: 10px; font-size: 0.9rem; max-width: 85%; }
+.user { background: #dcf8c6; align-self: flex-end; }
+.ai { background: white; align-self: flex-start; }
 
-/* استجابة الهاتف */
+/* الكتاب 3D */
+.book-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 4000; display: flex; align-items: center; justify-content: center; }
+.scene { width: 300px; height: 400px; perspective: 1000px; }
+.book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: 0.5s; }
+.page { width: 100%; height: 100%; position: absolute; transform-origin: left; transform-style: preserve-3d; transition: 0.8s; cursor: pointer; }
+.page-front, .page-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; padding: 20px; background: white; border: 1px solid #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.page-back { transform: rotateY(180deg); background: #fafafa; }
+.page.flipped { transform: rotateY(-180deg); }
+
+/* الهاتف */
 @media (max-width: 768px) {
-    .sidebar, .ai-chat-box { width: 100% !important; display: none; }
+    .sidebar, .ai-chat-box { display: none; width: 100%; }
     .tab-content.active { display: flex !important; }
-    .mobile-tabs { display: flex; background: #fff; border-bottom: 1px solid #ddd; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: none; font-weight: bold; color: #666; }
+    .mobile-tabs { display: flex; background: white; border-bottom: 2px solid #ddd; }
+    .tab-btn { flex: 1; padding: 12px; border: none; background: none; font-weight: bold; font-size: 0.8rem; }
     .tab-btn.active { color: var(--tech-blue); border-bottom: 3px solid var(--tech-blue); }
     .main-layout { flex-direction: column; }
-    #editor { font-size: 16px; }
 }
 
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 .hidden { display: none !important; }
