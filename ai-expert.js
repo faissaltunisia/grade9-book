@@ -1,34 +1,55 @@
-const pythonKnowledge = {
-    "print": "دالة print() هي أول دالة نتعلمها في الكتاب، وتستخدم لعرض النتائج. تأكد دائماً من وضع النص بين علامتي تنصيص ' '.",
-    "input": "في الوحدة الأولى، نستخدم input() لجعل البرنامج تفاعلياً. مثال: name = input('ما اسمك؟').",
-    "المتغيرات": "المتغير هو مخزن للبيانات. في بايثون، يمكنك تسمية المتغير بأي اسم بشرط ألا يبدأ برقم ولا يحتوي على رموز خاصة.",
-    "int": "نستخدم int() عندما نريد تحويل النص القادم من input() إلى رقم لعمل حسابات، مثل: age = int(input()).",
-    "نشاط": "لحل أنشطة الكتاب، تذكر دائماً ترتيب الكود: المدخلات أولاً، ثم العمليات، ثم المخرجات print.",
-    "خطأ": "إذا ظهر خطأ، تأكد من المسافات البادئة (Indentation) ومن إغلاق جميع الأقواس () في الكود."
+// قاعدة بيانات الحلول للأنشطة الموجودة في الكتاب
+const bookSolutions = {
+    "activity1": "print('مرحباً بك في صف تقنية المعلومات')\nname = input('أدخل اسمك: ')\nprint(name)",
+    "area_calc": "length = int(input('أدخل الطول: '))\nwidth = int(input('أدخل العرض: '))\narea = length * width\nprint('المساحة هي:', area)"
 };
 
+// 1. وظيفة المراقبة اللحظية (تنبيه عند الخطأ أثناء الكتابة)
+function monitorCode() {
+    const code = document.getElementById('code-editor').value;
+    const hintBox = document.getElementById('ai-hint');
+    const aiBody = document.getElementById('chat-body');
+
+    // فحص نسيان علامات التنصيص في دالة print
+    if (code.includes("print(") && !code.includes("'") && !code.includes('"')) {
+        hintBox.innerHTML = "💡 تنبيه من تِقني: تذكر وضع النص داخل علامات تنصيص ' ' في دالة print.";
+    } 
+    // فحص نسيان إغلاق الأقواس
+    else if ((code.match(/\(/g) || []).length > (code.match(/\)/g) || []).length) {
+        hintBox.innerHTML = "💡 تنبيه من تِقني: يبدو أنك فتحت قوساً ولم تغلقه بعد!";
+    }
+    else {
+        hintBox.innerHTML = ""; // مسح التنبيه إذا كان الكود يبدو سليماً
+    }
+}
+
+// 2. وظيفة كتابة الكود الصحيح للطالب
+function requestSolution() {
+    const aiBody = document.getElementById('chat-body');
+    const editor = document.getElementById('code-editor');
+
+    aiBody.innerHTML += `<div style="text-align:right; color:#27ae60;">🤖: حسناً، سأكتب لك الكود الصحيح لنشاط حساب المساحة (مثلاً) كما ورد في صفحة 25 من الكتاب. راقب المحرر!</div>`;
+    
+    // كتابة الكود داخل المحرر تلقائياً
+    editor.value = bookSolutions["area_calc"];
+    
+    // تأثير بصري للمحرر عند كتابة الحل
+    editor.style.borderColor = "#27ae60";
+    setTimeout(() => editor.style.borderColor = "#333", 2000);
+}
+
+// 3. تطوير ردود المساعد لتوجيه الطالب
 function askAI() {
     const inputField = document.getElementById('ai-input');
-    const chatBody = document.getElementById('chat-body');
-    const question = inputField.value.toLowerCase();
+    const question = inputField.value;
 
-    if (question.trim() === "") return;
-
-    chatBody.innerHTML += `<div style="text-align:left; color:#2c3e50; margin:5px;">👤: ${inputField.value}</div>`;
-
-    let answer = "سؤال ذكي! هذا الموضوع في صميم الوحدة الأولى. هل يمكنني مساعدتك في شرح دالة معينة أو تصحيح كود في المحاكي؟";
-
-    for (let key in pythonKnowledge) {
-        if (question.includes(key)) {
-            answer = pythonKnowledge[key];
-            break;
-        }
+    if (question.includes("خطأ")) {
+        showResponse("لا تقلق، الأخطاء البرمجية هي جزء من التعلم! تأكد من أن جميع الكلمات مكتوبة بالإنجليزية الصغيرة (Small letters).");
+    } else if (question.includes("ساعدني")) {
+        showResponse("بالطبع! جرب البدء بكتابة دالة print، وإذا تعثرت اضغط على زر 'أعطني الحل الصحيح'.");
+    } else {
+        // الردود العادية التي برمجناها سابقاً
+        processGeneralQuestion(question);
     }
-
-    setTimeout(() => {
-        chatBody.innerHTML += `<div style="text-align:right; color:#27ae60; margin:5px;">🤖: ${answer}</div>`;
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 600);
-
     inputField.value = "";
 }
