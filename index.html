@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة صلالة الشرقية الذكية | بايثون</title>
+    <title>المنصة الذكية  للبرمجة | بايثون</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" alt="Oman Emblem">
             </div>
             <h2>مختبر البرمجة الذكي</h2>
-            <h3>مدرسة صلالة الشرقية (5-9)</h3>
+            <h3> المساعد الذكي للاستاذ فيصل</h3>
             <p>نظام "تِقني" المدعوم بالذكاء الاصطناعي لتعلّم لغة بايثون</p>
             <button class="start-btn" onclick="launchPlatform()">دخول المنصة <i class="fa-solid fa-rocket"></i></button>
         </div>
@@ -29,7 +29,7 @@
             <div class="right-info">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" height="40">
                 <div class="title-group">
-                    <h1>منصة صلالة الشرقية التعليمية</h1>
+                    <h1>المنصة الذكية  للبرمجة</h1>
                     <span class="status"><i class="fa-solid fa-circle-check"></i> الخادم نشط (AI Online)</span>
                 </div>
             </div>
@@ -70,10 +70,10 @@
                     </div>
                 </div>
                 <div id="chat-messages" class="chat-messages">
-                    <div class="msg bot">مرحباً بك في مدرسة صلالة الشرقية! أنا "تِقني"، مساعدك الذكي. يمكنني شرح الدروس أو كتابة الكود لك. جرب سؤالي!</div>
+                    <div class="msg bot">مرحباً بك في المنصة الذكية  للبرمجة! أنا "تِقني"، مساعدك الذكي مساعد أ. فيصل العريبي . يمكنني شرح الدروس أو كتابة الكود لك. جرب سؤالي!</div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" id="ai-input" placeholder="اسأل تِقني..." onkeypress="if(event.key==='Enter') sendToAI()">
+                    <input type="text" id="ai-input" placeholder="اسأل المساعد ..." onkeypress="if(event.key==='Enter') sendToAI()">
                     <button onclick="sendToAI()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </section>
@@ -89,7 +89,7 @@
             try:
                 exec(src, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["output"].text = f"❌ خطأ برمي: {e}"
+                document["output"].text = f"❌ خطأ برمجي: {e}"
         document["run_button"].bind("click", execute_code)
     </script>
 
