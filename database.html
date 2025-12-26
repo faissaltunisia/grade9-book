@@ -2,48 +2,74 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>وحدة قواعد البيانات - المساعد الذكي</title>
+    <title>مختبر قواعد البيانات الذكي</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <aside class="sidebar">
-        <h3>أنشطة قواعد البيانات</h3>
-        <div class="lesson-item" onclick="guide('table')">نشاط: إنشاء جدول</div>
-        <div class="lesson-item" onclick="guide('key')">نشاط: تحديد المفتاح الأساسي</div>
-        <div class="lesson-item" onclick="guide('query')">نشاط: تشغيل استعلام</div>
+        <div class="sidebar-header">
+            <h3>وحدة قواعد البيانات</h3>
+        </div>
+        <div class="lessons-container">
+            <div class="lesson-group">
+                <span class="lesson-title">الدرس 1: الجداول</span>
+                <a href="#" class="activity-link" onclick="loadDBStep('create_table')">نشاط (2-1): إنشاء جدول</a>
+                <a href="#" class="activity-link" onclick="loadDBStep('primary_key')">نشاط (2-2): المفتاح الأساسي</a>
+            </div>
+            <div class="lesson-group">
+                <span class="lesson-title">الدرس 2: الاستعلامات</span>
+                <a href="#" class="activity-link" onclick="loadDBStep('run_query')">نشاط (2-5): تشغيل استعلام</a>
+            </div>
+        </div>
     </aside>
 
-    <main class="main-lab">
-        <header class="lab-header">
-            <h2>دليل التدريب العملي (MS Access)</h2>
-        </header>
+    <main class="main-content">
+        <div class="top-bar">
+            <h2 id="task-title">دليل التدريب العملي</h2>
+        </div>
         <div class="workspace">
-            <div class="activity-card" id="db-instruction">
-                اختر نشاطاً من القائمة الجانبية ليقوم المساعد بتوجيهك خطوة بخطوة داخل برنامج Access.
+            <div class="editor-area">
+                <div class="instruction-card" id="task-desc">
+                    اختر مهارة من القائمة للبدء في تطبيقها على برنامج MS Access.
+                </div>
+                <div id="step-visual" style="text-align:center; padding:20px; background:white; border-radius:10px;">
+                    <p>المساعد "تِقني" بانتظار اختيارك للنشاط...</p>
+                </div>
             </div>
-            <div id="step-viewer" style="background:white; padding:20px; border-radius:10px; height: 300px;">
-                <p id="step-text">في انتظار اختيار النشاط...</p>
-            </div>
-        </div>
-    </main>
 
-    <section class="ai-panel">
-        <div class="ai-header"><h4>تِقني (خبير الجداول)</h4></div>
-        <div id="ai-messages">
-            <div class="ai-bubble">أهلاً بك! في هذه الوحدة سأرشدك لكيفية التعامل مع برنامج MS Access 2010 خطوة بخطوة.</div>
+            <div class="ai-side-panel">
+                <div class="ai-chat-box" id="ai-messages">
+                    <div class="ai-bubble">مرحباً! في هذه الوحدة سنستخدم برنامج Microsoft Access. اختر نشاطاً وسأشرح لك الخطوات بدقة.</div>
+                </div>
+            </div>
         </div>
-    </section>
+    </aside>
 
     <script>
-        function guide(type) {
-            const msg = document.getElementById('ai-messages');
-            const stepText = document.getElementById('step-text');
-            
-            if(type === 'table') {
-                stepText.innerHTML = "<strong>الخطوة 1:</strong> افتح البرنامج واختر Blank Database.<br><strong>الخطوة 2:</strong> اذهب لتبويب Create ثم Table Design.";
-                msg.innerHTML += "<div class='ai-bubble'>تذكر أن تختار أنواع البيانات الصحيحة لكل حقل كما في صفحة 62!</div>";
+        const dbActivities = {
+            'create_table': {
+                title: "إنشاء الجداول",
+                desc: "افتح برنامج Access، اختر 'قاعدة بيانات فارغة'، ثم اذهب إلى تبويب 'إنشاء' واختر 'تصميم الجدول'.",
+                ai: "تذكر دائماً اختيار نوع البيانات المناسب لكل حقل (نص، رقم، تاريخ)."
+            },
+            'primary_key': {
+                title: "المفتاح الأساسي",
+                desc: "اختر الحقل الفريد (مثل رقم الطالب)، ثم اضغط على أيقونة المفتاح في شريط الأدوات.",
+                ai: "المفتاح الأساسي يمنع تكرار البيانات ويجعل الوصول للمعلومات أسرع!"
             }
-            // يمكن إضافة بقية الخطوات هنا
+        };
+
+        function loadDBStep(id) {
+            const act = dbActivities[id];
+            document.getElementById('task-title').innerText = act.title;
+            document.getElementById('task-desc').innerText = act.desc;
+            sendAI(act.ai);
+        }
+
+        function sendAI(msg) {
+            const box = document.getElementById('ai-messages');
+            box.innerHTML += `<div class="ai-bubble">${msg}</div>`;
+            box.scrollTop = box.scrollHeight;
         }
     </script>
 </body>
