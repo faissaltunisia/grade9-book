@@ -2,66 +2,52 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مختبر بايثون الذكي - الصف التاسع</title>
+    <title>مختبر بايثون الذكي | الصف التاسع</title>
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
 </head>
 <body onload="brython()">
 
-    <aside class="sidebar">
-        <h3>دروس البرمجة (بايثون)</h3>
-        <div class="lesson-item" onclick="loadActivity('intro')">الدرس 1: الواجهة البرمجية</div>
-        <div class="lesson-item" onclick="loadActivity('vars')">الدرس 2: المتغيرات الحسابية</div>
-        <div class="lesson-item" onclick="loadActivity('input')">الدرس 3: دالة الإدخال input</div>
-        <div class="lesson-item" onclick="loadActivity('final')">نشاط ختامي: حساب المساحة</div>
-    </aside>
+    <aside class="sidebar" id="sidebar-menu">
+        <h3>فهرس أنشطة الكتاب</h3>
+        </aside>
 
     <main class="main-lab">
-        <header class="lab-header">
-            <h2 id="current-task">اختر درساً للبدء</h2>
-            <span id="status-badge">المساعد يراقبك..</span>
-        </header>
-
-        <div class="workspace">
-            <div class="activity-card">
-                <strong>المطلوب:</strong>
-                <span id="activity-text">الرجاء اختيار نشاط من القائمة اليمنى لبدء البرمجة.</span>
-            </div>
-
-            <textarea id="code-editor" spellcheck="false" onkeyup="monitorCode()"></textarea>
-
-            <div class="controls">
-                <button class="btn btn-run" id="run-btn">تشغيل الكود ▶</button>
-                <button class="btn" style="background:#3498db; color:white;" onclick="getHint()">طلب مساعدة 💡</button>
-            </div>
-
-            <div id="console-output"></div>
+        <div class="instruction-box">
+            <h4 id="act-title">ابدأ رحلتك البرمجية</h4>
+            <p id="act-desc">اختر نشاطاً من القائمة الجانبية، وسأقوم بإرشادك خطوة بخطوة.</p>
         </div>
+
+        <textarea id="code-editor" onkeyup="aiMonitor()" placeholder="اكتب كود بايثون هنا..."></textarea>
+        
+        <div style="margin: 15px 0;">
+            <button id="run-btn" style="padding:10px 30px; background:#27ae60; color:white; border:none; border-radius:5px; cursor:pointer;">تشغيل الكود ▶</button>
+        </div>
+
+        <div id="console" style="background:black; color:#00ff00; padding:15px; border-radius:8px; height:100px; overflow-y:auto; font-family:monospace;"></div>
     </main>
 
-    <section class="ai-panel">
+    <section class="ai-assistant">
         <div class="ai-header">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="60">
-            <h4>تِقني (خبير بايثون)</h4>
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="50">
+            <p><strong>المساعد تِقني</strong></p>
         </div>
-        <div id="ai-messages">
-            <div class="ai-bubble">مرحباً بك يا بطل! أنا هنا لأراقب كودك وأرشدك خطوة بخطوة كما في كتابك المدرسي.</div>
+        <div id="ai-chat">
+            <div class="ai-msg">أهلاً بك يا بطل! أنا تِقني، سأراقب كودك وأساعدك في حل أنشطة الكتاب المدرسي.</div>
         </div>
     </section>
 
     <script type="text/python">
         from browser import document
-        def run_python(ev):
-            document["console-output"].text = ""
-            code = document["code-editor"].value
+        def run_code(ev):
+            document["console"].text = ""
+            src = document["code-editor"].value
             try:
-                exec(code, {"print": custom_print})
+                exec(src, {"print": lambda *args: setattr(document["console"], "text", document["console"].text + " ".join(map(str, args)) + "\n")})
             except Exception as e:
-                document["console-output"].text = "خطأ في الكود: " + str(e)
-        def custom_print(*args):
-            document["console-output"].text += " ".join(map(str, args)) + "\n"
-        document["run-btn"].bind("click", run_python)
+                document["console"].text = f"خطأ برمي: {e}"
+        document["run-btn"].bind("click", run_code)
     </script>
 
     <script src="ai-engine.js"></script>
