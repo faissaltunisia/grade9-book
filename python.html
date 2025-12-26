@@ -1,39 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <title>مختبر البرمجة - بايثون</title>
-    <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
-</head>
-<body onload="brython()">
-    <header><h1>مختبر بايثون التفاعلي</h1></header>
-    <nav><a href="index.html">الرئيسية</a> | <a href="python.html">بايثون</a></nav>
-    <div class="container">
-        <div class="card">
-            <h2>اكتب كودك هنا</h2>
-            <p>المساعد الذكي ينبهك عند وجود أخطاء في الأقواس أو علامات التنصيص.</p>
-            <textarea id="code-editor" onkeyup="monitorCode()" placeholder="مثال: print('مرحباً بكم')"></textarea>
-            <button class="btn" id="run-btn">تشغيل ▶</button>
-            <button class="btn btn-solution" onclick="getAISolution()">أعطني الحل الصحيح 💡</button>
-            <div id="console-output"></div>
-        </div>
-    </div>
-
-    <script type="text/python">
-        from browser import document
-        def run_code(ev):
-            document["console-output"].text = ""
-            code = document["code-editor"].value
-            try:
-                exec(code, {"print": custom_print})
-            except Exception as e:
-                document["console-output"].text = "خطأ برمجي: " + str(e)
-        def custom_print(*args):
-            document["console-output"].text += " ".join(map(str, args)) + "\n"
-        document["run-btn"].bind("click", run_code)
-    </script>
-    <script src="ai-engine.js"></script>
-</body>
-</html>
