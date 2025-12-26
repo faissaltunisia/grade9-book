@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مختبر تِقني | نسخة الهاتف الاحترافية</title>
+    <title>منصة تِقني | المنهج العماني</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,182 +12,191 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
 
     <style>
-        :root { --primary: #6366f1; --accent: #00f2fe; --dark: #0f172a; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: var(--dark); overflow: hidden; color: white; }
+        :root { --primary: #4f46e5; --bg: #f8fafc; --text: #1e293b; --success: #059669; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); overflow: hidden; }
 
-        /* الهيدر العلوي - نحيف جداً لتوفير مساحة */
-        .header { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid #1e293b; }
-        .logo { font-weight: 900; font-size: 1.1rem; }
+        /* شريط التنقل العلوي للمنهج */
+        .curriculum-tabs {
+            display: flex; background: white; border-bottom: 2px solid #e2e8f0; height: 50px;
+        }
+        .tab-item {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.9rem; color: #64748b; cursor: pointer;
+        }
+        .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #f5f3ff; }
 
-        /* منطقة المحرر - تأخذ معظم الشاشة */
-        .editor-container { height: calc(100% - 130px); position: relative; width: 100%; }
+        /* منطقة المساعد الذكي (تِقني) */
+        .ai-guide-bar {
+            background: #ffffff; margin: 10px; padding: 12px 15px; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px; border-right: 5px solid var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: 0.3s;
+        }
+        .ai-eye { width: 12px; height: 12px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); }
+        .ai-message { font-size: 0.85rem; font-weight: 700; color: var(--text); flex: 1; }
+
+        /* المحرر */
+        .editor-box {
+            flex: 1; margin: 0 10px; background: #1e293b; border-radius: 15px;
+            overflow: hidden; display: flex; flex-direction: column; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
         #editor {
-            width: 100%; height: 100%; background: #0b0f1a; color: #94a3b8;
+            flex: 1; width: 100%; background: transparent; color: #e2e8f0;
             padding: 15px; font-family: 'Consolas', monospace; font-size: 1.1rem;
             border: none; outline: none; resize: none; line-height: 1.6;
         }
 
-        /* المساعد الذكي - رأس عائم قابل للسحب (Drag) */
-        #ai-assistant {
-            position: absolute; top: 100px; left: 20px;
-            width: 55px; height: 55px; background: var(--primary);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); z-index: 1000;
-            border: 3px solid #fff; cursor: grab; transition: transform 0.2s;
+        /* شريط المخرجات */
+        #console {
+            height: 0; background: #000; color: #10b981; transition: 0.3s;
+            overflow-y: auto; font-family: monospace; font-size: 0.9rem;
         }
-        #ai-assistant i { font-size: 1.5rem; color: white; }
-        #ai-assistant.glow { box-shadow: 0 0 30px var(--accent); border-color: var(--accent); }
+        #console.active { height: 100px; padding: 10px 15px; border-top: 2px solid #334155; }
 
-        /* نافذة المساعدة - تظهر كبطاقة فوقية مريحة */
-        #ai-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; align-items: center; justify-content: center; z-index: 2000;
-            padding: 20px; backdrop-filter: blur(5px);
+        /* شريط الأدوات السفلي */
+        .action-bar {
+            padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid #e2e8f0;
         }
-        .modal-card {
-            background: white; width: 100%; border-radius: 20px; padding: 25px;
-            color: #1e293b; position: relative; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .btn-main {
+            flex: 2; padding: 12px; border: none; border-radius: 10px;
+            font-weight: 900; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .modal-card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+        .btn-run { background: var(--success); color: white; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); }
+        .btn-clear { flex: 1; background: #f1f5f9; color: #ef4444; border: 1px solid #e2e8f0; }
 
-        /* شريط النتائج - يفتح بالسحب أو الضغط */
-        #terminal {
-            position: fixed; bottom: 80px; left: 0; right: 0; height: 0;
-            background: #000; color: #10b981; font-family: monospace;
-            overflow-y: auto; transition: 0.3s; padding: 0 15px; border-top: 2px solid #333;
+        /* شاشات الأنشطة والكتاب */
+        .full-screen-overlay {
+            position: fixed; inset: 0; background: white; z-index: 2000;
+            display: none; flex-direction: column; padding: 20px; overflow-y: auto;
         }
-        #terminal.open { height: 120px; padding: 10px 15px; }
-
-        /* شريط التحكم السفلي - أزرار ضخمة وسهلة للمس */
-        .toolbar {
-            height: 80px; background: #1e293b; display: flex; align-items: center;
-            justify-content: space-around; position: fixed; bottom: 0; width: 100%;
-        }
-        .tool-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #94a3b8; font-size: 0.8rem; border: none; background: none; }
-        .run-fab { width: 60px; height: 60px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: white; margin-top: -40px; border: 6px solid var(--dark); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onload="brython()">
 
-    <div class="header">
-        <div class="logo">مختبر <span style="color:var(--primary)">تِقني</span></div>
-        <div style="font-size: 0.8rem; opacity: 0.7;">صلالة الشرقية</div>
-    </div>
+    <div style="height: 100vh; display: flex; flex-direction: column;">
+        <nav class="curriculum-tabs">
+            <div class="tab-item active" onclick="switchMainTab('lab')"><i class="fas fa-flask"></i>&nbsp;المختبر</div>
+            <div class="tab-item" onclick="switchMainTab('tasks')"><i class="fas fa-edit"></i>&nbsp;الأنشطة</div>
+            <div class="tab-item" onclick="switchMainTab('book')"><i class="fas fa-book-open"></i>&nbsp;الكتاب</div>
+        </nav>
 
-    <main class="editor-container">
-        <div id="ai-assistant" onclick="openAiHelp()">
-            <i class="fas fa-robot"></i>
+        <div class="ai-guide-bar" id="ai-status">
+            <div class="ai-eye" id="ai-eye"></div>
+            <div class="ai-message" id="ai-text">تِقني: أهلاً بك! أنا أتابع كودك، ابدأ الكتابة وسأرشدك.</div>
+            <button onclick="askAiDeep()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding:5px 10px; font-size:0.7rem;">اطلب المساعدة</button>
         </div>
 
-        <textarea id="editor" spellcheck="false" oninput="liveAiCheck()">print("مرحباً بك")</textarea>
-    </main>
+        <div class="editor-box">
+            <textarea id="editor" spellcheck="false" oninput="monitorCode()">print("مرحباً بك في مادة تقنية المعلومات")</textarea>
+            <div id="console"></div>
+        </div>
 
-    <div id="terminal"></div>
-
-    <div id="ai-modal" onclick="closeAiHelp()">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3><i class="fas fa-brain"></i> تِقني يحلل كودك:</h3>
-            <div id="ai-response" style="line-height: 1.6; margin-bottom: 20px;">جاري التفكير...</div>
-            <button onclick="closeAiHelp()" style="width:100%; padding:12px; border-radius:12px; border:none; background:var(--primary); color:white; font-weight:bold;">مفهوم</button>
+        <div class="action-bar">
+            <button class="btn-main btn-clear" onclick="clearFull()">
+                <i class="fas fa-trash"></i> مسح
+            </button>
+            <button class="btn-main btn-run" onclick="runScript()">
+                <i class="fas fa-play-circle"></i> ▶ تشغيل البرنامج
+            </button>
         </div>
     </div>
 
-    <footer class="toolbar">
-        <button class="tool-btn" onclick="clearAll()"><i class="fas fa-eraser" style="font-size:1.2rem;"></i><span>مسح</span></button>
-        <button class="run-fab" onclick="runCode()"><i class="fas fa-play"></i></button>
-        <button class="tool-btn" onclick="toggleTerminal()"><i class="fas fa-terminal" style="font-size:1.2rem;"></i><span>النتائج</span></button>
-    </footer>
+    <div id="screen-tasks" class="full-screen-overlay">
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>الأنشطة الدراسية</h2>
+            <i class="fas fa-times" onclick="closeOverlay()" style="font-size:1.5rem;"></i>
+        </header>
+        <div style="background:#f1f5f9; padding:20px; border-radius:15px; margin-top:20px;">
+            <h4>النشاط الأول: طباعة الاسم</h4>
+            <p>اكتب برنامجاً يقوم بطباعة اسمك الثلاثي باستخدام دالة print.</p>
+            <button onclick="closeOverlay()" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:8px;">بدء النشاط</button>
+        </div>
+    </div>
+
+    <div id="screen-book" class="full-screen-overlay">
+        <header style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>كتاب الطالب الإلكتروني</h2>
+            <i class="fas fa-times" onclick="closeOverlay()" style="font-size:1.5rem;"></i>
+        </header>
+        <div style="margin-top:20px; border: 2px dashed #ccc; height: 400px; display:flex; align-items:center; justify-content:center; color:#999;">
+            <p>سيتم عرض صفحات الكتاب (PDF) هنا</p>
+        </div>
+    </div>
 
     <script type="text/python">
         from browser import document, window
-        def execute_py(ev=None):
-            window.toggleTerminal(True)
-            document["terminal"].text = ""
-            def log(*args): document["terminal"].text += " ".join(map(str, args)) + "\n"
+        def execute(ev=None):
+            document["console"].classList.add("active")
+            document["console"].text = ""
+            def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
+                window.aiSuccess()
             except Exception as e:
-                document["terminal"].text = f"خطأ برمي:\n{str(e)}"
-        window.runPythonAction = execute_py
+                document["console"].text = f"❌ خطأ:\n{str(e)}"
+                window.aiError(str(e))
+        window.pythonRun = execute
     </script>
 
     <script>
-        // جعل المساعد قابلاً للسحب (للجوال)
-        const aiBtn = document.getElementById('ai-assistant');
-        let isDragging = false;
-
-        aiBtn.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            aiBtn.style.top = (touch.clientY - 25) + 'px';
-            aiBtn.style.left = (touch.clientX - 25) + 'px';
-            isDragging = true;
-        });
-
-        aiBtn.addEventListener('touchend', () => {
-            setTimeout(() => isDragging = false, 100);
-        });
-
-        function openAiHelp() {
-            if (isDragging) return;
-            document.getElementById('ai-modal').style.display = 'flex';
-            fetchAiExplanation();
+        // تبديل الأقسام
+        function switchMainTab(tab) {
+            if(tab === 'tasks') document.getElementById('screen-tasks').style.display = 'flex';
+            if(tab === 'book') document.getElementById('screen-book').style.display = 'flex';
+        }
+        function closeOverlay() {
+            document.querySelectorAll('.full-screen-overlay').forEach(o => o.style.display = 'none');
         }
 
-        function closeAiHelp() {
-            document.getElementById('ai-modal').style.display = 'none';
-        }
-
-        function toggleTerminal(forceOpen = false) {
-            const t = document.getElementById('terminal');
-            if (forceOpen) t.classList.add('open');
-            else t.classList.toggle('open');
-        }
-
-        function runCode() { window.runPythonAction(); }
-
-        function clearAll() {
-            if(confirm("مسح الكود؟")) document.getElementById('editor').value = "";
-        }
-
-        // فحص ذكي لحظي لتغيير لون المساعد
-        function liveAiCheck() {
+        // ذكاء المساعد "تِقني"
+        function monitorCode() {
             const code = document.getElementById('editor').value;
-            const ai = document.getElementById('ai-assistant');
-            if(code.includes('print') && !code.includes('(')) {
-                ai.classList.add('glow');
-                ai.style.background = '#ef4444'; // أحمر تنبيه
-            } else {
-                ai.classList.remove('glow');
-                ai.style.background = '#6366f1'; 
+            const msg = document.getElementById('ai-text');
+            const eye = document.getElementById('ai-eye');
+            const bar = document.getElementById('ai-status');
+
+            if (code.includes('print') && !code.includes('(')) {
+                msg.innerText = "تِقني: انتبه! دالة print تحتاج أقواس () لتعمل.";
+                eye.style.background = "#ef4444";
+                bar.style.borderColor = "#ef4444";
+            } else if (code.length > 20) {
+                msg.innerText = "تِقني: كود جميل! هل جربت تشغيله لرؤية النتيجة؟";
+                eye.style.background = "#4f46e5";
+                bar.style.borderColor = "#4f46e5";
             }
         }
 
-        // اتصال بذكاء اصطناعي حقيقي لتقديم المساعدة
-        async function fetchAiExplanation() {
+        async function askAiDeep() {
             const code = document.getElementById('editor').value;
-            const resBox = document.getElementById('ai-response');
-            resBox.innerText = "جاري تحليل المنطق البرمجي... ✨";
-
+            const msg = document.getElementById('ai-text');
+            msg.innerText = "تِقني يفكر في كودك... 🤔";
+            
             try {
-                const response = await fetch('https://text.pollinations.ai/', {
+                const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [
-                            { role: 'system', content: 'أنت تِقني، مساعد برمجة عماني. اشرح الكود للطالب بأسلوب مشجع ومختصر جداً في نقاط.' },
-                            { role: 'user', content: code }
-                        ]
+                        messages: [{role: 'system', content: 'أنت تِقني مساعد مادة تقنية المعلومات بعمان، قدم نصيحة برمجية للطالب في جملة واحدة مشجعة.'}, {role: 'user', content: code}]
                     })
                 });
-                const text = await response.text();
-                resBox.innerText = text;
+                msg.innerText = "تِقني: " + await res.text();
             } catch {
-                resBox.innerText = "أعتذر، عقلي الذكي غير متصل بالإنترنت حالياً!";
+                msg.innerText = "تِقني: أنا معك، استمر في الإبداع!";
             }
         }
+
+        function aiSuccess() {
+            document.getElementById('ai-text').innerText = "تِقني: ممتاز! البرنامج عمل بنجاح، أنت مبرمج رائع.";
+            document.getElementById('ai-eye').style.background = "#059669";
+        }
+
+        function aiError(e) {
+            document.getElementById('ai-text').innerText = "تِقني: حدث خطأ بسيط، لا تقلق، حاول قراءة الرسالة الخضراء في الأسفل.";
+            document.getElementById('ai-eye').style.background = "#ef4444";
+        }
+
+        function runScript() { window.pythonRun(); }
+        function clearFull() { if(confirm("مسح الكود؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
