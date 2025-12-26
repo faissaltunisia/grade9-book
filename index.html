@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة صلالة الشرقية | المساعد الموجه</title>
+    <title>مختبر تِقني الذكي | ملاحقة الكود</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,190 +12,150 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
 
     <style>
-        :root {
-            --primary: #007bff; --bg: #0f172a; --ai-color: #00f2fe;
-        }
-
+        :root { --primary: #007bff; --accent: #00f2fe; --bg: #0b1120; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: var(--bg); overflow: hidden; color: white; }
 
-        /* الهيدر العلوي */
-        .mobile-header {
-            height: 60px; background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 100;
+        /* --- واجهة الترحيب --- */
+        #welcome-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: radial-gradient(circle at center, #1e293b 0%, #000 100%);
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.8s ease-in-out;
         }
+        .ai-glow { width: 100px; height: 100px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 40px var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; animation: pulse 2s infinite; }
 
-        /* منطقة المحرر */
-        .editor-container { height: calc(100% - 130px); position: relative; display: flex; flex-direction: column; }
+        /* --- منطقة العمل --- */
+        .app-view { display: flex; flex-direction: column; height: 100vh; visibility: hidden; }
+        .editor-wrapper { flex: 1; position: relative; background: #0f172a; overflow: hidden; }
+        
         #editor {
-            flex: 1; width: 100%; background: transparent; color: #38bdf8;
-            padding: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem;
-            border: none; outline: none; resize: none; line-height: 1.6;
+            width: 100%; height: 100%; background: transparent; color: #38bdf8;
+            padding: 25px; font-family: 'Consolas', 'Monaco', monospace; font-size: 1.2rem;
+            border: none; outline: none; resize: none; line-height: 2; /* مساحة كافية للسطر التالي */
+            caret-color: #fff;
         }
 
-        /* المساعد الموجه (اللحظي) */
-        #live-coach {
-            position: absolute; top: 10px; left: 10px; right: 10px;
-            background: rgba(0, 123, 255, 0.9); color: white; padding: 12px 15px;
-            border-radius: 12px; display: none; align-items: center; gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 500;
-            border: 1px solid var(--ai-color); animation: bounceIn 0.5s ease;
+        /* --- المساعد الملاحق (The Ghost Assistant) --- */
+        #ghost-guide {
+            position: absolute; pointer-events: none;
+            background: rgba(0, 123, 255, 0.15); border-right: 3px solid var(--accent);
+            color: var(--accent); padding: 4px 12px; border-radius: 4px;
+            font-size: 0.9rem; font-weight: bold; white-space: nowrap;
+            display: none; align-items: center; gap: 8px;
+            z-index: 100; transition: top 0.2s, left 0.2s;
         }
-        #live-coach i { font-size: 1.2rem; color: var(--ai-color); }
+        #ghost-guide i { font-size: 0.8rem; }
 
         /* الأزرار العائمة */
-        .floating-btns { 
-            position: absolute; bottom: 90px; left: 15px; right: 15px; 
-            display: flex; justify-content: space-between; pointer-events: none;
-        }
-        .circle-btn {
-            width: 60px; height: 60px; border-radius: 50%; border: none;
-            color: white; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: auto;
-        }
-        .btn-run { background: #22c55e; }
+        .floating-bar { position: absolute; bottom: 100px; left: 0; right: 0; display: flex; justify-content: space-around; padding: 0 20px; z-index: 1000; }
+        .btn-round { width: 60px; height: 60px; border-radius: 50%; border: none; color: white; font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .btn-magic { background: linear-gradient(45deg, #8b5cf6, #d946ef); }
+        .btn-run { background: #22c55e; }
 
-        #output { height: 70px; background: #000; padding: 10px 20px; font-size: 0.9rem; border-top: 1px solid #334155; overflow-y: auto; color: #adff2f; }
+        #output { height: 70px; background: #000; padding: 10px 15px; border-top: 1px solid #333; color: #adff2f; overflow-y: auto; font-size: 0.85rem; }
 
-        /* نافذة الدردشة المنسفقة */
-        #chat-popup {
-            position: fixed; inset: 0; background: #f8fafc; z-index: 3000;
-            display: none; flex-direction: column;
-        }
-        .chat-header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; color: #333; }
-        .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 12px; border-radius: 15px; max-width: 85%; font-size: 0.9rem; }
-        .bubble.ai { background: white; align-self: flex-start; color: #333; border: 1px solid #ddd; }
-        .bubble.user { background: var(--primary); align-self: flex-end; color: white; }
-
-        /* لوحات السحب */
-        .sheet { position: fixed; bottom: -100%; left: 0; right: 0; height: 80%; background: white; border-radius: 25px 25px 0 0; z-index: 1000; transition: 0.4s; color: #1e293b; padding: 20px; }
-        .sheet.open { bottom: 0; }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onload="brython()">
 
-    <header class="mobile-header">
-        <div style="font-weight: 900;">تِقني <span style="color:var(--primary)">AI</span></div>
-        <div style="display:flex; gap:15px;">
-            <i class="fas fa-layer-group" onclick="openSheet('tasks')"></i>
-            <i class="fas fa-book-open" onclick="openSheet('book')"></i>
-        </div>
-    </header>
-
-    <div class="editor-container">
-        <div id="live-coach">
-            <i class="fas fa-robot"></i>
-            <span id="coach-text">أنا معك.. ابدأ بكتابة كودك!</span>
-        </div>
-
-        <textarea id="editor" spellcheck="false" oninput="liveGuide()" placeholder="# اكتب كود بايثون هنا...">print("مرحباً")</textarea>
-        
-        <div class="floating-btns">
-            <button class="circle-btn btn-magic" onclick="openChat()"><i class="fas fa-wand-magic-sparkles"></i></button>
-            <button class="circle-btn btn-run" id="run_btn"><i class="fas fa-play"></i></button>
+    <div id="welcome-overlay">
+        <div style="text-align: center;">
+            <div class="ai-glow"><i class="fas fa-robot" style="font-size: 3rem;"></i></div>
+            <h1 style="margin: 10px 0;">تِقني AI</h1>
+            <p style="color: #94a3b8; margin-bottom: 30px;">مساعدك الذكي بمدرسة صلالة الشرقية</p>
+            <button onclick="enterLab()" style="padding: 15px 40px; border-radius: 30px; border: none; background: var(--accent); color: #000; font-weight: bold; font-size: 1.1rem;">دخول المختبر</button>
         </div>
     </div>
-    
-    <div id="output">>>> المخرجات ستظهر هنا...</div>
 
-    <div id="chat-popup">
-        <div class="chat-header">
+    <div class="app-view" id="main-app">
+        <header style="padding: 15px 20px; background: #1e293b; display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--accent);">مختبر تِقني</strong>
+            <div style="display: flex; gap: 20px;">
+                <i class="fas fa-book-open"></i>
+                <i class="fas fa-medal"></i>
+            </div>
+        </header>
+
+        <div class="editor-wrapper">
+            <div id="ghost-guide">
+                <i class="fas fa-magic"></i>
+                <span id="guide-msg">تِقني معك..</span>
+            </div>
+
+            <textarea id="editor" oninput="trackCaret()" onkeyup="trackCaret()" onclick="trackCaret()" spellcheck="false" placeholder="أدخل كود بايثون هنا..."></textarea>
+            
+            <div class="floating-bar">
+                <button class="btn-round btn-magic" onclick="openFullChat()"><i class="fas fa-comment-dots"></i></button>
+                <button class="btn-round btn-run" id="run_btn"><i class="fas fa-play"></i></button>
+            </div>
+        </div>
+
+        <div id="output">>>> المخرجات ستظهر هنا</div>
+    </div>
+
+    <div id="chat-popup" style="position:fixed; inset:0; background:#f8fafc; display:none; flex-direction:column; z-index:20000; color: #333;">
+        <div style="padding: 20px; background: white; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <strong>المساعد تِقني</strong>
-            <button onclick="closeChat()" style="border:none; background:#eee; padding:5px 15px; border-radius:10px;">عودة للمحرر</button>
+            <button onclick="closeFullChat()" style="background:#eee; border:none; padding:10px 20px; border-radius:10px;">عودة</button>
         </div>
-        <div class="chat-body" id="chat-body">
-            <div class="bubble ai">أهلاً بك! كيف يمكنني مساعدتك في الكود الخاص بك؟</div>
-        </div>
-    </div>
-
-    <div id="sheet-tasks" class="sheet">
-        <h3>الأنشطة</h3>
-        <div style="background:#f1f5f9; padding:15px; border-radius:10px;" onclick="setTask('print(\'صلالة الشرقية\')')">نشاط 1: دالة الطباعة</div>
-    </div>
-
-    <div id="sheet-book" class="sheet">
-        <h3>الكتاب المدرسي</h3>
-        <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width:100%; height:90%; border:none;"></iframe>
+        <div id="chat-flow" style="flex:1; padding:20px; overflow-y:auto;"></div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def run_it(ev):
+        def run_code(ev):
             document["output"].text = ""
             def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
-                window.showGuide("رائع! كودك يعمل بنجاح ✅")
             except Exception as e:
                 document["output"].text = f"خطأ: {e}"
-                window.showGuide("هناك خطأ.. أصلحه وسأساعدك ❌")
-        document["run_btn"].bind("click", run_it)
+        document["run_btn"].bind("click", run_code)
     </script>
 
     <script>
-        // التوجيه اللحظي (المراقب الذكي)
-        function liveGuide() {
-            const code = document.getElementById('editor').value;
-            const coach = document.getElementById('live-coach');
-            const txt = document.getElementById('coach-text');
+        function enterLab() {
+            document.getElementById('welcome-overlay').style.transform = 'translateY(-100%)';
+            document.getElementById('main-app').style.visibility = 'visible';
+        }
 
-            if (code.includes('print') && !code.includes('(')) {
-                txt.innerText = "تِقني: افتح قوساً ( بعد كلمة print";
-                coach.style.display = 'flex';
-            } 
-            else if (code.includes('(') && !code.includes(')')) {
-                txt.innerText = "تِقني: لا تنسَ إغلاق القوس ) في نهاية السطر";
-                coach.style.display = 'flex';
-            }
-            else if (code.includes('"') && (code.match(/"/g) || []).length % 2 !== 0) {
-                txt.innerText = "تِقني: تذكر إغلاق علامات التنصيص \"";
-                coach.style.display = 'flex';
-            }
-            else if (code.length > 5 && !code.includes('print')) {
-                txt.innerText = "تِقني: هل جربت استخدام دالة print لعرض النتيجة؟";
-                coach.style.display = 'flex';
-            }
-            else {
-                coach.style.display = 'none'; // الكود سليم أو الطالب ما زال يكتب
+        // وظيفة ملاحقة السطر التالي للكود
+        function trackCaret() {
+            const editor = document.getElementById('editor');
+            const ghost = document.getElementById('ghost-guide');
+            const msg = document.getElementById('guide-msg');
+            const code = editor.value;
+
+            // الحصول على موقع السطر الحالي (تقريبياً للهواتف)
+            const lines = code.substr(0, editor.selectionStart).split("\n");
+            const currentLineNum = lines.length;
+            const lineHeight = 1.2 * 20; // 1.2rem * 20px تقريباً
+            
+            // تحديد مكان الظهور (تحت السطر الحالي بـ 35 بكسل)
+            ghost.style.top = (currentLineNum * 32 + 20) + "px"; 
+            ghost.style.left = "25px";
+
+            // منطق النصائح اللحظية
+            const currentLineText = lines[currentLineNum - 1] || "";
+            
+            if (currentLineText.includes('print') && !currentLineText.includes('(')) {
+                msg.innerText = "تِقني: افتح قوساً (";
+                ghost.style.display = 'flex';
+            } else if (currentLineText.includes('(') && !currentLineText.includes(')')) {
+                msg.innerText = "تِقني: أغلق القوس )";
+                ghost.style.display = 'flex';
+            } else if (code.length > 2) {
+                msg.innerText = "تِقني: كود رائع، استمر!";
+                ghost.style.display = 'flex';
+            } else {
+                ghost.style.display = 'none';
             }
         }
 
-        function showGuide(msg) {
-            const coach = document.getElementById('live-coach');
-            document.getElementById('coach-text').innerText = msg;
-            coach.style.display = 'flex';
-            setTimeout(() => coach.style.display = 'none', 3000);
-        }
-
-        function openChat() { 
-            document.getElementById('chat-popup').style.display = 'flex';
-            const code = document.getElementById('editor').value;
-            addBubble('user', "حلل لي هذا الكود: " + code);
-            // هنا يتم استدعاء الذكاء الاصطناعي (كما في الكود السابق)
-        }
-        function closeChat() { document.getElementById('chat-popup').style.display = 'none'; }
-        
-        function openSheet(id) { document.getElementById('sheet-' + id).classList.add('open'); }
-        function closeSheets() { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open')); }
-        function setTask(code) { document.getElementById('editor').value = code; closeSheets(); }
-
-        function addBubble(role, text) {
-            const body = document.getElementById('chat-body');
-            const div = document.createElement('div');
-            div.className = "bubble " + role;
-            div.innerText = text;
-            body.appendChild(div);
-            body.scrollTop = body.scrollHeight;
-        }
+        function openFullChat() { document.getElementById('chat-popup').style.display = 'flex'; }
+        function closeFullChat() { document.getElementById('chat-popup').style.display = 'none'; }
     </script>
 </body>
 </html>
