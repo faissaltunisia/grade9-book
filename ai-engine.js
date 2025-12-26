@@ -1,43 +1,80 @@
-const chatBody = document.getElementById('chat-body');
-const editor = document.getElementById('code-editor');
+// بيانات الأنشطة والحلول مستنتجة من كتاب التاسع
+const activities = {
+    'intro': {
+        task: "نشاط (1-1): اكتب كود يطبع 'مرحباً بك في عالم البرمجة'.",
+        hint: "استخدم دالة print() وضع النص بين علامتي تنصيص.",
+        keywords: ["print(", "'", ")"],
+        solution: "print('مرحباً بك في عالم البرمجة')"
+    },
+    'vars': {
+        task: "نشاط (1-3): عرف متغير باسم x قيمته 10 ومتغير y قيمته 20 ثم اطبع مجموعهما.",
+        hint: "اكتب x = 10 ثم y = 20 ثم print(x + y).",
+        keywords: ["x", "y", "print"],
+        solution: "x = 10\ny = 20\nprint(x + y)"
+    },
+    'input': {
+        task: "نشاط (1-5): اطلب من المستخدم إدخال اسمه باستخدام دالة input ثم رحب به.",
+        hint: "استخدم name = input('ما اسمك؟') ثم اطبع المتغير name.",
+        keywords: ["input", "print"],
+        solution: "name = input('أدخل اسمك: ')\nprint('أهلاً بك يا', name)"
+    },
+    'final': {
+        task: "التحدي الختامي: اكتب برنامجاً يحسب مساحة مستطيل (الطول × العرض) عبر إدخال القيم من المستخدم.",
+        hint: "تذكر تحويل المدخلات إلى أرقام باستخدام int().",
+        keywords: ["int", "input", "*"],
+        solution: "L = int(input('الطول: '))\nW = int(input('العرض: '))\nprint('المساحة هي:', L * W)"
+    }
+};
 
-// 1. وظيفة المراقبة اللحظية
-function monitorCode() {
-    const code = editor.value;
+let activeKey = null;
+
+function loadActivity(key) {
+    activeKey = key;
+    const act = activities[key];
+    document.getElementById('current-task').innerText = "نشاط نشط";
+    document.getElementById('activity-text').innerText = act.task;
+    document.getElementById('code-editor').value = "";
+    document.getElementById('console-output').innerText = "";
     
-    if (code.includes("print(") && !code.includes("'") && !code.includes('"')) {
-        updateAIStatus("تنبيه: لقد نسيت وضع النص داخل علامات تنصيص ' ' في دالة الطباعة.");
-    } else if (code.match(/\(/g)?.length > code.match(/\)/g)?.length) {
-        updateAIStatus("تنبيه: يبدو أنك لم تغلق القوس الخاص بالدالة!");
-    } else {
-        updateAIStatus("كودك يبدو سليماً حتى الآن.. استمر!");
+    sendAIMessage(`رائع! لقد اخترت ${act.task.split(':')[0]}. ابدأ الكتابة وسأراقبك!`);
+}
+
+function monitorCode() {
+    if (!activeKey) return;
+    const code = document.getElementById('code-editor').value;
+    const act = activities[activeKey];
+    const badge = document.getElementById('status-badge');
+
+    // 1. فحص الأخطاء الشائعة (Syntax Monitoring)
+    if (code.includes("print") && !code.includes("(")) {
+        sendAIMessage("⚠️ انتبه: لقد نسيت فتح القوس بعد دالة print.");
+        badge.innerText = "تنبيه خطأ! 🔴";
+    } 
+    else if (code.includes("'") && (code.match(/'/g) || []).length % 2 !== 0) {
+        sendAIMessage("⚠️ تذكر: علامات التنصيص يجب أن تكون زوجية (بداية ونهاية النص).");
+        badge.innerText = "تنبيه خطأ! 🔴";
+    }
+    // 2. فحص التقدم في الحل
+    else if (act.keywords.every(k => code.includes(k))) {
+        sendAIMessage("✨ مذهل! كودك يحتوي على العناصر المطلوبة. جرب تشغيله الآن.");
+        badge.innerText = "تقدم ممتاز! 🟢";
     }
 }
 
-// 2. إعطاء حل صحيح للنشاط الموجود في الكتاب
-function getAISolution() {
-    const solution = "# حل نشاط حساب المساحة\nlength = 10\nwidth = 5\narea = length * width\nprint('المساحة هي:', area)";
-    editor.value = solution;
-    updateAIStatus("لقد كتبت لك الكود الصحيح لنشاط حساب المساحة في المحرر.");
+function getHint() {
+    if (activeKey) {
+        sendAIMessage("💡 نصيحة: " + activities[activeKey].hint);
+    }
 }
 
-function updateAIStatus(msg) {
-    chatBody.innerHTML = `<div style="color:blue; font-weight:bold;">تِقني:</div><div>${msg}</div>`;
-}
-
-// 3. نظام الرد على أسئلة الطالب
-function sendMsg() {
-    const input = document.getElementById('user-msg');
-    const msg = input.value;
-    chatBody.innerHTML += `<div style="color:gray;">أنت: ${msg}</div>`;
+function sendAIMessage(text) {
+    const msgBox = document.getElementById('ai-messages');
+    // منع تكرار نفس الرسالة الأخيرة
+    if (msgBox.lastElementChild && msgBox.lastElementChild.innerText === text) return;
     
-    let response = "سؤال رائع! هذا الجزء مشروح في الوحدة الأولى من كتابك.";
-    if(msg.includes("print")) response = "دالة print تستخدم لعرض المخرجات على الشاشة.";
-    if(msg.includes("input")) response = "دالة input تستخدم لاستقبال بيانات من المستخدم.";
-    
-    setTimeout(() => {
-        chatBody.innerHTML += `<div style="color:blue; font-weight:bold;">تِقني:</div><div>${response}</div>`;
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 500);
-    input.value = "";
+    const bubble = document.createElement('div');
+    bubble.className = 'ai-bubble';
+    bubble.innerText = text;
+    msgBox.appendChild(bubble);
+    msgBox.scrollTop = msgBox.scrollHeight;
 }
