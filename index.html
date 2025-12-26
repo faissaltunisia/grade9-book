@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني | المساعد الذكي</title>
+    <title>مختبر تِقني | نسخة الهاتف الاحترافية</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,157 +12,182 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
 
     <style>
-        :root { --primary: #6366f1; --bg: #0b0f1a; --ai-glow: #00f2fe; }
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; overflow: hidden; }
+        :root { --primary: #6366f1; --accent: #00f2fe; --dark: #0f172a; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: var(--dark); overflow: hidden; color: white; }
 
-        /* منطقة العمل */
-        .app-container { height: 100vh; display: flex; flex-direction: column; position: relative; }
+        /* الهيدر العلوي - نحيف جداً لتوفير مساحة */
+        .header { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid #1e293b; }
+        .logo { font-weight: 900; font-size: 1.1rem; }
 
-        /* المحرر الاحترافي */
+        /* منطقة المحرر - تأخذ معظم الشاشة */
+        .editor-container { height: calc(100% - 130px); position: relative; width: 100%; }
         #editor {
-            flex: 1; width: 100%; background: #111827; color: #e5e7eb;
-            padding: 25px; font-family: 'Consolas', monospace; font-size: 1.15rem;
-            border: none; outline: none; resize: none; line-height: 1.7;
+            width: 100%; height: 100%; background: #0b0f1a; color: #94a3b8;
+            padding: 15px; font-family: 'Consolas', monospace; font-size: 1.1rem;
+            border: none; outline: none; resize: none; line-height: 1.6;
         }
 
-        /* --- أهم عنصر: المساعد الذكي العائم --- */
-        .ai-avatar {
-            position: absolute; top: 80px; left: 20px;
-            width: 60px; height: 60px; background: var(--primary);
+        /* المساعد الذكي - رأس عائم قابل للسحب (Drag) */
+        #ai-assistant {
+            position: absolute; top: 100px; left: 20px;
+            width: 55px; height: 55px; background: var(--primary);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px var(--primary); cursor: pointer;
-            z-index: 1000; transition: 0.3s; animation: float 3s infinite ease-in-out;
-            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); z-index: 1000;
+            border: 3px solid #fff; cursor: grab; transition: transform 0.2s;
         }
-        .ai-avatar i { font-size: 1.8rem; color: white; }
-        .ai-avatar.warning { background: #ef4444; box-shadow: 0 0 25px #ef4444; }
+        #ai-assistant i { font-size: 1.5rem; color: white; }
+        #ai-assistant.glow { box-shadow: 0 0 30px var(--accent); border-color: var(--accent); }
 
-        /* فقاعة النصيحة (تظهر بجانب الروبوت) */
-        .ai-status-bubble {
-            position: absolute; top: 90px; left: 90px;
-            background: rgba(255, 255, 255, 0.95); color: #1e293b;
-            padding: 10px 15px; border-radius: 12px; font-size: 0.85rem;
-            font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: none; max-width: 200px; z-index: 999; animation: slideRight 0.4s ease;
+        /* نافذة المساعدة - تظهر كبطاقة فوقية مريحة */
+        #ai-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+            padding: 20px; backdrop-filter: blur(5px);
         }
-
-        /* نافذة المساعد الكبرى (تظهر عند الضغط) */
-        #ai-panel {
-            position: fixed; bottom: -100%; left: 0; right: 0; height: 60%;
-            background: rgba(255, 255, 255, 0.98); border-radius: 30px 30px 0 0;
-            z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 30px; color: #1e293b; display: flex; flex-direction: column;
+        .modal-card {
+            background: white; width: 100%; border-radius: 20px; padding: 25px;
+            color: #1e293b; position: relative; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #ai-panel.open { bottom: 0; }
+        .modal-card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; color: var(--primary); }
 
-        /* شريط المخرجات السفلي */
-        #terminal { height: 80px; background: #000; color: #10b981; padding: 15px; font-family: monospace; border-top: 1px solid #333; overflow-y: auto; }
+        /* شريط النتائج - يفتح بالسحب أو الضغط */
+        #terminal {
+            position: fixed; bottom: 80px; left: 0; right: 0; height: 0;
+            background: #000; color: #10b981; font-family: monospace;
+            overflow-y: auto; transition: 0.3s; padding: 0 15px; border-top: 2px solid #333;
+        }
+        #terminal.open { height: 120px; padding: 10px 15px; }
 
-        /* الأزرار */
-        .nav-bar { height: 70px; background: #1f2937; display: flex; align-items: center; justify-content: space-around; }
-        .run-btn { width: 55px; height: 55px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: none; color: white; margin-top: -30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        /* شريط التحكم السفلي - أزرار ضخمة وسهلة للمس */
+        .toolbar {
+            height: 80px; background: #1e293b; display: flex; align-items: center;
+            justify-content: space-around; position: fixed; bottom: 0; width: 100%;
+        }
+        .tool-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; color: #94a3b8; font-size: 0.8rem; border: none; background: none; }
+        .run-fab { width: 60px; height: 60px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: white; margin-top: -40px; border: 6px solid var(--dark); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onload="brython()">
 
-    <div class="app-container">
-        <div class="ai-avatar" id="ai-orb" onclick="toggleAiPanel()">
+    <div class="header">
+        <div class="logo">مختبر <span style="color:var(--primary)">تِقني</span></div>
+        <div style="font-size: 0.8rem; opacity: 0.7;">صلالة الشرقية</div>
+    </div>
+
+    <main class="editor-container">
+        <div id="ai-assistant" onclick="openAiHelp()">
             <i class="fas fa-robot"></i>
         </div>
-        <div class="ai-status-bubble" id="status-bubble">تِقني يراقب كودك...</div>
 
-        <textarea id="editor" oninput="aiAnalyze()" spellcheck="false" placeholder="# ابدأ البرمجة هنا...">print("مرحباً بك في عمان")</textarea>
+        <textarea id="editor" spellcheck="false" oninput="liveAiCheck()">print("مرحباً بك")</textarea>
+    </main>
 
-        <div id="terminal">>>> جاهز لتشغيل كودك</div>
+    <div id="terminal"></div>
 
-        <nav class="nav-bar">
-            <button onclick="clearEditor()" style="background:none; border:none; color:#9ca3af;"><i class="fas fa-eraser"></i><br><small>مسح</small></button>
-            <button class="run-btn" onclick="runPython()"><i class="fas fa-play"></i></button>
-            <button onclick="toggleAiPanel()" style="background:none; border:none; color:#9ca3af;"><i class="fas fa-comment-dots"></i><br><small>تِقني</small></button>
-        </nav>
+    <div id="ai-modal" onclick="closeAiHelp()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3><i class="fas fa-brain"></i> تِقني يحلل كودك:</h3>
+            <div id="ai-response" style="line-height: 1.6; margin-bottom: 20px;">جاري التفكير...</div>
+            <button onclick="closeAiHelp()" style="width:100%; padding:12px; border-radius:12px; border:none; background:var(--primary); color:white; font-weight:bold;">مفهوم</button>
+        </div>
     </div>
 
-    <div id="ai-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0;"><i class="fas fa-brain" style="color:var(--primary)"></i> تحليل تِقني الذكي</h2>
-            <i class="fas fa-times" onclick="toggleAiPanel()" style="font-size:1.5rem; cursor:pointer;"></i>
-        </div>
-        <div id="ai-content" style="flex:1; overflow-y:auto; line-height:1.6; font-size:1.1rem;">
-            اكتب كوداً في الأعلى ثم اضغط عليّ لأقوم بتحليله لك!
-        </div>
-        <button onclick="toggleAiPanel()" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:900;">فهمت، شكراً تِقني!</button>
-    </div>
+    <footer class="toolbar">
+        <button class="tool-btn" onclick="clearAll()"><i class="fas fa-eraser" style="font-size:1.2rem;"></i><span>مسح</span></button>
+        <button class="run-fab" onclick="runCode()"><i class="fas fa-play"></i></button>
+        <button class="tool-btn" onclick="toggleTerminal()"><i class="fas fa-terminal" style="font-size:1.2rem;"></i><span>النتائج</span></button>
+    </footer>
 
     <script type="text/python">
         from browser import document, window
-        def run_code(ev=None):
+        def execute_py(ev=None):
+            window.toggleTerminal(True)
             document["terminal"].text = ""
             def log(*args): document["terminal"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["terminal"].text = f"خطأ برمي: {e}"
-        window.runPythonAction = run_code
+                document["terminal"].text = f"خطأ برمي:\n{str(e)}"
+        window.runPythonAction = execute_py
     </script>
 
     <script>
-        let aiTimeout;
+        // جعل المساعد قابلاً للسحب (للجوال)
+        const aiBtn = document.getElementById('ai-assistant');
+        let isDragging = false;
 
-        function toggleAiPanel() {
-            const panel = document.getElementById('ai-panel');
-            panel.classList.toggle('open');
-            if(panel.classList.contains('open')) fetchFullAnalysis();
+        aiBtn.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            aiBtn.style.top = (touch.clientY - 25) + 'px';
+            aiBtn.style.left = (touch.clientX - 25) + 'px';
+            isDragging = true;
+        });
+
+        aiBtn.addEventListener('touchend', () => {
+            setTimeout(() => isDragging = false, 100);
+        });
+
+        function openAiHelp() {
+            if (isDragging) return;
+            document.getElementById('ai-modal').style.display = 'flex';
+            fetchAiExplanation();
         }
 
-        // تحليل لحظي بسيط لتغيير حالة الروبوت
-        function aiAnalyze() {
-            const code = document.getElementById('editor').value;
-            const orb = document.getElementById('ai-orb');
-            const bubble = document.getElementById('status-bubble');
+        function closeAiHelp() {
+            document.getElementById('ai-modal').style.display = 'none';
+        }
 
-            bubble.style.display = 'block';
-            
-            // تنبيهات بصرية فورية
-            if (code.includes('print') && !code.includes('(')) {
-                orb.classList.add('warning');
-                bubble.innerText = "تِقني: انتبه! نسيت الأقواس ()";
+        function toggleTerminal(forceOpen = false) {
+            const t = document.getElementById('terminal');
+            if (forceOpen) t.classList.add('open');
+            else t.classList.toggle('open');
+        }
+
+        function runCode() { window.runPythonAction(); }
+
+        function clearAll() {
+            if(confirm("مسح الكود؟")) document.getElementById('editor').value = "";
+        }
+
+        // فحص ذكي لحظي لتغيير لون المساعد
+        function liveAiCheck() {
+            const code = document.getElementById('editor').value;
+            const ai = document.getElementById('ai-assistant');
+            if(code.includes('print') && !code.includes('(')) {
+                ai.classList.add('glow');
+                ai.style.background = '#ef4444'; // أحمر تنبيه
             } else {
-                orb.classList.remove('warning');
-                bubble.innerText = "تِقني: كودك يبدو ممتازاً!";
-                setTimeout(() => bubble.style.display = 'none', 3000);
+                ai.classList.remove('glow');
+                ai.style.background = '#6366f1'; 
             }
         }
 
-        // تحليل عميق من ذكاء اصطناعي خارجي
-        async function fetchFullAnalysis() {
+        // اتصال بذكاء اصطناعي حقيقي لتقديم المساعدة
+        async function fetchAiExplanation() {
             const code = document.getElementById('editor').value;
-            const content = document.getElementById('ai-content');
-            content.innerHTML = "جاري قراءة كودك بعناية... ✨";
+            const resBox = document.getElementById('ai-response');
+            resBox.innerText = "جاري تحليل المنطق البرمجي... ✨";
 
             try {
-                const res = await fetch('https://text.pollinations.ai/', {
+                const response = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         messages: [
-                            {role: 'system', content: 'أنت تِقني، مساعد برمج ذكي جداً. اشرح للطالب ماذا يفعل كوده وما هي الأخطاء بأسلوب مشجع ومبسط جداً.'},
-                            {role: 'user', content: code}
+                            { role: 'system', content: 'أنت تِقني، مساعد برمجة عماني. اشرح الكود للطالب بأسلوب مشجع ومختصر جداً في نقاط.' },
+                            { role: 'user', content: code }
                         ]
                     })
                 });
-                const data = await res.text();
-                content.innerText = data;
+                const text = await response.text();
+                resBox.innerText = text;
             } catch {
-                content.innerText = "تعذر علي الاتصال بعقلي الإلكتروني، تأكد من الإنترنت!";
+                resBox.innerText = "أعتذر، عقلي الذكي غير متصل بالإنترنت حالياً!";
             }
         }
-
-        function runPython() { window.runPythonAction(); }
-        function clearEditor() { if(confirm("مسح المحرر؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
