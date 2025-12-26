@@ -1,22 +1,50 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>وحدة قواعد البيانات</title>
+    <title>وحدة قواعد البيانات - المساعد الذكي</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header><h1>قواعد البيانات (MS Access)</h1></header>
-    <div class="container">
-        <div class="card">
-            <h2>مفاهيم الوحدة الثانية</h2>
-            <ul>
-                <li><strong>الجدول:</strong> المكون الأساسي لتخزين البيانات.</li>
-                <li><strong>المفتاح الأساسي:</strong> حقل فريد لا يتكرر (مثل رقم الطالب).</li>
-                <li><strong>الاستعلام:</strong> استرجاع بيانات محددة من الجداول.</li>
-            </ul>
+    <aside class="sidebar">
+        <h3>أنشطة قواعد البيانات</h3>
+        <div class="lesson-item" onclick="guide('table')">نشاط: إنشاء جدول</div>
+        <div class="lesson-item" onclick="guide('key')">نشاط: تحديد المفتاح الأساسي</div>
+        <div class="lesson-item" onclick="guide('query')">نشاط: تشغيل استعلام</div>
+    </aside>
+
+    <main class="main-lab">
+        <header class="lab-header">
+            <h2>دليل التدريب العملي (MS Access)</h2>
+        </header>
+        <div class="workspace">
+            <div class="activity-card" id="db-instruction">
+                اختر نشاطاً من القائمة الجانبية ليقوم المساعد بتوجيهك خطوة بخطوة داخل برنامج Access.
+            </div>
+            <div id="step-viewer" style="background:white; padding:20px; border-radius:10px; height: 300px;">
+                <p id="step-text">في انتظار اختيار النشاط...</p>
+            </div>
         </div>
-    </div>
-    <script src="ai-engine.js"></script>
+    </main>
+
+    <section class="ai-panel">
+        <div class="ai-header"><h4>تِقني (خبير الجداول)</h4></div>
+        <div id="ai-messages">
+            <div class="ai-bubble">أهلاً بك! في هذه الوحدة سأرشدك لكيفية التعامل مع برنامج MS Access 2010 خطوة بخطوة.</div>
+        </div>
+    </section>
+
+    <script>
+        function guide(type) {
+            const msg = document.getElementById('ai-messages');
+            const stepText = document.getElementById('step-text');
+            
+            if(type === 'table') {
+                stepText.innerHTML = "<strong>الخطوة 1:</strong> افتح البرنامج واختر Blank Database.<br><strong>الخطوة 2:</strong> اذهب لتبويب Create ثم Table Design.";
+                msg.innerHTML += "<div class='ai-bubble'>تذكر أن تختار أنواع البيانات الصحيحة لكل حقل كما في صفحة 62!</div>";
+            }
+            // يمكن إضافة بقية الخطوات هنا
+        }
+    </script>
 </body>
 </html>
