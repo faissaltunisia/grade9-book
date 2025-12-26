@@ -2,54 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مختبر بايثون الذكي | الصف التاسع</title>
+    <title>مختبر صلالة الشرقية البرمجي</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
 </head>
 <body onload="brython()">
 
-    <aside class="sidebar" id="sidebar-menu">
-        <h3>فهرس أنشطة الكتاب</h3>
-        </aside>
-
-    <main class="main-lab">
-        <div class="instruction-box">
-            <h4 id="act-title">ابدأ رحلتك البرمجية</h4>
-            <p id="act-desc">اختر نشاطاً من القائمة الجانبية، وسأقوم بإرشادك خطوة بخطوة.</p>
+    <aside class="sidebar">
+        <div class="school-header">
+            <small>سلطنة عمان</small>
+            <h3>مدرسة صلالة الشرقية (5-9)</h3>
+            <span style="color: var(--neon-green)">وحدة برمجة بايثون - التاسع</span>
         </div>
-
-        <textarea id="code-editor" onkeyup="aiMonitor()" placeholder="اكتب كود بايثون هنا..."></textarea>
         
-        <div style="margin: 15px 0;">
-            <button id="run-btn" style="padding:10px 30px; background:#27ae60; color:white; border:none; border-radius:5px; cursor:pointer;">تشغيل الكود ▶</button>
+        <div style="display:flex;">
+            <button class="tab-btn active" onclick="showTab('theory')">📘 مفاهيم نظرية</button>
+            <button class="tab-btn" onclick="showTab('tasks')">⌨️ أنشطة الكتاب</button>
         </div>
 
-        <div id="console" style="background:black; color:#00ff00; padding:15px; border-radius:8px; height:100px; overflow-y:auto; font-family:monospace;"></div>
+        <div id="theory-section" class="scroll-area">
+            <div class="card" style="background:#21262d; padding:10px; border-radius:5px; margin-bottom:10px;">
+                <h4 style="color:var(--neon-blue)">دالة print()</h4>
+                <p style="font-size:13px;">هي الدالة المسؤولة عن عرض النتائج على الشاشة. أي نص يوضع بين ' ' يظهر كما هو.</p>
+            </div>
+            <div class="card" style="background:#21262d; padding:10px; border-radius:5px; margin-bottom:10px;">
+                <h4 style="color:var(--neon-blue)">المتغيرات (Variables)</h4>
+                <p style="font-size:13px;">مواقع لتخزين البيانات في ذاكرة الحاسوب، مثل x = 5 حيث x هو اسم المتغير.</p>
+            </div>
+        </div>
+
+        <div id="tasks-section" class="scroll-area" style="display:none;">
+            </div>
+    </aside>
+
+    <main class="editor-container">
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <h2 id="task-title" style="margin:0;">IDE صلالة الشرقية v1.0</h2>
+            <div>
+                <button onclick="runPython()" style="background:var(--neon-green); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">Run Code ▶</button>
+                <button onclick="askForHint()" style="background:var(--neon-blue); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">طلب تلميح 💡</button>
+            </div>
+        </div>
+        
+        <textarea id="code-editor" onkeyup="aiLiveMonitor()" spellcheck="false"># ابدأ البرمجة هنا يا بطل...</textarea>
+        
+        <div class="console-output" id="output">
+            >>> المخرجات ستظهر هنا...
+        </div>
     </main>
 
-    <section class="ai-assistant">
-        <div class="ai-header">
+    <section class="ai-mentor">
+        <div class="school-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="50">
-            <p><strong>المساعد تِقني</strong></p>
+            <p><strong>المعلم الذكي (تِقني)</strong></p>
         </div>
-        <div id="ai-chat">
-            <div class="ai-msg">أهلاً بك يا بطل! أنا تِقني، سأراقب كودك وأساعدك في حل أنشطة الكتاب المدرسي.</div>
+        <div class="chat-messages" id="chat-flow">
+            <div class="msg bot">مرحباً بك في مختبر مدرسة صلالة الشرقية! أنا معلمك الافتراضي، اسألني أي سؤال عن المنهج أو اطلب مني مساعدتك في الكود.</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-ask" placeholder="اسأل تِقني (مثلاً: ما هي دالة input؟)...">
+            <button onclick="chatWithAI()" style="background:var(--neon-blue); color:white; border:none; padding:10px; border-radius:5px;">إرسال</button>
         </div>
     </section>
 
+    <script src="ai-engine.js"></script>
     <script type="text/python">
         from browser import document
-        def run_code(ev):
-            document["console"].text = ""
-            src = document["code-editor"].value
-            try:
-                exec(src, {"print": lambda *args: setattr(document["console"], "text", document["console"].text + " ".join(map(str, args)) + "\n")})
-            except Exception as e:
-                document["console"].text = f"خطأ برمي: {e}"
-        document["run-btn"].bind("click", run_code)
-    </script>
+        import sys
 
-    <script src="ai-engine.js"></script>
+        def run_python(ev):
+            document["output"].text = ">>> "
+            code = document["code-editor"].value
+            try:
+                exec(code, {"print": custom_print, "input": custom_input})
+            except Exception as e:
+                document["output"].text += f"\nError: {e}"
+
+        def custom_print(*args):
+            document["output"].text += " ".join(map(str, args)) + "\n"
+
+        def custom_input(msg):
+            # محاكاة بسيطة للـ input في المتصفح
+            from browser import window
+            return window.prompt(msg)
+
+        # ربط الزر بـ Brython
+        window.runPython = run_python
+    </script>
 </body>
 </html>
