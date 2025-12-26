@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني | التحليل المتطور</title>
+    <title>منصة تِقني | بطاقة التحليل العائمة</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,176 +12,141 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
 
     <style>
-        :root { --primary: #4f46e5; --success: #10b981; --dark: #0f172a; --ai-pulse: #22d3ee; }
+        :root { --primary: #4f46e5; --success: #10b981; --dark: #0f172a; --card-bg: #ffffff; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark); overflow: hidden; display: flex; flex-direction: column; }
 
         /* منطقة المحرر */
-        .editor-container { flex: 1.2; position: relative; width: 100%; }
+        .editor-container { flex: 1.3; position: relative; width: 100%; }
         #editor { width: 100%; height: 100%; background: #0b0f1a; color: #67e8f9; padding: 15px; font-family: monospace; font-size: 1.1rem; border: none; outline: none; line-height: 1.5; resize: none; }
 
-        /* منطقة النتائج والتحليل */
-        .bottom-pane { flex: 1; display: flex; flex-direction: column; background: #000; border-top: 3px solid #1e293b; }
-        
-        /* شاشة المخرجات السوداء */
-        #console { flex: 0.6; padding: 10px 15px; color: var(--success); font-family: monospace; overflow-y: auto; font-size: 0.9rem; border-bottom: 1px solid #111; }
-
-        /* شريط التحليل المتطور */
-        .ai-advanced-analysis { 
-            flex: 0.4; background: #111827; padding: 12px 15px; 
-            display: flex; gap: 12px; align-items: flex-start;
-            border-top: 1px solid #374151; position: relative;
-        }
-        .ai-icon-box { position: relative; display: flex; align-items: center; justify-content: center; }
-        .pulse-ring { position: absolute; width: 20px; height: 20px; border: 2px solid var(--ai-pulse); border-radius: 50%; animation: ripple 1.5s infinite; opacity: 0; }
-        #analysis-text { color: #f3f4f6; font-size: 0.85rem; line-height: 1.6; font-weight: 500; }
+        /* منطقة النتائج */
+        .output-pane { flex: 0.7; background: #000; border-top: 2px solid #1e293b; padding: 10px 15px; color: var(--success); font-family: monospace; overflow-y: auto; font-size: 0.9rem; }
 
         /* أيقونة الدردشة العائمة */
-        #chat-trigger {
-            position: fixed; bottom: 85px; left: 20px; width: 52px; height: 52px;
-            background: var(--primary); border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 1000;
+        #chat-float {
+            position: fixed; bottom: 85px; left: 20px; width: 50px; height: 50px;
+            background: var(--primary); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 100;
         }
 
-        /* شريط الأزرار */
-        .bottom-nav { height: 70px; background: #1f2937; display: flex; align-items: center; padding: 0 12px; gap: 10px; }
-        .btn-run { flex: 3; height: 48px; background: var(--success); color: white; border: none; border-radius: 14px; font-weight: 900; font-size: 1rem; box-shadow: 0 4px 10px rgba(16,185,129,0.2); }
-        .btn-clear { flex: 1; height: 48px; background: #374151; color: #fca5a5; border: none; border-radius: 14px; font-weight: bold; }
+        /* --- بطاقة التحليل العائمة --- */
+        #analysis-card {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            display: none; align-items: center; justify-content: center; z-index: 2000;
+            padding: 20px; backdrop-filter: blur(5px);
+        }
+        .card-content {
+            background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 24px;
+            padding: 25px; display: flex; flex-direction: column; gap: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-header { display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: 900; font-size: 1.1rem; }
+        #analysis-body { color: #334155; font-size: 0.95rem; line-height: 1.6; max-height: 300px; overflow-y: auto; }
+        .btn-back { 
+            background: var(--primary); color: white; border: none; padding: 12px; 
+            border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
 
-        /* نافذة الدردشة */
-        .chat-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: none; padding: 15px; backdrop-filter: blur(8px); }
-        .chat-window { background: white; border-radius: 20px; height: 80%; margin-top: 10%; display: flex; flex-direction: column; overflow: hidden; }
+        /* شريط الأزرار السفلي */
+        .bottom-nav { height: 75px; background: #1f2937; display: flex; align-items: center; padding: 0 10px; gap: 8px; flex-shrink: 0; }
+        .btn-action { height: 50px; border-radius: 14px; border: none; font-weight: 900; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .run-btn { flex: 2; background: var(--success); color: white; }
+        .analyze-btn { flex: 1.2; background: #6366f1; color: white; }
+        .clear-btn { width: 50px; background: #374151; color: #fca5a5; }
 
-        @keyframes ripple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onload="brython()">
 
     <main class="editor-container">
-        <textarea id="editor" spellcheck="false" placeholder="اكتب كودك هنا..."># مثال:
-name = "أحمد"
-print("مرحباً يا", name)</textarea>
+        <textarea id="editor" spellcheck="false"># اكتب كودك هنا
+print("مرحباً بك في عالم البرمجة")</textarea>
     </main>
 
-    <div class="bottom-pane">
-        <div id="console">>>> جاهز لتنفيذ كودك...</div>
-        
-        <div class="ai-advanced-analysis">
-            <div class="ai-icon-box">
-                <div class="pulse-ring" id="ai-pulse"></div>
-                <i class="fas fa-brain" style="color:var(--ai-pulse); z-index: 2;"></i>
-            </div>
-            <div id="analysis-text">تِقني: بانتظار مخرجات كودك للبدء في التحليل الذكي...</div>
-        </div>
+    <div class="output-pane" id="console">>>> جاهز للتشغيل...</div>
+
+    <div id="chat-float" onclick="alert('تِقني: قريباً سيتم تفعيل الدردشة المباشرة هنا!')">
+        <i class="fas fa-comment-dots"></i>
     </div>
 
-    <div id="chat-trigger" onclick="openChat()">
-        <i class="fas fa-comment-dots" style="font-size: 1.4rem;"></i>
+    <div id="analysis-card">
+        <div class="card-content">
+            <div class="card-header">
+                <i class="fas fa-microchip"></i>
+                <span>تحليل تِقني الذكي</span>
+            </div>
+            <div id="analysis-body">جاري قراءة منطق الكود... ✨</div>
+            <button class="btn-back" onclick="closeAnalysis()">
+                <i class="fas fa-arrow-right"></i> رجوع للتحرير
+            </button>
+        </div>
     </div>
 
     <footer class="bottom-nav">
-        <button class="btn-clear" onclick="clearWorkspace()">مسح</button>
-        <button class="btn-run" onclick="runAndAnalyze()">▶ تشغيل البرنامج</button>
+        <button class="btn-action clear-btn" onclick="clearCode()"><i class="fas fa-trash-can"></i></button>
+        <button class="btn-action run-btn" onclick="runCode()">
+            <i class="fas fa-play"></i> تشغيل البرنامج
+        </button>
+        <button class="btn-action analyze-btn" onclick="openAnalysis()">
+            <i class="fas fa-brain"></i> تحليل
+        </button>
     </footer>
-
-    <div id="chat-overlay" id="chat-modal">
-        <div class="chat-window">
-            <div style="padding:15px; background:var(--primary); color:white; display:flex; justify-content:space-between;">
-                <strong>دردشة مع تِقني</strong>
-                <i class="fas fa-times" onclick="this.parentElement.parentElement.parentElement.style.display='none'"></i>
-            </div>
-            <div style="flex:1; padding:15px; overflow-y:auto; font-size:0.9rem;" id="chat-content">
-                اسألني عن أي شيء يخص البرمجة!
-            </div>
-            <div style="padding:10px; border-top:1px solid #eee; display:flex; gap:8px;">
-                <input type="text" id="chat-in" style="flex:1; border-radius:8px; border:1px solid #ddd; padding:8px;">
-                <button onclick="sendChat()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
 
     <script type="text/python">
         from browser import document, window
-        def execute_code(ev=None):
+        def execute_py(ev=None):
             document["console"].text = ""
-            def log(*args): 
-                document["console"].text += " ".join(map(str, args)) + "\n"
-                window.onOutputGenerated() # استدعاء التحليل عند كل عملية طباعة
+            def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
                 document["console"].text = f"خطأ برمي:\n{str(e)}"
-        window.pyRun = execute_code
+        window.runPy = execute_py
     </script>
 
     <script>
-        let isAnalyzing = false;
+        function runCode() { window.runPy(); }
 
-        // يتم استدعاؤه فورياً عند حدوث أي عملية طباعة (print) في الكود
-        async function onOutputGenerated() {
-            if (isAnalyzing) return; 
-            isAnalyzing = true;
-
+        async function openAnalysis() {
+            const card = document.getElementById('analysis-card');
+            const body = document.getElementById('analysis-body');
             const code = document.getElementById('editor').value;
-            const outputText = document.getElementById('console').innerText;
-            const analysisDiv = document.getElementById('analysis-text');
-            const pulse = document.getElementById('ai-pulse');
 
-            pulse.style.opacity = '1';
-            analysisDiv.innerText = "تِقني يحلل النتائج الآن... ✨";
+            card.style.display = 'flex';
+            body.innerText = "تِقني يحلل الكود الآن، انتظر قليلاً... ⏳";
 
             try {
-                const response = await fetch('https://text.pollinations.ai/', {
+                const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         messages: [
-                            {role: 'system', content: 'أنت تِقني، معلم ذكي. الطالب قام بالطباعة للتو. حلل مخرجاته وكوده فوراً وقدم نصيحة تقنية قصيرة جداً (سطر واحد).'},
-                            {role: 'user', content: `الكود: ${code} \n المخرجات: ${outputText}`}
+                            {role: 'system', content: 'أنت تِقني، معلم حاسوب عماني. حلل الكود بوضوح: اشرح وظيفته، نبه للأخطاء إن وجدت، وأعطِ نصيحة للتطوير.'},
+                            {role: 'user', content: code}
                         ]
                     })
                 });
-                const data = await response.text();
-                analysisDiv.innerText = "تحليل تِقني: " + data;
+                const data = await res.text();
+                body.innerText = data;
             } catch {
-                analysisDiv.innerText = "تِقني: مخرجات جيدة! استمر في التجربة.";
-            } finally {
-                pulse.style.opacity = '0';
-                isAnalyzing = false;
+                body.innerText = "تعذر الاتصال بالمساعد الذكي، تأكد من اتصالك بالإنترنت.";
             }
         }
 
-        function runAndAnalyze() {
-            document.getElementById('analysis-text').innerText = "تِقني: جاري المتابعة...";
-            window.pyRun();
+        function closeAnalysis() {
+            document.getElementById('analysis-card').style.display = 'none';
         }
 
-        function openChat() { document.querySelector('.chat-overlay').style.display = 'block'; }
-        
-        function clearWorkspace() {
-            if(confirm("مسح منطقة العمل؟")) {
+        function clearCode() {
+            if(confirm("مسح الكود بالكامل؟")) {
                 document.getElementById('editor').value = "";
                 document.getElementById('console').innerText = ">>> تم المسح";
-                document.getElementById('analysis-text').innerText = "تِقني: بانتظار مخرجات كودك للبدء...";
             }
-        }
-
-        async function sendChat() {
-            const inp = document.getElementById('chat-in');
-            const cont = document.getElementById('chat-content');
-            if(!inp.value) return;
-            cont.innerHTML += `<div style="color:var(--primary); margin-top:10px;">أنت: ${inp.value}</div>`;
-            const msg = inp.value;
-            inp.value = "";
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'user', content: msg}]})
-            });
-            const data = await res.text();
-            cont.innerHTML += `<div style="margin-top:5px;">تِقني: ${data}</div>`;
-            cont.scrollTop = cont.scrollHeight;
         }
     </script>
 </body>
