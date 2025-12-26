@@ -1,58 +1,59 @@
 :root {
-    --oman-red: #d92027;
-    --oman-green: #007e33;
-    --tech-blue: #0056b3;
-    --bg-light: #f4f6f9;
-    --dark-text: #2c3e50;
+    --primary: #004a99;
+    --accent: #d92027;
+    --green: #2ecc71;
+    --dark: #1e1e1e;
+    --glass: rgba(255, 255, 255, 0.9);
 }
 
-body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg-light); display: flex; flex-direction: column; height: 100vh; direction: rtl; }
+body { margin: 0; font-family: 'Segoe UI', Tahoma; overflow: hidden; background: #eef2f7; direction: rtl; }
 
-/* الشريط العلوي */
-.top-platform-bar {
-    height: 70px; background: white; border-bottom: 3px solid var(--oman-red);
-    display: flex; justify-content: space-between; align-items: center; padding: 0 25px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 100;
+/* شاشة الترحيب */
+.welcome-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--primary), #001f3f);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+    transition: 0.8s ease-in-out;
 }
-.oman-emblem { height: 45px; margin-left: 15px; }
-.platform-info h1 { font-size: 1.1rem; margin: 0; color: var(--tech-blue); }
-.platform-info p { font-size: 0.8rem; margin: 0; color: var(--oman-green); font-weight: bold; }
-
-.main-container { display: flex; flex: 1; overflow: hidden; }
-
-/* القائمة الجانبية */
-.sidebar { width: 280px; background: white; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; }
-.sidebar-title { padding: 20px; font-weight: bold; color: var(--dark-text); border-bottom: 1px solid #eee; }
-.activities-scroll { flex: 1; overflow-y: auto; padding: 10px; }
-.act-item { 
-    padding: 12px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; 
-    cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+.welcome-card {
+    background: var(--glass); padding: 40px; border-radius: 20px; text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3); backdrop-filter: blur(10px);
 }
-.act-item:hover { background: #f0f7ff; border-color: var(--tech-blue); color: var(--tech-blue); }
+.oman-logo-big { width: 100px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* المساعد الذكي (WhatsApp Style) */
-.ai-chat-interface { width: 350px; background: #e5ddd5; display: flex; flex-direction: column; }
-.ai-chat-header { background: #075e54; color: white; padding: 10px 15px; display: flex; align-items: center; gap: 12px; }
-.ai-avatar { position: relative; }
-.ai-avatar img { width: 40px; border-radius: 50%; background: white; }
-.online-status { width: 10px; height: 10px; background: #25d366; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #075e54; }
-.ai-name { display: flex; flex-direction: column; font-size: 0.85rem; }
+.entry-btn {
+    background: var(--accent); color: white; border: none; padding: 15px 40px;
+    font-size: 1.2rem; border-radius: 50px; cursor: pointer; transition: 0.3s;
+}
+.entry-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--accent); }
 
-.chat-window { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-.msg { padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.5; position: relative; }
-.ai-msg { background: white; align-self: flex-start; border-radius: 0 12px 12px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-.user-msg { background: #dcf8c6; align-self: flex-end; border-radius: 12px 0 12px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+/* المنصة */
+.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+#main-platform { display: flex; flex-direction: column; height: 100vh; transition: 0.8s; }
 
-.chat-footer { padding: 10px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; }
-.chat-footer input { flex: 1; padding: 12px; border: none; border-radius: 25px; outline: none; }
-.send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+.top-nav { background: white; padding: 10px 20px; display: flex; justify-content: space-between; border-bottom: 3px solid var(--accent); }
+.nav-text { display: flex; flex-direction: column; margin-right: 15px; }
+.school-name { font-weight: bold; color: var(--primary); }
+.platform-tag { font-size: 0.7rem; color: #666; }
 
-/* منطقة المحرر */
-.editor-section { flex: 1; background: #fff; display: flex; flex-direction: column; padding: 15px; }
-#code-editor { flex: 1; background: #fafafa; border: 1px solid #ddd; border-radius: 10px; padding: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem; resize: none; outline: none; }
-.terminal-output { height: 140px; background: #1e1e1e; color: #fff; margin-top: 15px; border-radius: 10px; display: flex; flex-direction: column; }
-.terminal-head { padding: 5px 15px; background: #333; font-size: 0.7rem; color: #aaa; border-radius: 10px 10px 0 0; }
-#output-screen { padding: 10px 15px; overflow-y: auto; color: #00ff00; font-family: monospace; }
-.btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
-.btn-run { background: var(--oman-green); color: white; }
-.btn-help { background: #f39c12; color: white; }
+.app-body { display: flex; flex: 1; overflow: hidden; }
+
+/* AI Chat WhatsApp Style */
+.ai-chat { width: 350px; background: #f0f2f5; display: flex; flex-direction: column; border-right: 1px solid #ddd; }
+.chat-head { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
+.chat-content { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+.msg { padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; max-width: 85%; }
+.ai { background: white; align-self: flex-start; border-right: 4px solid var(--primary); }
+.user { background: #dcf8c6; align-self: flex-end; }
+.chat-input-box { padding: 15px; background: white; display: flex; gap: 10px; }
+.chat-input-box input { flex: 1; border: 1px solid #ddd; padding: 10px; border-radius: 20px; outline: none; }
+.chat-input-box button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+
+/* Editor Area */
+.code-zone { flex: 1; display: flex; flex-direction: column; background: white; padding: 15px; }
+#editor { flex: 1; background: #282c34; color: #abb2bf; padding: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem; border-radius: 10px; border: none; resize: none; outline: none; }
+.terminal { height: 150px; background: black; color: #2ecc71; margin-top: 15px; border-radius: 10px; overflow-y: auto; padding: 10px; font-family: monospace; }
+
+.pulse { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green); animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
