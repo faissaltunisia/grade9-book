@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مختبر صلالة الشرقية البرمجي</title>
+    <title>منصة مدرسة صلالة الشرقية البرمجية</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
@@ -10,85 +10,65 @@
 <body onload="brython()">
 
     <aside class="sidebar">
-        <div class="school-header">
-            <small>سلطنة عمان</small>
+        <div class="header-box">
             <h3>مدرسة صلالة الشرقية (5-9)</h3>
-            <span style="color: var(--neon-green)">وحدة برمجة بايثون - التاسع</span>
+            <p>وحدة بايثون - الصف التاسع</p>
         </div>
-        
-        <div style="display:flex;">
-            <button class="tab-btn active" onclick="showTab('theory')">📘 مفاهيم نظرية</button>
-            <button class="tab-btn" onclick="showTab('tasks')">⌨️ أنشطة الكتاب</button>
+        <div class="lessons-list">
+            <h4 style="border-bottom: 2px solid #eee; padding-bottom: 5px;">الدروس والأنشطة</h4>
+            <div id="activities-container"></div>
         </div>
-
-        <div id="theory-section" class="scroll-area">
-            <div class="card" style="background:#21262d; padding:10px; border-radius:5px; margin-bottom:10px;">
-                <h4 style="color:var(--neon-blue)">دالة print()</h4>
-                <p style="font-size:13px;">هي الدالة المسؤولة عن عرض النتائج على الشاشة. أي نص يوضع بين ' ' يظهر كما هو.</p>
-            </div>
-            <div class="card" style="background:#21262d; padding:10px; border-radius:5px; margin-bottom:10px;">
-                <h4 style="color:var(--neon-blue)">المتغيرات (Variables)</h4>
-                <p style="font-size:13px;">مواقع لتخزين البيانات في ذاكرة الحاسوب، مثل x = 5 حيث x هو اسم المتغير.</p>
-            </div>
-        </div>
-
-        <div id="tasks-section" class="scroll-area" style="display:none;">
-            </div>
     </aside>
 
-    <main class="editor-container">
-        <div style="display:flex; justify-content: space-between; align-items:center;">
-            <h2 id="task-title" style="margin:0;">IDE صلالة الشرقية v1.0</h2>
-            <div>
-                <button onclick="runPython()" style="background:var(--neon-green); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">Run Code ▶</button>
-                <button onclick="askForHint()" style="background:var(--neon-blue); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">طلب تلميح 💡</button>
-            </div>
+    <main class="editor-main">
+        <div class="controls">
+            <button class="btn btn-run" onclick="runCode()">تشغيل الكود Run ▶</button>
+            <button class="btn btn-hint" onclick="getHint()">طلب تلميح المساعد 💡</button>
+            <h3 id="current-task-title" style="margin-right: auto; color: #4a90e2;">اختر نشاطاً للبدء</h3>
         </div>
         
-        <textarea id="code-editor" onkeyup="aiLiveMonitor()" spellcheck="false"># ابدأ البرمجة هنا يا بطل...</textarea>
-        
-        <div class="console-output" id="output">
-            >>> المخرجات ستظهر هنا...
+        <div id="task-description" style="background: #e7f3ff; padding: 15px; border-radius: 8px; font-size: 14px;">
+            يرجى اختيار نشاط من القائمة الجانبية لقراءة تفاصيله من الكتاب المدرسي.
         </div>
+
+        <textarea id="code-editor" spellcheck="false"># اكتب كود بايثون هنا...</textarea>
+        
+        <div id="console-out">>>> المخرجات ستظهر هنا...</div>
     </main>
 
-    <section class="ai-mentor">
-        <div class="school-header">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="50">
-            <p><strong>المعلم الذكي (تِقني)</strong></p>
+    <section class="ai-section">
+        <div style="padding: 15px; text-align: center; border-bottom: 1px solid #eee;">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="40">
+            <strong>المساعد الذكي (تِقني)</strong>
         </div>
-        <div class="chat-messages" id="chat-flow">
-            <div class="msg bot">مرحباً بك في مختبر مدرسة صلالة الشرقية! أنا معلمك الافتراضي، اسألني أي سؤال عن المنهج أو اطلب مني مساعدتك في الكود.</div>
+        <div class="chat-box" id="chat-flow">
+            <div class="bubble bot-msg">مرحباً! أنا "تِقني"، مساعدك الذكي. يمكنني شرح الدروس، تصحيح الكود، أو مساعدتك في حل أنشطة كتاب تقنية المعلومات. ماذا تريد أن تتعلم اليوم؟</div>
         </div>
-        <div class="chat-input">
-            <input type="text" id="user-ask" placeholder="اسأل تِقني (مثلاً: ما هي دالة input؟)...">
-            <button onclick="chatWithAI()" style="background:var(--neon-blue); color:white; border:none; padding:10px; border-radius:5px;">إرسال</button>
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="اسألني أي شيء عن بايثون...">
+            <button class="btn btn-run" style="padding: 8px 15px;" onclick="askAI()">إرسال</button>
         </div>
     </section>
 
-    <script src="ai-engine.js"></script>
     <script type="text/python">
-        from browser import document
+        from browser import document, window
         import sys
 
-        def run_python(ev):
-            document["output"].text = ">>> "
-            code = document["code-editor"].value
+        def run_code_logic(ev):
+            document["console-out"].text = ""
+            source = document["code-editor"].value
             try:
-                exec(code, {"print": custom_print, "input": custom_input})
+                # محاكاة الطباعة
+                def _print(*args):
+                    document["console-out"].text += " ".join(map(str, args)) + "\n"
+                
+                exec(source, {"print": _print})
             except Exception as e:
-                document["output"].text += f"\nError: {e}"
+                document["console-out"].text = f"خطأ برمي: {e}"
 
-        def custom_print(*args):
-            document["output"].text += " ".join(map(str, args)) + "\n"
-
-        def custom_input(msg):
-            # محاكاة بسيطة للـ input في المتصفح
-            from browser import window
-            return window.prompt(msg)
-
-        # ربط الزر بـ Brython
-        window.runPython = run_python
+        window.runPythonEngine = run_code_logic
     </script>
+
+    <script src="ai-engine.js"></script>
 </body>
 </html>
