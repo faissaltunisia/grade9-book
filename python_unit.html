@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وحدة البرمجة - محاكي بايثون الذكي</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
+</head>
+<body onload="brython()">
+
+    <header>
+        <h1>مختبر بايثون البرمجي | الصف التاسع</h1>
+        <p>تعلم، برمج، وجرب كودك فوراً</p>
+    </header>
+
+    <nav>
+        <a href="index.html">الرئيسية</a>
+        <a href="#lessons">دروس الوحدة</a>
+        <a href="#simulator">محاكي بايثون</a>
+    </nav>
+
+    <div class="container">
+        <div class="card" id="simulator">
+            <h2>💻 محاكي بايثون التفاعلي</h2>
+            <p>اكتب كود بايثون هنا واضغط على "تشغيل" لرؤية النتيجة (جرب كتابة <code>print("مرحباً بك في عمان")</code>)</p>
+            
+            <textarea id="code-editor" rows="10" placeholder="اكتب كود بايثون هنا...">
+# نشاط من الكتاب: حساب مجموع رقمين
+num1 = 5
+num2 = 10
+sum = num1 + num2
+print("المجموع هو:", sum)
+            </textarea>
+            
+            <button class="btn-run" id="run-btn">تشغيل الكود ▶</button>
+            
+            <h3>المخرجات (Console):</h3>
+            <pre id="console-output"></pre>
+        </div>
+
+        <div class="card" id="lessons">
+            <h2>📚 ملخص دروس الوحدة الأولى</h2>
+            <p>حسب المنهج المطور، ركز على الدوال التالية:</p>
+            <ul>
+                <li><code>print()</code>: لطباعة المخرجات.</li>
+                <li><code>input()</code>: لاستقبال البيانات من المستخدم.</li>
+                <li><code>int()</code>: لتحويل النص إلى رقم صحيح.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="ai-chat-wrapper">
+        <div id="ai-window" class="hidden">
+            <div id="chat-header">تِقني: خبير بايثون 🤖</div>
+            <div id="chat-body">مرحباً مبرمج المستقبل! أنا تِقني. هل تواجه صعوبة في حل أنشطة الوحدة الأولى؟ اسألني عن أي دالة!</div>
+            <div id="chat-footer">
+                <input type="text" id="ai-input" placeholder="اسألني عن دالة print أو متغيرات...">
+                <button onclick="askAI()">إرسال</button>
+            </div>
+        </div>
+        <button id="ai-toggle-btn" onclick="toggleChat()">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" width="30">
+        </button>
+    </div>
+
+    <script type="text/python">
+        from browser import document, alert
+
+        def run_code(ev):
+            # مسح المخرجات القديمة
+            document["console-output"].text = ""
+            # الحصول على الكود من المحرر
+            code = document["code-editor"].value
+            try:
+                # تنفيذ الكود
+                exec(code, {"print": custom_print})
+            except Exception as e:
+                document["console-output"].text = str(e)
+
+        def custom_print(*args):
+            text = " ".join(map(str, args))
+            document["console-output"].text += text + "\n"
+
+        document["run-btn"].bind("click", run_code)
+    </script>
+
+    <script src="ai-expert.js"></script>
+    <script>
+        function toggleChat() {
+            document.getElementById('ai-window').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
