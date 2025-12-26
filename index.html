@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مختبر تِقني الذكي</title>
+    <title>منصة صلالة الشرقية | المساعدة السحرية</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
     <style>
         :root {
-            --primary: #007bff; --bg: #0f172a; --chat-bg: #f4f7fb;
+            --primary: #007bff; --bg: #0f172a; --chat-bg: #f8fafc;
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
@@ -21,14 +21,13 @@
 
         /* الهيدر العلوي */
         .mobile-header {
-            height: 60px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px);
+            height: 60px; background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         .nav-icons { display: flex; gap: 20px; }
         .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; }
         .nav-btn i { font-size: 1.2rem; }
-        .nav-btn span { font-size: 0.6rem; margin-top: 2px; }
 
         /* منطقة المحرر */
         .editor-container { height: calc(100% - 130px); position: relative; }
@@ -38,40 +37,46 @@
             border: none; outline: none; resize: none;
         }
 
-        /* الأزرار العائمة */
-        .floating-btns { position: absolute; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .circle-btn {
-            width: 60px; height: 60px; border-radius: 50%; border: none;
-            color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4); z-index: 50;
+        /* الأزرار العائمة - المساعدة السحرية بجانب التشغيل */
+        .floating-btns { 
+            position: absolute; bottom: 100px; left: 20px; right: 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            pointer-events: none; /* للسماح باللمس من خلالها */
         }
-        .btn-run { background: #22c55e; }
-        .btn-magic { background: #8b5cf6; }
+        .circle-btn {
+            width: 65px; height: 65px; border-radius: 50%; border: none;
+            color: white; font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.4); pointer-events: auto;
+            transition: 0.3s;
+        }
+        .btn-run { background: #22c55e; } /* زر التشغيل الأخضر */
+        .btn-magic { background: linear-gradient(45deg, #8b5cf6, #d946ef); } /* زر المساعدة السحرية */
+        .btn-magic i { filter: drop-shadow(0 0 5px white); }
 
         #output { height: 70px; background: #000; padding: 10px 20px; font-size: 0.9rem; border-top: 1px solid #334155; overflow-y: auto; }
 
-        /* نافذة المساعد (الروبوت الدردشة) */
+        /* نافذة المساعد (روبوت الدردشة المنسفق) */
         #chat-popup {
-            position: fixed; inset: 0; background: var(--chat-bg); z-index: 2000;
-            display: none; flex-direction: column; animation: slideUp 0.3s ease-out;
+            position: fixed; inset: 0; background: var(--chat-bg); z-index: 3000;
+            display: none; flex-direction: column; animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .chat-header {
-            background: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); color: #333;
+            background: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: #333; border-bottom: 1px solid #eee;
         }
-        .chat-header .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; color: var(--primary); }
+        .back-btn { background: #f1f5f9; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         
         .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .bubble { padding: 12px 18px; border-radius: 18px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
-        .bubble.ai { background: white; align-self: flex-start; color: #333; border-bottom-right-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--primary); }
-        .bubble.user { background: var(--primary); align-self: flex-end; color: white; border-bottom-left-radius: 2px; }
+        .bubble { padding: 12px 16px; border-radius: 20px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
+        .bubble.ai { background: white; align-self: flex-start; color: #1e293b; border-bottom-right-radius: 4px; border: 1px solid #e2e8f0; }
+        .bubble.user { background: var(--primary); align-self: flex-end; color: white; border-bottom-left-radius: 4px; }
 
         .chat-footer { padding: 15px; background: white; display: flex; gap: 10px; border-top: 1px solid #eee; }
-        .chat-footer input { flex: 1; border: 1px solid #ddd; padding: 12px; border-radius: 25px; outline: none; }
-        .chat-footer button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        .chat-footer input { flex: 1; border: 1px solid #e2e8f0; padding: 12px 20px; border-radius: 30px; outline: none; font-size: 1rem; }
+        .chat-footer button { background: var(--primary); color: white; border: none; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; }
 
         /* لوحات السحب */
-        .sheet { position: fixed; bottom: -100%; left: 0; right: 0; height: 80%; background: white; border-radius: 25px 25px 0 0; z-index: 1000; transition: 0.4s; color: #1e293b; padding: 25px; }
+        .sheet { position: fixed; bottom: -100%; left: 0; right: 0; height: 80%; background: white; border-radius: 25px 25px 0 0; z-index: 1000; transition: 0.4s; color: #1e293b; padding: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); }
         .sheet.open { bottom: 0; }
 
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -80,47 +85,71 @@
 <body onload="brython()">
 
     <header class="mobile-header">
-        <div style="font-weight: 900; color: white;">تِقني <span style="color:var(--primary)">AI</span></div>
+        <div style="font-weight: 900; color: white; font-size: 1.2rem;">تِقني <span style="color:var(--primary)">AI</span></div>
         <div class="nav-icons">
-            <div class="nav-btn" onclick="openSheet('tasks')"><i class="fas fa-layer-group"></i><span>الأنشطة</span></div>
-            <div class="nav-btn" onclick="openSheet('book')"><i class="fas fa-book-open"></i><span>الكتاب</span></div>
+            <div class="nav-btn" onclick="openSheet('tasks')"><i class="fas fa-layer-group"></i></div>
+            <div class="nav-btn" onclick="openSheet('book')"><i class="fas fa-book-open"></i></div>
         </div>
     </header>
 
     <div class="editor-container">
-        <textarea id="editor" spellcheck="false">print("مرحباً صلالة")</textarea>
+        <textarea id="editor" spellcheck="false" placeholder="# اكتب كودك هنا...">print("مرحباً بمدرسة صلالة الشرقية")</textarea>
+        
         <div class="floating-btns">
-            <button class="circle-btn btn-magic" onclick="openMagicChat()"><i class="fas fa-robot"></i></button>
-            <button class="circle-btn btn-run" id="run_btn"><i class="fas fa-play"></i></button>
+            <button class="circle-btn btn-magic" onclick="triggerMagicHelp()">
+                <i class="fas fa-wand-magic-sparkles"></i>
+            </button>
+            
+            <button class="circle-btn btn-run" id="run_btn">
+                <i class="fas fa-play"></i>
+            </button>
         </div>
     </div>
+    
     <div id="output">>>> المخرجات تظهر هنا...</div>
 
     <div id="chat-popup">
         <div class="chat-header">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-robot" style="color:var(--primary); font-size:1.5rem;"></i>
-                <strong>المساعد تِقني</strong>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px; height:40px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <strong style="display:block;">تِقني الذكي</strong>
+                    <small style="color:green;">متصل الآن</small>
+                </div>
             </div>
-            <button class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i> عودة للمحرر</button>
+            <button class="back-btn" onclick="closeChat()">
+                <i class="fas fa-chevron-right"></i> عودة للمحرر
+            </button>
         </div>
+        
         <div class="chat-body" id="chat-body">
-            <div class="bubble ai">أهلاً بك يا بطل! لقد قرأت كودك، كيف يمكنني مساعدتك الآن؟</div>
+            <div class="bubble ai">أهلاً بك! لقد جئت في الوقت المناسب. دعني ألقي نظرة على كودك...</div>
         </div>
+        
         <div class="chat-footer">
-            <input type="text" id="chat-input" placeholder="اسأل تِقني شيئاً..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <input type="text" id="chat-input" placeholder="اسأل تِقني عن الكود..." onkeypress="if(event.key==='Enter') sendChatMessage()">
             <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <div id="sheet-tasks" class="sheet">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h3>الأنشطة</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
-        <div style="background:#f1f5f9; padding:15px; border-radius:15px;" onclick="setTask('print(\'مرحباً\')')">نشاط 1: دالة الطباعة</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>قائمة الأنشطة</h3>
+            <i class="fas fa-times" onclick="closeSheets()" style="font-size:1.5rem;"></i>
+        </div>
+        <div style="background:#f1f5f9; padding:20px; border-radius:15px; border-right:5px solid var(--primary);" onclick="setTask('print(\'أنا مبرمج صغير\')')">
+            <strong>نشاط 1: الطباعة</strong>
+        </div>
     </div>
 
     <div id="sheet-book" class="sheet">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h3>الكتاب الرقمي</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
-        <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width:100%; height:90%; border:none;"></iframe>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>تصفح الكتاب المدرسي</h3>
+            <i class="fas fa-times" onclick="closeSheets()" style="font-size:1.5rem;"></i>
+        </div>
+        <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width:100%; height:90%; border:none; border-radius:10px;"></iframe>
     </div>
 
     <script type="text/python">
@@ -131,7 +160,7 @@
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["output"].text = f"خطأ: {e}"
+                document["output"].text = f"خطأ برمي: {e}"
         document["run_btn"].bind("click", run_code)
     </script>
 
@@ -140,13 +169,16 @@
         function closeSheets() { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open')); }
         function setTask(code) { document.getElementById('editor').value = code; closeSheets(); }
 
-        // وظائف الدردشة المنسفقة
-        function openMagicChat() {
+        // وظائف المساعدة السحرية والدردشة
+        function triggerMagicHelp() {
             const chat = document.getElementById('chat-popup');
             chat.style.display = 'flex';
+            
+            // تنظيف الشات القديم (اختياري)
+            document.getElementById('chat-body').innerHTML = '<div class="bubble ai">أهلاً بك! دعني أحلل كودك سحرياً... ✨</div>';
+            
             const code = document.getElementById('editor').value;
-            // إرسال طلب تلقائي للذكاء الاصطناعي لتحليل الكود فور فتح النافذة
-            sendAIRequest("حلل هذا الكود وأخبرني إذا كان صحيحاً أم لا: \n" + code);
+            sendAIRequest("قم بتحليل هذا الكود البرمجي وأخبرني إذا كان يحتوي على أخطاء، واشرح لي ماذا يفعل باختصار: \n" + code);
         }
 
         function closeChat() {
@@ -163,20 +195,20 @@
         }
 
         async function sendAIRequest(prompt) {
-            const botBubble = addBubble('ai', 'جاري التفكير... ✍️');
+            const botBubble = addBubble('ai', 'تِقني يفكر... ✍️');
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         messages: [
-                            {role: 'system', content: 'أنت تِقني معلم حاسوب عماني، ساعد الطلاب في البرمجة بذكاء.'},
+                            {role: 'system', content: 'أنت تِقني، معلم بايثون ذكي في مدرسة صلالة الشرقية. أجب بأسلوب تعليمي مشجع وبسيط.'},
                             {role: 'user', content: prompt}
                         ]
                     })
                 });
                 botBubble.innerText = await res.text();
-            } catch { botBubble.innerText = "عذراً، تِقني غير متاح حالياً."; }
+            } catch { botBubble.innerText = "تعذر الاتصال بالمساعد الذكي الآن."; }
         }
 
         function addBubble(role, text) {
