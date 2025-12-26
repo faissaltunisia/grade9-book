@@ -2,29 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة تقنية المعلومات الذكية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة صلالة الشرقية الذكية</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body style="display: block; overflow: auto;"> <header>
-        <h1>مرحباً بك في المختبر الذكي لتقنية المعلومات</h1>
-        <p>بوابتك التفاعلية لتعلم البرمجة وقواعد البيانات - الصف التاسع</p>
+<body>
+
+    <header class="top-platform-bar">
+        <div class="logo-area">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" alt="Oman Logo" class="oman-emblem">
+            <div class="platform-info">
+                <h1>منصة صلالة الشرقية التعليمية (5-9)</h1>
+                <p>وحدة البرمجة (بايثون) - المنهج العماني المطور</p>
+            </div>
+        </div>
+        <div class="user-status">
+            <span>مختبر الابتكار الرقمي</span>
+            <i class="fa-solid fa-microchip"></i>
+        </div>
     </header>
 
-    <nav style="background: #34495e; display: flex; justify-content: center; padding: 10px;">
-        <a href="index.html" style="color:white; margin:0 15px; text-decoration:none;">الرئيسية</a>
-        <a href="python_lab.html" style="color:white; margin:0 15px; text-decoration:none;">مختبر بايثون</a>
-        <a href="database.html" style="color:white; margin:0 15px; text-decoration:none;">قواعد البيانات</a>
-    </nav>
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-title"><i class="fa-solid fa-book-open"></i> أنشطة الكتاب المدرسي</div>
+            <div id="activities-list" class="activities-scroll">
+                </div>
+        </aside>
 
-    <div class="container" style="max-width: 900px; margin: 40px auto; padding: 20px;">
-        <div class="card">
-            <h2>كيف تستخدم المنصة؟</h2>
-            <p>1. اختر <strong>مختبر بايثون</strong> من القائمة العلوية.</p>
-            <p>2. اختر النشاط المطلوب من فهرس الكتاب على اليمين.</p>
-            <p>3. ابدأ بكتابة الكود، وسيقوم المساعد <strong>"تِقني"</strong> بمراقبتك وتوجيهك فوراً.</p>
-        </div>
-        
-        
+        <main class="editor-section">
+            <div class="editor-header">
+                <div class="task-info">
+                    <span id="current-task-name">اختر نشاطاً للبدء</span>
+                </div>
+                <div class="action-btns">
+                    <button class="btn btn-run" onclick="runPythonEngine()"><i class="fa-solid fa-play"></i> تشغيل الكود</button>
+                    <button class="btn btn-help" onclick="requestSmartHint()"><i class="fa-solid fa-lightbulb"></i> طلب مساعدة ذكية</button>
+                </div>
+            </div>
+            
+            <textarea id="code-editor" spellcheck="false" placeholder="أهلاً بك يا مبرمج المستقبل.. اكتب كود بايثون هنا"></textarea>
+            
+            <div class="terminal-output">
+                <div class="terminal-head">مخرجات النظام (Terminal)</div>
+                <div id="output-screen">>>> في انتظار تشغيل الكود...</div>
+            </div>
+        </main>
+
+        <section class="ai-chat-interface">
+            <div class="ai-chat-header">
+                <div class="ai-avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="AI">
+                    <div class="online-status"></div>
+                </div>
+                <div class="ai-name">
+                    <strong>تِقني (AI)</strong>
+                    <span>نشط الآن - مساعدك الذكي</span>
+                </div>
+            </div>
+            
+            <div id="chat-window" class="chat-window">
+                <div class="msg ai-msg">
+                    مرحباً بك في منصة مدرسة صلالة الشرقية. أنا "تِقني"، محرك ذكاء اصطناعي مخصص لمساعدتك في بايثون. كيف يمكنني دعمك اليوم؟
+                </div>
+            </div>
+
+            <div class="chat-footer">
+                <input type="text" id="ai-user-input" placeholder="اكتب سؤالك هنا (Enter للإرسال)..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="processAISearch()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
+    <script type="text/python">
+        from browser import document, window
+        def run_it(ev):
+            document["output-screen"].text = ""
+            code = document["code-editor"].value
+            try:
+                def p(*args): document["output-screen"].text += " ".join(map(str, args)) + "\n"
+                exec(code, {"print": p, "input": window.prompt})
+            except Exception as e: document["output-screen"].text = f"Error: {e}"
+        window.runPythonEngine = run_it
+    </script>
+    <script src="ai-engine.js"></script>
 </body>
 </html>
