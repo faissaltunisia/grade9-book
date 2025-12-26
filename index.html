@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة صلالة الشرقية الذكية | الإصدار 4.0</title>
+    <title>المنصة الذكية للبرمجة بلغة بايثون</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
         <div class="welcome-card">
             <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" class="oman-logo">
             <h2>مختبر تِقني الذكي</h2>
-            <p>مدرسة صلالة الشرقية (5-9)</p>
+            <p> المنصة الذكية للبرمجة</p>
             <button class="start-btn" onclick="startApp()">دخول المنصة <i class="fa-solid fa-rocket"></i></button>
         </div>
     </div>
@@ -25,25 +25,25 @@
         <div class="header-right">
             <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" height="40">
             <div class="header-titles">
-                <h1>مدرسة صلالة الشرقية</h1>
-                <span id="ai-status"><i class="fa-solid fa-robot"></i> تِقني يراقب أداءك الآن..</span>
+                <h1>منصة الطالب الذكية </h1>
+                <span id="ai-status-text"><i class="fa-solid fa-eye"></i> المساعد تِقني يراقب كودك..</span>
             </div>
         </div>
         <div class="header-left">
-            <button class="book-btn" onclick="openBook()"><i class="fa-solid fa-book-open"></i> الكتاب المدرسي</button>
+            <button class="book-btn-top" onclick="openBook()"><i class="fa-solid fa-book-open"></i> الكتاب الرقمي</button>
         </div>
     </header>
 
     <div id="app-content" class="app-container hidden">
         <nav class="mobile-tabs">
-            <button class="tab-btn active" onclick="showTab('editor-section')">البرمجة</button>
-            <button class="tab-btn" onclick="showTab('ai-section')">تِقني AI</button>
-            <button class="tab-btn" onclick="showTab('tasks-section')">الدروس</button>
+            <button class="tab-btn active" onclick="showTab('editor-section')"><i class="fa-solid fa-code"></i> البرمجة</button>
+            <button class="tab-btn" onclick="showTab('ai-section')"><i class="fa-solid fa-robot"></i> تِقني AI</button>
+            <button class="tab-btn" onclick="showTab('tasks-section')"><i class="fa-solid fa-list"></i> الدروس</button>
         </nav>
 
         <div class="main-layout">
             <aside id="tasks-section" class="sidebar tab-content">
-                <div class="sidebar-header">محتوى الكتاب المدرسي</div>
+                <div class="sidebar-header">منهج بايثون - عُمان</div>
                 <div id="curriculum-list" class="scrollable"></div>
             </aside>
 
@@ -51,27 +51,27 @@
                 <div class="toolbar">
                     <span id="active-task-name">التمرين الحر</span>
                     <div class="tool-btns">
-                        <button class="help-btn" onclick="askMagicHelp()"><i class="fa-solid fa-wand-magic-sparkles"></i> مساعدة سحرية</button>
+                        <button class="magic-btn" onclick="askMagicHelp()"><i class="fa-solid fa-wand-magic-sparkles"></i> مساعدة سحرية</button>
                         <button class="run-btn" id="run_button">تشغيل <i class="fa-solid fa-play"></i></button>
                     </div>
                 </div>
-                <div class="editor-wrapper">
-                    <textarea id="editor" spellcheck="false" oninput="liveMonitor()"></textarea>
+                <div class="editor-container">
+                    <textarea id="editor" spellcheck="false" oninput="liveMonitor()" placeholder="اكتب كود بايثون هنا..."></textarea>
                     <div id="ai-hint-bubble" class="hint-bubble hidden"></div>
                 </div>
                 <div class="terminal">
-                    <pre id="output">>>> مخرجات البرمجة تظهر هنا...</pre>
+                    <pre id="output">>>> النتائج تظهر هنا...</pre>
                 </div>
             </main>
 
             <section id="ai-section" class="ai-chat-box tab-content">
-                <div class="ai-header">
+                <div class="ai-header-chat">
                     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="30">
-                    <strong>تِقني - المساعد الشخصي</strong>
+                    <strong>تِقني AI</strong>
                 </div>
                 <div id="chat-messages" class="chat-flow"></div>
                 <div class="chat-input-area">
-                    <input type="text" id="ai-input" placeholder="اسأل عن أي شيء في الكتاب..." onkeypress="checkEnter(event)">
+                    <input type="text" id="ai-input" placeholder="اسأل تِقني..." onkeypress="if(event.key==='Enter') sendChatMessage()">
                     <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </section>
@@ -79,19 +79,30 @@
     </div>
 
     <div id="book-modal" class="book-modal hidden">
-        <div class="book-content">
+        <div class="book-overlay-content">
             <button class="close-book" onclick="closeBook()">×</button>
-            <div class="book-frame">
-                <div class="page-container" id="page-viewer">
-                    <div class="page-3d">
-                        <h3>وحدة البرمجة - بايثون</h3>
-                        <p>تصفح الدروس بشكل تفاعلي...</p>
-                        <img src="https://img.freepik.com/free-vector/coding-concept-illustration_114360-1209.jpg" width="100%">
+            <div class="scene">
+                <div class="book" id="main-book">
+                    <div class="page cover" onclick="this.classList.toggle('flipped')">
+                        <div class="page-front">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" width="60">
+                            <h2>تقنية المعلومات</h2>
+                            <p>الصف التاسع</p>
+                            <small>انقر لفتح الكتاب ➔</small>
+                        </div>
+                        <div class="page-back">محتويات الوحدة الأولى...</div>
                     </div>
-                </div>
-                <div class="book-nav">
-                    <button onclick="prevPage()">السابق</button>
-                    <button onclick="nextPage()">التالي</button>
+                    <div class="page" onclick="this.classList.toggle('flipped')">
+                        <div class="page-front">
+                            <h3>دالة الطباعة print</h3>
+                            <p>تُستخدم لعرض المخرجات على الشاشة.</p>
+                            <code>print("Hello")</code>
+                        </div>
+                        <div class="page-back">
+                            <h3>المتغيرات Variables</h3>
+                            <p>تستخدم لتخزين القيم في الذاكرة.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,14 +110,14 @@
 
     <script type="text/python">
         from browser import document, window
-        def execute_code(ev):
+        def run_py(ev):
             document["output"].text = ""
             def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["output"].text = f"❌ خطأ: {e}"
-        document["run_button"].bind("click", execute_code)
+                document["output"].text = f"خطأ: {e}"
+        document["run_button"].bind("click", run_py)
     </script>
 
     <script src="script.js"></script>
