@@ -1,83 +1,129 @@
 :root {
-    --main-bg: #f0f2f5;
-    --primary-color: #2c3e50;
-    --secondary-color: #27ae60;
-    --accent-color: #3498db;
-    --text-white: #ffffff;
+    --dark-blue: #2c3e50;
+    --oman-green: #27ae60;
+    --light-bg: #f4f7f6;
+    --editor-bg: #1e1e1e;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
     direction: rtl;
-    background-color: var(--main-bg);
     margin: 0;
-    line-height: 1.6;
-}
-
-header {
-    background: var(--primary-color);
-    color: var(--text-white);
-    padding: 20px;
-    text-align: center;
-    border-bottom: 4px solid var(--secondary-color);
-}
-
-nav {
     display: flex;
-    justify-content: center;
-    background: #34495e;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    height: 100vh;
+    overflow: hidden;
 }
 
-nav a {
+/* القائمة الجانبية - دروس الكتاب */
+.sidebar {
+    width: 280px;
+    background: var(--dark-blue);
     color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h3 { padding: 20px; background: #1a252f; margin: 0; font-size: 18px; }
+
+.lesson-item {
     padding: 15px 20px;
-    text-decoration: none;
+    border-bottom: 1px solid #34495e;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.lesson-item:hover { background: var(--oman-green); }
+
+/* منطقة العمل الوسطى */
+.main-lab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--light-bg);
+}
+
+.lab-header {
+    padding: 15px 25px;
+    background: white;
+    border-bottom: 2px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+
+.workspace {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-card {
+    background: #fff9c4;
+    padding: 15px;
+    border-right: 5px solid #fbc02d;
+    border-radius: 5px;
+}
+
+#code-editor {
+    flex: 1;
+    background: var(--editor-bg);
+    color: #dcdcaa;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    border-radius: 8px;
+    resize: none;
+    border: none;
+}
+
+.controls { padding: 10px 0; display: flex; gap: 10px; }
+
+.btn {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-weight: bold;
 }
 
-nav a:hover { background: var(--secondary-color); }
-
-.container { max-width: 1100px; margin: 20px auto; padding: 20px; }
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* محاكي بايثون */
-#code-editor {
-    width: 100%; height: 200px;
-    background: #1e1e1e; color: #dcdcaa;
-    font-family: 'Courier New', monospace;
-    padding: 15px; border-radius: 8px; box-sizing: border-box;
-    font-size: 16px; border: 2px solid #333;
-}
+.btn-run { background: var(--oman-green); color: white; }
 
 #console-output {
-    background: #000; color: #00ff00;
-    padding: 15px; border-radius: 8px; min-height: 60px;
-    margin-top: 10px; font-family: monospace; white-space: pre-wrap;
+    height: 120px;
+    background: black;
+    color: #00ff00;
+    padding: 15px;
+    font-family: monospace;
+    overflow-y: auto;
+    border-radius: 8px;
 }
 
-/* المساعد الذكي العائم */
-#ai-chat {
-    position: fixed; bottom: 20px; left: 20px; width: 320px;
-    background: white; border-radius: 15px; box-shadow: 0 5px 30px rgba(0,0,0,0.3);
-    display: flex; flex-direction: column; overflow: hidden; z-index: 2000;
+/* لوحة المساعد الذكي */
+.ai-panel {
+    width: 320px;
+    background: white;
+    border-right: 2px solid #ddd;
+    display: flex;
+    flex-direction: column;
 }
 
-#chat-header { background: var(--secondary-color); color: white; padding: 15px; font-weight: bold; }
-#chat-body { height: 300px; padding: 15px; overflow-y: auto; font-size: 14px; background: #f9f9f9; }
-#chat-input-area { display: flex; border-top: 1px solid #ddd; }
-#chat-input-area input { flex: 1; border: none; padding: 10px; outline: none; }
-#chat-input-area button { background: var(--secondary-color); color: white; border: none; padding: 10px; cursor: pointer; }
+.ai-header { padding: 20px; background: #ecf0f1; text-align: center; }
 
-.hidden { display: none; }
-.btn { background: var(--secondary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
-.btn-solution { background: var(--accent-color); }
+#ai-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ai-bubble {
+    background: #dff9fb;
+    padding: 12px;
+    border-radius: 15px 15px 0 15px;
+    color: #2c3e50;
+    font-size: 14px;
+    line-height: 1.5;
+}
