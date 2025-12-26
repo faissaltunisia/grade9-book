@@ -2,96 +2,75 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>أمن المعلومات - التحدي الذكي</title>
+    <title>مختبر الأمن السيبراني</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <aside class="sidebar">
-        <h3>أمن المعلومات والشبكات</h3>
-        <div class="lesson-item" onclick="startSecurityQuiz('malware')">مخاطر البرمجيات الخبيثة</div>
-        <div class="lesson-item" onclick="startSecurityQuiz('internet')">أمن الإنترنت والخصوصية</div>
-        <div class="lesson-item" onclick="startSecurityQuiz('protection')">طرق حماية البيانات</div>
+        <div class="sidebar-header">
+            <h3>أمن المعلومات</h3>
+        </div>
+        <div class="lessons-container">
+            <div class="lesson-group">
+                <span class="lesson-title">الدرس 1: التهديدات</span>
+                <a href="#" class="activity-link" onclick="loadSecurity('viruses')">نشاط: أنواع الفيروسات</a>
+                <a href="#" class="activity-link" onclick="loadSecurity('phishing')">نشاط: التصيد الاحتيالي</a>
+            </div>
+        </div>
     </aside>
 
-    <main class="main-lab">
-        <header class="lab-header">
-            <h2>مختبر التوعية الأمنية</h2>
-            <span id="score-board">النقاط: 0</span>
-        </header>
-
+    <main class="main-content">
+        <div class="top-bar">
+            <h2>تحدي الوعي الأمني</h2>
+            <div id="score">النقاط: 0</div>
+        </div>
         <div class="workspace">
-            <div class="activity-card">
-                <strong>السيناريو الحالي:</strong>
-                <p id="scenario-text">اختر موضوعاً من القائمة اليمنى لبدء تحدي أمن المعلومات مع المساعد تِقني.</p>
+            <div class="editor-area">
+                <div class="instruction-card" id="scenario-box">
+                    اضغط على نشاط لبدء اختبار مهاراتك الأمنية.
+                </div>
+                <div id="quiz-options" style="display:none;">
+                    <button class="btn-run" onclick="checkSecurity(true)" id="btn-opt1" style="width:100%; margin-bottom:10px;"></button>
+                    <button class="btn-run" onclick="checkSecurity(false)" id="btn-opt2" style="width:100%; background:#e74c3c;"></button>
+                </div>
             </div>
 
-            <div id="options-container" class="workspace" style="display:none;">
-                <button class="btn" style="background:#3498db; color:white; display:block; width:100%; margin:10px 0;" onclick="checkSecurityAnswer(1)" id="opt1"></button>
-                <button class="btn" style="background:#3498db; color:white; display:block; width:100%; margin:10px 0;" onclick="checkSecurityAnswer(2)" id="opt2"></button>
+            <div class="ai-side-panel">
+                <div class="ai-chat-box" id="ai-messages">
+                    <div class="ai-bubble">سأقوم بطرح مواقف حقيقية عليك، وعليك اختيار التصرف الصحيح لحماية بياناتك.</div>
+                </div>
             </div>
-
-            
         </div>
     </main>
 
-    <section class="ai-panel">
-        <div class="ai-header">
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="60">
-            <h4>تِقني (خبير الأمن)</h4>
-        </div>
-        <div id="ai-messages">
-            <div class="ai-bubble">أهلاً بك! في هذا القسم، سأختبر مهاراتك في حماية بياناتك. هل أنت مستعد للمغامرة؟</div>
-        </div>
-    </section>
-
     <script>
-        let currentCorrect = 0;
-        let score = 0;
-
-        const securityData = {
-            'malware': {
-                question: "وصلت إليك رسالة بريد إلكتروني من مصدر مجهول تحتوي على ملف تنفيذي (.exe)، ماذا تفعل؟",
-                options: ["أفتح الملف فوراً لأرى محتواه", "أقوم بحذف الرسالة دون فتح المرفق"],
-                correct: 2,
-                feedback: "أحسنت! الملفات التنفيذية من مصادر مجهولة هي الطريقة الأشهر لنشر الفيروسات."
-            },
-            'protection': {
-                question: "ما هي أفضل ممارسة لإنشاء كلمة مرور قوية لحسابك المدرسي؟",
-                options: ["استخدام تاريخ ميلادي فقط", "مزج الحروف الكبيرة والصغيرة والأرقام والرموز"],
-                correct: 2,
-                feedback: "ممتاز! كلمات المرور المعقدة تصعب مهمة المخترقين في تخمينها."
+        const scenarios = {
+            'viruses': {
+                q: "وجدت فلاش ميموري (USB) في ساحة المدرسة، ماذا تفعل؟",
+                opt1: "أقوم بتوصيله بجهازي لأعرف صاحبه",
+                opt2: "أسلمه لمعلم تقنية المعلومات دون فتحه",
+                correct: false, // الخيار الثاني هو الأصح
+                ai: "أحسنت! الفلاشات المجهولة قد تحتوي على برمجيات تجسس تعمل تلقائياً."
             }
         };
 
-        function startSecurityQuiz(type) {
-            const data = securityData[type];
-            document.getElementById('scenario-text').innerText = data.question;
-            document.getElementById('options-container').style.display = 'block';
-            document.getElementById('opt1').innerText = data.options[0];
-            document.getElementById('opt2').innerText = data.options[1];
-            currentCorrect = data.correct;
-            
-            sendAIMessage("فكر جيداً قبل الإجابة، أمنك الرقمي يعتمد على قراراتك!");
+        function loadSecurity(id) {
+            const sc = scenarios[id];
+            document.getElementById('scenario-box').innerText = sc.q;
+            document.getElementById('quiz-options').style.display = 'block';
+            document.getElementById('btn-opt1').innerText = sc.opt1;
+            document.getElementById('btn-opt2').innerText = sc.opt2;
         }
 
-        function checkSecurityAnswer(choice) {
-            if(choice === currentCorrect) {
-                score += 10;
-                document.getElementById('score-board').innerText = "النقاط: " + score;
-                sendAIMessage("إجابة صحيحة! " + securityData[Object.keys(securityData).find(k => securityData[k].correct === currentCorrect)].feedback);
-            } else {
-                sendAIMessage("للأسف إجابة خاطئة. هذا التصرف قد يعرض جهازك للاختراق!");
-            }
+        function checkSecurity(isFirst) {
+            // منطق التصحيح والتحفيز
+            sendAI("هذا قرار ذكي جداً! أنت الآن تساهم في حماية مدرستك من الهجمات الرقمية.");
         }
 
-        function sendAIMessage(text) {
-            const msgBox = document.getElementById('ai-messages');
-            const bubble = document.createElement('div');
-            bubble.className = 'ai-bubble';
-            bubble.innerText = text;
-            msgBox.appendChild(bubble);
-            msgBox.scrollTop = msgBox.scrollHeight;
+        function sendAI(msg) {
+            const box = document.getElementById('ai-messages');
+            box.innerHTML += `<div class="ai-bubble">${msg}</div>`;
+            box.scrollTop = box.scrollHeight;
         }
     </script>
 </body>
