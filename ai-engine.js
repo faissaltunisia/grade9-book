@@ -1,80 +1,72 @@
-// بيانات الأنشطة والحلول مستنتجة من كتاب التاسع
-const activities = {
-    'intro': {
-        task: "نشاط (1-1): اكتب كود يطبع 'مرحباً بك في عالم البرمجة'.",
-        hint: "استخدم دالة print() وضع النص بين علامتي تنصيص.",
-        keywords: ["print(", "'", ")"],
-        solution: "print('مرحباً بك في عالم البرمجة')"
+// بيانات الأنشطة المستخلصة من كتاب الصف التاسع
+const curriculumData = [
+    {
+        lesson: "الدرس الأول: مقدمة البرمجة",
+        tasks: [
+            { id: "1-1", title: "نشاط (1-1): إخراج البيانات", desc: "اكتب كود يطبع 'مرحباً بك في بايثون'.", target: "print", hint: "تذكر استخدام دالة print والأقواس ()[cite: 24]." },
+            { id: "1-2", title: "نشاط (1-2): علامة الحث", desc: "اكتب عملية حسابية مباشرة (مثلاً 10 + 20) لتراها في المخرجات[cite: 19].", target: "+", hint: "بايثون يعامل الأرقام مباشرة في واجهة الأوامر." }
+        ]
     },
-    'vars': {
-        task: "نشاط (1-3): عرف متغير باسم x قيمته 10 ومتغير y قيمته 20 ثم اطبع مجموعهما.",
-        hint: "اكتب x = 10 ثم y = 20 ثم print(x + y).",
-        keywords: ["x", "y", "print"],
-        solution: "x = 10\ny = 20\nprint(x + y)"
+    {
+        lesson: "الدرس الثاني: المتغيرات والحساب",
+        tasks: [
+            { id: "2-1", title: "نشاط (1-3): تعريف المتغيرات", desc: "عرف متغير x=10 و y=20 واطبع ناتج جمعهم[cite: 27].", target: "=", hint: "استخدم علامة المساواة لإسناد القيم للمتغيرات." },
+            { id: "2-2", title: "نشاط (1-4): مساحة المستطيل", desc: "احسب مساحة مستطيل طوله 10 وعرضه 5 باستخدام الطول * العرض[cite: 35].", target: "*", hint: "استخدم النجمة (*) لعملية الضرب." }
+        ]
     },
-    'input': {
-        task: "نشاط (1-5): اطلب من المستخدم إدخال اسمه باستخدام دالة input ثم رحب به.",
-        hint: "استخدم name = input('ما اسمك؟') ثم اطبع المتغير name.",
-        keywords: ["input", "print"],
-        solution: "name = input('أدخل اسمك: ')\nprint('أهلاً بك يا', name)"
-    },
-    'final': {
-        task: "التحدي الختامي: اكتب برنامجاً يحسب مساحة مستطيل (الطول × العرض) عبر إدخال القيم من المستخدم.",
-        hint: "تذكر تحويل المدخلات إلى أرقام باستخدام int().",
-        keywords: ["int", "input", "*"],
-        solution: "L = int(input('الطول: '))\nW = int(input('العرض: '))\nprint('المساحة هي:', L * W)"
+    {
+        lesson: "الدرس الثالث: دالة الإدخال والتحويل",
+        tasks: [
+            { id: "3-1", title: "نشاط (1-5): استقبال البيانات", desc: "اطلب من المستخدم إدخال اسمه باستخدام دالة input[cite: 25].", target: "input", hint: "دالة input() تسمح للمستخدم بالكتابة." },
+            { id: "3-2", title: "نشاط (1-6): تحويل البيانات", desc: "حول نصاً مدخلاً إلى رقم صحيح باستخدام دالة int()[cite: 31].", target: "int", hint: "لا تنسَ أن input تعيد نصوصاً، وللحساب نحتاج int()." }
+        ]
     }
-};
+];
 
-let activeKey = null;
+let activeTask = null;
 
-function loadActivity(key) {
-    activeKey = key;
-    const act = activities[key];
-    document.getElementById('current-task').innerText = "نشاط نشط";
-    document.getElementById('activity-text').innerText = act.task;
+// بناء القائمة الجانبية
+function initMenu() {
+    const sidebar = document.getElementById('sidebar-menu');
+    curriculumData.forEach(section => {
+        let sectionHtml = `<div class="lesson-block"><div class="lesson-title">${section.lesson}</div>`;
+        section.tasks.forEach(t => {
+            sectionHtml += `<div class="activity-item" onclick="loadTask('${t.id}')">${t.title}</div>`;
+        });
+        sectionHtml += `</div>`;
+        sidebar.innerHTML += sectionHtml;
+    });
+}
+
+function loadTask(id) {
+    for(let section of curriculumData) {
+        activeTask = section.tasks.find(t => t.id === id);
+        if(activeTask) break;
+    }
+    document.getElementById('act-title').innerText = activeTask.title;
+    document.getElementById('act-desc').innerText = activeTask.desc;
     document.getElementById('code-editor').value = "";
-    document.getElementById('console-output').innerText = "";
-    
-    sendAIMessage(`رائع! لقد اخترت ${act.task.split(':')[0]}. ابدأ الكتابة وسأراقبك!`);
+    talkAI(`حسناً! سنبدأ حل ${activeTask.title}. نصيحتي: ${activeTask.hint}`);
 }
 
-function monitorCode() {
-    if (!activeKey) return;
+// المراقبة الذكية للكود
+function aiMonitor() {
+    if(!activeTask) return;
     const code = document.getElementById('code-editor').value;
-    const act = activities[activeKey];
-    const badge = document.getElementById('status-badge');
 
-    // 1. فحص الأخطاء الشائعة (Syntax Monitoring)
-    if (code.includes("print") && !code.includes("(")) {
-        sendAIMessage("⚠️ انتبه: لقد نسيت فتح القوس بعد دالة print.");
-        badge.innerText = "تنبيه خطأ! 🔴";
-    } 
-    else if (code.includes("'") && (code.match(/'/g) || []).length % 2 !== 0) {
-        sendAIMessage("⚠️ تذكر: علامات التنصيص يجب أن تكون زوجية (بداية ونهاية النص).");
-        badge.innerText = "تنبيه خطأ! 🔴";
+    if(code.includes("print") && !code.includes("(")) {
+        talkAI("تنبيه: دالة الطباعة print تحتاج دائماً إلى أقواس هكذا ( ).");
     }
-    // 2. فحص التقدم في الحل
-    else if (act.keywords.every(k => code.includes(k))) {
-        sendAIMessage("✨ مذهل! كودك يحتوي على العناصر المطلوبة. جرب تشغيله الآن.");
-        badge.innerText = "تقدم ممتاز! 🟢";
+    if(code.includes(activeTask.target)) {
+        talkAI("عمل رائع! لقد استخدمت الأداة الصحيحة للحل. اضغط تشغيل الآن.");
     }
 }
 
-function getHint() {
-    if (activeKey) {
-        sendAIMessage("💡 نصيحة: " + activities[activeKey].hint);
-    }
+function talkAI(msg) {
+    const chat = document.getElementById('ai-chat');
+    if(chat.lastElementChild && chat.lastElementChild.innerText === msg) return;
+    chat.innerHTML += `<div class="ai-msg">${msg}</div>`;
+    chat.scrollTop = chat.scrollHeight;
 }
 
-function sendAIMessage(text) {
-    const msgBox = document.getElementById('ai-messages');
-    // منع تكرار نفس الرسالة الأخيرة
-    if (msgBox.lastElementChild && msgBox.lastElementChild.innerText === text) return;
-    
-    const bubble = document.createElement('div');
-    bubble.className = 'ai-bubble';
-    bubble.innerText = text;
-    msgBox.appendChild(bubble);
-    msgBox.scrollTop = msgBox.scrollHeight;
-}
+initMenu();
