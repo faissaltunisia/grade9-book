@@ -13,7 +13,7 @@
 
     <style>
         :root {
-            --primary: #007bff; --accent: #ff3e3e; --bg: #0f172a; --card: #1e293b;
+            --primary: #007bff; --bg: #0f172a; --chat-bg: #f4f7fb;
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
@@ -29,7 +29,6 @@
         .nav-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #94a3b8; }
         .nav-btn i { font-size: 1.2rem; }
         .nav-btn span { font-size: 0.6rem; margin-top: 2px; }
-        .nav-btn.active { color: var(--primary); }
 
         /* منطقة المحرر */
         .editor-container { height: calc(100% - 130px); position: relative; }
@@ -39,42 +38,43 @@
             border: none; outline: none; resize: none;
         }
 
-        /* المساعد تِقني - فقاعة تنبيه */
-        #ai-bubble {
-            position: absolute; top: 15px; left: 15px; right: 15px;
-            background: rgba(0, 123, 255, 0.95); padding: 12px; border-radius: 12px;
-            display: none; align-items: center; gap: 10px; border-left: 4px solid white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 100;
-        }
-
         /* الأزرار العائمة */
         .floating-btns { position: absolute; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 12px; }
         .circle-btn {
             width: 60px; height: 60px; border-radius: 50%; border: none;
             color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4); z-index: 50;
         }
         .btn-run { background: #22c55e; }
         .btn-magic { background: #8b5cf6; }
 
-        /* لوحة النتائج */
-        #output {
-            height: 70px; background: #000; padding: 10px 20px;
-            font-size: 0.9rem; border-top: 1px solid #334155; overflow-y: auto;
-        }
+        #output { height: 70px; background: #000; padding: 10px 20px; font-size: 0.9rem; border-top: 1px solid #334155; overflow-y: auto; }
 
-        /* لوحة السحب (Bottom Sheets) */
-        .sheet {
-            position: fixed; bottom: -100%; left: 0; right: 0; height: 80%;
-            background: white; border-radius: 25px 25px 0 0; z-index: 1000;
-            transition: 0.4s ease; color: #1e293b; padding: 25px;
+        /* نافذة المساعد (الروبوت الدردشة) */
+        #chat-popup {
+            position: fixed; inset: 0; background: var(--chat-bg); z-index: 2000;
+            display: none; flex-direction: column; animation: slideUp 0.3s ease-out;
         }
+        .chat-header {
+            background: #fff; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); color: #333;
+        }
+        .chat-header .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; color: var(--primary); }
+        
+        .chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .bubble { padding: 12px 18px; border-radius: 18px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
+        .bubble.ai { background: white; align-self: flex-start; color: #333; border-bottom-right-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--primary); }
+        .bubble.user { background: var(--primary); align-self: flex-end; color: white; border-bottom-left-radius: 2px; }
+
+        .chat-footer { padding: 15px; background: white; display: flex; gap: 10px; border-top: 1px solid #eee; }
+        .chat-footer input { flex: 1; border: 1px solid #ddd; padding: 12px; border-radius: 25px; outline: none; }
+        .chat-footer button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+
+        /* لوحات السحب */
+        .sheet { position: fixed; bottom: -100%; left: 0; right: 0; height: 80%; background: white; border-radius: 25px 25px 0 0; z-index: 1000; transition: 0.4s; color: #1e293b; padding: 25px; }
         .sheet.open { bottom: 0; }
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .task-card {
-            background: #f1f5f9; padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 15px; border-right: 5px solid var(--primary);
-        }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body onload="brython()">
@@ -84,49 +84,43 @@
         <div class="nav-icons">
             <div class="nav-btn" onclick="openSheet('tasks')"><i class="fas fa-layer-group"></i><span>الأنشطة</span></div>
             <div class="nav-btn" onclick="openSheet('book')"><i class="fas fa-book-open"></i><span>الكتاب</span></div>
-            <div class="nav-btn" onclick="openSheet('awards')"><i class="fas fa-medal"></i><span>الجوائز</span></div>
         </div>
     </header>
 
     <div class="editor-container">
-        <div id="ai-bubble">
-            <i class="fas fa-robot"></i>
-            <span id="ai-msg">أنا أراقب كودك يا بطل..</span>
-        </div>
-
-        <textarea id="editor" oninput="checkCode()">print("مرحباً بكم")</textarea>
-
+        <textarea id="editor" spellcheck="false">print("مرحباً صلالة")</textarea>
         <div class="floating-btns">
-            <button class="circle-btn btn-magic" onclick="runMagic()"><i class="fas fa-wand-magic-sparkles"></i></button>
+            <button class="circle-btn btn-magic" onclick="openMagicChat()"><i class="fas fa-robot"></i></button>
             <button class="circle-btn btn-run" id="run_btn"><i class="fas fa-play"></i></button>
         </div>
     </div>
+    <div id="output">>>> المخرجات تظهر هنا...</div>
 
-    <div id="output">>>> المخرجات ستظهر هنا...</div>
+    <div id="chat-popup">
+        <div class="chat-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-robot" style="color:var(--primary); font-size:1.5rem;"></i>
+                <strong>المساعد تِقني</strong>
+            </div>
+            <button class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i> عودة للمحرر</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="bubble ai">أهلاً بك يا بطل! لقد قرأت كودك، كيف يمكنني مساعدتك الآن؟</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="اسأل تِقني شيئاً..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
     <div id="sheet-tasks" class="sheet">
-        <div class="sheet-header"><h3>الوحدات والأنشطة</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
-        <div class="task-card" onclick="setTask('print(\'مدرسة صلالة الشرقية\')')">
-            <i class="fas fa-code"></i>
-            <div><strong>نشاط 1: الطباعة</strong><br><small>تعلم عرض النصوص</small></div>
-        </div>
-        <div class="task-card" onclick="setTask('x = 10\nprint(x)')">
-            <i class="fas fa-variable"></i>
-            <div><strong>نشاط 2: المتغيرات</strong><br><small>تخزين البيانات واستدعاؤها</small></div>
-        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h3>الأنشطة</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
+        <div style="background:#f1f5f9; padding:15px; border-radius:15px;" onclick="setTask('print(\'مرحباً\')')">نشاط 1: دالة الطباعة</div>
     </div>
 
     <div id="sheet-book" class="sheet">
-        <div class="sheet-header"><h3>الكتاب المدرسي</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
-        <div style="height: 85%; overflow: hidden; border-radius: 15px;">
-            <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-    </div>
-
-    <div id="sheet-awards" class="sheet" style="text-align: center;">
-        <div class="sheet-header"><h3>لوحة الشرف</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
-        <i class="fas fa-trophy" style="font-size: 4rem; color: gold; margin: 20px;"></i>
-        <p>أنهِ التمارين لتحصل على وسام المبرمج الصغير!</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h3>الكتاب الرقمي</h3><i class="fas fa-times" onclick="closeSheets()"></i></div>
+        <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width:100%; height:90%; border:none;"></iframe>
     </div>
 
     <script type="text/python">
@@ -136,56 +130,63 @@
             def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
-                window.aiSay("أحسنت! الكود يعمل بنجاح")
             except Exception as e:
                 document["output"].text = f"خطأ: {e}"
-                window.aiSay("هناك خطأ.. حاول مرة أخرى")
         document["run_btn"].bind("click", run_code)
     </script>
 
     <script>
-        function openSheet(id) {
-            closeSheets();
-            document.getElementById('sheet-' + id).classList.add('open');
-        }
+        function openSheet(id) { document.getElementById('sheet-' + id).classList.add('open'); }
+        function closeSheets() { document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open')); }
+        function setTask(code) { document.getElementById('editor').value = code; closeSheets(); }
 
-        function closeSheets() {
-            document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
-        }
-
-        function setTask(code) {
-            document.getElementById('editor').value = code;
-            closeSheets();
-            aiSay("تم تحميل النشاط بنجاح!");
-        }
-
-        function aiSay(msg) {
-            const bubble = document.getElementById('ai-bubble');
-            document.getElementById('ai-msg').innerText = "تِقني: " + msg;
-            bubble.style.display = 'flex';
-            setTimeout(() => bubble.style.display = 'none', 4000);
-        }
-
-        function checkCode() {
+        // وظائف الدردشة المنسفقة
+        function openMagicChat() {
+            const chat = document.getElementById('chat-popup');
+            chat.style.display = 'flex';
             const code = document.getElementById('editor').value;
-            if (code.includes('print') && !code.includes('(')) {
-                aiSay("لا تنسَ الأقواس () بعد print");
-            }
+            // إرسال طلب تلقائي للذكاء الاصطناعي لتحليل الكود فور فتح النافذة
+            sendAIRequest("حلل هذا الكود وأخبرني إذا كان صحيحاً أم لا: \n" + code);
         }
 
-        async function runMagic() {
-            const code = document.getElementById('editor').value;
-            aiSay("جاري التحليل السحري...");
+        function closeChat() {
+            document.getElementById('chat-popup').style.display = 'none';
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+            addBubble('user', msg);
+            input.value = "";
+            await sendAIRequest(msg);
+        }
+
+        async function sendAIRequest(prompt) {
+            const botBubble = addBubble('ai', 'جاري التفكير... ✍️');
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [{role: 'system', content: 'أنت تِقني معلم مدرسة صلالة. اشرح الخطأ باختصار.'}, {role: 'user', content: code}]
+                        messages: [
+                            {role: 'system', content: 'أنت تِقني معلم حاسوب عماني، ساعد الطلاب في البرمجة بذكاء.'},
+                            {role: 'user', content: prompt}
+                        ]
                     })
                 });
-                alert("تِقني يساعدك:\n" + await res.text());
-            } catch { alert("تعذر الاتصال بالمساعد."); }
+                botBubble.innerText = await res.text();
+            } catch { botBubble.innerText = "عذراً، تِقني غير متاح حالياً."; }
+        }
+
+        function addBubble(role, text) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = "bubble " + role;
+            div.innerText = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+            return div;
         }
     </script>
 </body>
