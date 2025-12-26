@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة صلالة الشرقية الذكية | تِقني المطور</title>
+    <title>منصة صلالة الشرقية الذكية | المساعد المتطور</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -14,256 +14,282 @@
     <style>
         :root {
             --primary: #004a99; --accent: #d92027; --ai-color: #00d2ff;
-            --glass: rgba(255, 255, 255, 0.9); --dark-panel: #121212;
+            --glass: rgba(255, 255, 255, 0.95); --dark-panel: #1e1e1e;
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f7fa; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f0f2f5; }
 
-        /* شاشة الترحيب العصرية */
+        /* شاشة الترحيب */
         #welcome-screen {
-            position: fixed; inset: 0; background: radial-gradient(circle at center, #001a33 0%, #000 100%);
-            z-index: 10000; display: flex; align-items: center; justify-content: center; color: white;
-        }
-        .welcome-box { text-align: center; animation: fadeIn 1.5s ease; }
-        .welcome-box img { width: 120px; filter: drop-shadow(0 0 10px var(--ai-color)); }
-        .glow-btn {
-            margin-top: 20px; padding: 15px 45px; border-radius: 50px; border: none;
-            background: linear-gradient(45deg, var(--primary), var(--ai-color));
-            color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px var(--ai-color);
+            position: fixed; inset: 0; background: linear-gradient(135deg, #001a33, #000);
+            z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; text-align: center;
         }
 
         /* الهيكل الرئيسي */
-        .app-shell { display: flex; height: 100vh; width: 100%; position: relative; }
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
 
-        /* القائمة الجانبية (تصميم نحيف) */
-        .sidebar { width: 80px; background: var(--primary); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 20px; z-index: 100; }
-        .side-btn { color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.7; transition: 0.3s; position: relative; }
-        .side-btn:hover { opacity: 1; transform: scale(1.1); }
-
-        /* منطقة العمل */
-        .main-workspace { flex: 1; display: flex; flex-direction: column; position: relative; }
-
-        /* الهيدر الأنيق */
-        header { 
-            height: 70px; background: var(--glass); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 25px;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+        /* الهيدر العلوي */
+        header {
+            background: white; padding: 10px 15px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 2px solid #eee; z-index: 100;
         }
-        .header-actions { display: flex; gap: 10px; }
-        .action-btn { 
-            padding: 10px 20px; border: none; border-radius: 12px; font-weight: bold;
-            display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;
-        }
-        .run-btn { background: #00c853; color: white; box-shadow: 0 4px 15px rgba(0,200,83,0.3); }
-        .magic-btn { background: #6200ea; color: white; box-shadow: 0 4px 15px rgba(98,0,234,0.3); }
+        .header-btns { display: flex; gap: 8px; }
+        .btn { border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        .btn-run { background: #00c853; color: white; }
+        .btn-magic { background: #6200ea; color: white; }
 
-        /* محرر الكود */
-        .code-area { flex: 1; display: flex; flex-direction: column; padding: 15px; background: #fff; position: relative; }
-        #editor { 
-            flex: 1; background: var(--dark-panel); color: #00ff41; padding: 20px;
-            border-radius: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem;
-            border: none; outline: none; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+        /* منطقة المحتوى */
+        .content-area { flex: 1; position: relative; overflow: hidden; }
 
-        /* المساعد الذكي المراقب (الإشعارات) */
-        #ai-monitor {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 74, 153, 0.9); color: white; padding: 12px 25px;
-            border-radius: 50px; font-size: 0.9rem; font-weight: bold; z-index: 500;
-            display: none; box-shadow: 0 5px 20px rgba(0,0,0,0.2); border: 1px solid var(--ai-color);
-        }
+        /* الأقسام (المحرر، الدروس، الكتاب) */
+        .page-view { position: absolute; inset: 0; background: white; display: none; flex-direction: column; padding: 10px; }
+        .page-view.active { display: flex; }
 
-        /* نافذة الكتاب المنبثقة (Side Panel) */
-        #book-panel {
-            position: absolute; top: 70px; left: -100%; width: 350px; bottom: 0;
-            background: var(--glass); backdrop-filter: blur(15px); z-index: 600;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-right: 1px solid rgba(0,0,0,0.1); padding: 20px;
+        /* المحرر */
+        #editor {
+            flex: 1; background: var(--dark-panel); color: #00ff41; padding: 15px;
+            border-radius: 15px; font-family: monospace; font-size: 1rem; border: none; outline: none;
         }
-        #book-panel.open { left: 0; }
+        .terminal { height: 100px; background: #000; color: #fff; margin-top: 8px; border-radius: 12px; padding: 10px; font-size: 0.8rem; overflow-y: auto; }
 
-        /* المساعد العائم (للهاتف) */
+        /* القائمة السفلية (للهاتف) */
+        .bottom-nav {
+            background: white; height: 70px; display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid #ddd; padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #777; font-size: 0.7rem; gap: 4px; cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item i { font-size: 1.3rem; }
+
+        /* كبسولة المساعد العائمة */
         #ai-capsule {
-            position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px;
+            position: fixed; bottom: 85px; left: 15px; width: 55px; height: 55px;
             background: var(--ai-color); border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; color: white; font-size: 1.5rem;
-            box-shadow: 0 5px 20px var(--ai-color); cursor: pointer; z-index: 1000;
+            align-items: center; justify-content: center; color: white; font-size: 1.4rem;
+            box-shadow: 0 4px 15px rgba(0,210,255,0.4); z-index: 999;
         }
 
-        #chat-window {
-            position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px;
-            background: white; border-radius: 20px; display: none; flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; z-index: 1000;
+        /* نافذة المساعد */
+        #ai-window {
+            position: fixed; bottom: 150px; left: 15px; right: 15px; top: 100px;
+            background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none; flex-direction: column; z-index: 1000; overflow: hidden;
         }
 
-        /* الهاتف */
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            #book-panel { width: 100%; top: 0; }
-            .header-actions span { display: none; }
-            #editor { font-size: 1rem; }
+        /* لوحة الكتاب (تظهر كإشعار علوي) */
+        #book-overlay {
+            position: absolute; top: -100%; left: 0; right: 0; height: 80%;
+            background: var(--glass); backdrop-filter: blur(10px); z-index: 500;
+            transition: 0.4s; border-bottom: 3px solid var(--primary); padding: 20px;
         }
+        #book-overlay.active { top: 0; }
 
-        .active-flex { display: flex !important; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* التنبيهات الذكية */
+        #smart-toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: #00ff41; padding: 10px 20px;
+            border-radius: 50px; font-size: 0.8rem; z-index: 2000; display: none;
+        }
     </style>
 </head>
 <body onload="brython()">
 
     <div id="welcome-screen">
-        <div class="welcome-box">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg">
-            <h1>مرحباً بك في مدرسة صلالة الشرقية</h1>
-            <p>المساعد "تِقني" مستعد لمرافقتك في رحلتك البرمجية</p>
-            <button class="glow-btn" onclick="startSystem()">تفعيل النظام الذكي</button>
+        <div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" width="80">
+            <h2>مختبر تِقني الذكي</h2>
+            <button class="btn" style="background:var(--accent); color:white; padding:15px 40px; margin-top:20px;" onclick="start()">دخول المختبر</button>
         </div>
     </div>
 
-    <div class="app-shell">
-        <aside class="sidebar">
-            <div class="side-btn" title="الكتاب المدرسي" onclick="toggleBook()"><i class="fa-solid fa-book-open"></i></div>
-            <div class="side-btn" title="الأنشطة" onclick="showTasks()"><i class="fa-solid fa-tasks"></i></div>
-            <div class="side-btn" title="لوحة الشرف"><i class="fa-solid fa-trophy"></i></div>
-        </aside>
-
-        <div class="main-workspace">
-            <div id="ai-monitor"><i class="fa-solid fa-robot"></i> <span id="monitor-text">أنا أراقب كودك.. واصل الإبداع!</span></div>
-
-            <header>
-                <div class="logo-area">
-                    <strong style="color: var(--primary); font-size: 1.2rem;">تِقني <span style="color:var(--ai-color)">AI</span></strong>
-                </div>
-                <div class="header-actions">
-                    <button class="action-btn magic-btn" onclick="askMagic()">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>مساعدة سحرية</span>
-                    </button>
-                    <button class="action-btn run-btn" id="run_button">
-                        <i class="fa-solid fa-play"></i> <span>تشغيل الكود</span>
-                    </button>
-                </div>
-            </header>
-
-            <main class="code-area">
-                <textarea id="editor" spellcheck="false" oninput="liveMonitor()" placeholder="# اكتب كود بايثون هنا..."></textarea>
-                <div style="height: 100px; background: #000; border-radius: 15px; margin-top:10px; padding:15px; color:#fff; overflow-y:auto;" id="output">>>> المخرجات ستظهر هنا</div>
-            </main>
-        </div>
-
-        <div id="book-panel">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="margin:0">الكتاب الرقمي</h3>
-                <i class="fa-solid fa-xmark" style="cursor:pointer" onclick="toggleBook()"></i>
+    <div class="app-container">
+        <header>
+            <strong>تِقني <span style="color:var(--ai-color)">AI</span></strong>
+            <div class="header-btns">
+                <button class="btn btn-magic" onclick="askAIAboutCode()"><i class="fa-solid fa-wand-magic-sparkles"></i> سحر</button>
+                <button class="btn btn-run" id="run_btn"><i class="fa-solid fa-play"></i> تشغيل</button>
             </div>
-            <div style="background: white; padding:15px; border-radius:15px;">
-                <img src="https://img.freepik.com/free-vector/code-typing-concept-illustration_114360-3581.jpg" style="width:100%; border-radius:10px;">
-                <h4>الوحدة الأولى: البرمجة</h4>
-                <p>تُستخدم دالة <b>print</b> لعرض النتائج. تذكر دائماً وضع النص بين علامتي تنصيص.</p>
-                <button class="glow-btn" style="padding:10px; width:100%" onclick="window.open('https://moe.gov.om','_blank')">فتح الكتاب كاملاً PDF</button>
+        </header>
+
+        <div class="content-area">
+            <div id="smart-toast">تِقني يراقب...</div>
+
+            <div id="view-editor" class="page-view active">
+                <textarea id="editor" spellcheck="false" oninput="analyzeCodeLive()" placeholder="# اكتب كود بايثون هنا..."></textarea>
+                <div class="terminal" id="output">>>> المخرجات ستظهر هنا</div>
             </div>
-        </aside>
-    </div>
 
-    <div id="ai-capsule" onclick="toggleChat()">
-        <i class="fa-solid fa-robot"></i>
-    </div>
+            <div id="view-lessons" class="page-view">
+                <h3>الوحدات الدراسية</h3>
+                <div style="background:#f8f9fa; padding:15px; border-radius:15px; margin-bottom:10px; border-right:5px solid var(--primary);" onclick="loadLesson('print(\'مرحباً\')', 'درس الطباعة')">
+                    <strong>الوحدة الأولى: أساسيات البرمجة</strong><br><small>تعلم دالة الطباعة</small>
+                </div>
+                <div style="background:#f8f9fa; padding:15px; border-radius:15px; border-right:5px solid var(--accent);" onclick="loadLesson('x = 5\nprint(x)', 'درس المتغيرات')">
+                    <strong>الوحدة الثانية: البيانات</strong><br><small>المتغيرات والعمليات</small>
+                </div>
+            </div>
 
-    <div id="chat-window">
-        <div style="background:var(--primary); color:white; padding:15px; display:flex; justify-content:space-between;">
-            <span>المساعد تِقني</span>
-            <i class="fa-solid fa-chevron-down" onclick="toggleChat()"></i>
+            <div id="view-awards" class="page-view" style="text-align:center;">
+                <i class="fa-solid fa-trophy" style="font-size:4rem; color:gold; margin-top:30px;"></i>
+                <h2>لوحة الأبطال</h2>
+                <p>أنهِ الأنشطة لتحصل على أوسمتك هنا!</p>
+            </div>
+
+            <div id="book-overlay">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>📖 الكتاب المدرسي</h3>
+                    <button onclick="toggleBook()" style="border:none; background:none; font-size:1.5rem;">&times;</button>
+                </div>
+                <div style="height:90%; overflow-y:auto; padding-top:10px;">
+                    <iframe src="https://www.moe.gov.om/Portals/0/Information%20Technology%20Grade%209.pdf" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>
+                </div>
+            </div>
         </div>
-        <div id="chat-flow" style="flex:1; padding:15px; overflow-y:auto; background:#f9f9f9; display:flex; flex-direction:column; gap:10px;">
-            <div style="background:white; padding:10px; border-radius:10px; font-size:0.9rem;">أهلاً بك! أنا هنا لأتابع تقدمك. ابدأ بالكتابة وسأخبرك إذا لاحظت شيئاً.</div>
+
+        <div id="ai-capsule" onclick="toggleAIWindow()">
+            <i class="fa-solid fa-robot"></i>
         </div>
-        <div style="padding:10px; display:flex; gap:5px; border-top:1px solid #eee;">
-            <input type="text" id="ai-input" placeholder="اسأل تِقني..." style="flex:1; padding:8px; border-radius:10px; border:1px solid #ddd;">
-            <button onclick="sendAI()" style="border:none; background:var(--primary); color:white; padding:8px 15px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
+
+        <div id="ai-window">
+            <div style="background:var(--primary); color:white; padding:15px; display:flex; justify-content:space-between;">
+                <span>المساعد تِقني</span>
+                <i class="fa-solid fa-times" onclick="toggleAIWindow()"></i>
+            </div>
+            <div id="chat-flow" style="flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; background:#f4f7fa;">
+                <div style="background:white; padding:10px; border-radius:10px; font-size:0.9rem;">أهلاً بطل صلالة الشرقية! أنا أراقب كودك وسأوجهك للحل الصحيح.</div>
+            </div>
+            <div style="padding:10px; background:white; display:flex; gap:10px; border-top:1px solid #eee;">
+                <input type="text" id="ai-input" placeholder="اسأل تِقني..." style="flex:1; border:1px solid #ddd; padding:10px; border-radius:10px;">
+                <button onclick="sendAI()" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
         </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" id="nav-editor" onclick="switchView('view-editor', this)">
+                <i class="fa-solid fa-code"></i><span>المحرر</span>
+            </div>
+            <div class="nav-item" onclick="switchView('view-lessons', this)">
+                <i class="fa-solid fa-layer-group"></i><span>الوحدات</span>
+            </div>
+            <div class="nav-item" onclick="toggleBook()">
+                <i class="fa-solid fa-book-open"></i><span>الكتاب</span>
+            </div>
+            <div class="nav-item" onclick="switchView('view-awards', this)">
+                <i class="fa-solid fa-award"></i><span>الجوائز</span>
+            </div>
+        </nav>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def run_code(ev):
+        def run_it(ev):
             document["output"].text = ""
             def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
-                window.showMonitor("رائع! الكود يعمل بنجاح ✅", 3000)
+                window.notifyAI("أحسنت! الكود عمل بنجاح")
             except Exception as e:
                 document["output"].text = f"خطأ: {e}"
-                window.showMonitor("أوه! هناك خطأ بسيط في الكود ❌", 4000)
-        document["run_button"].bind("click", run_code)
+                window.notifyAI("هناك خطأ، حاول إصلاحه أو اضغط 'سحر'")
+        document["run_btn"].bind("click", run_it)
     </script>
 
     <script>
-        function startSystem() {
-            document.getElementById('welcome-screen').style.display = 'none';
-            showMonitor("النظام الذكي نشط.. تِقني معك الآن", 3000);
+        function start() { document.getElementById('welcome-screen').style.display = 'none'; }
+
+        // التبديل بين الصفحات
+        function switchView(viewId, el) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            el.classList.add('active');
         }
 
-        // المساعد المراقب (تنبيهات ذكية)
-        function liveMonitor() {
-            const code = document.getElementById('editor').value;
-            const monitor = document.getElementById('ai-monitor');
-            const text = document.getElementById('monitor-text');
-
-            if (code.includes('print') && !code.includes('(')) {
-                text.innerText = "تِقني يلاحظ: لا تنسَ الأقواس () في دالة الطباعة";
-                monitor.style.display = 'block';
-            } else if (code.includes('""') || code.includes("''")) {
-                text.innerText = "تِقني يلاحظ: لا تترك علامات التنصيص فارغة";
-                monitor.style.display = 'block';
-            } else {
-                monitor.style.display = 'none';
-            }
+        // إظهار/إخفاء الكتاب (مثل الإشعار العلوي)
+        function toggleBook() {
+            document.getElementById('book-overlay').classList.toggle('active');
         }
 
-        function showMonitor(msg, time) {
-            const monitor = document.getElementById('ai-monitor');
-            document.getElementById('monitor-text').innerText = msg;
-            monitor.style.display = 'block';
-            setTimeout(() => { monitor.style.display = 'none'; }, time);
-        }
-
-        function toggleBook() { document.getElementById('book-panel').classList.toggle('open'); }
-        function toggleChat() { 
-            const win = document.getElementById('chat-window');
+        function toggleAIWindow() {
+            const win = document.getElementById('ai-window');
             win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        async function sendAI() {
-            const input = document.getElementById('ai-input');
-            const val = input.value;
-            if(!val) return;
-            addChat('user', val);
-            input.value = "";
-            const botMsg = addChat('ai', 'جاري التحليل...');
+        // المساعد المراقب للكود (تفاعل لحظي)
+        function analyzeCodeLive() {
+            const code = document.getElementById('editor').value;
+            const toast = document.getElementById('smart-toast');
+            
+            if (code.includes('print') && !code.includes('(')) {
+                toast.innerText = "تِقني: تذكر الأقواس () بعد كلمة print";
+                toast.style.display = 'block';
+            } else if (code.includes('"') && (code.match(/"/g) || []).length % 2 !== 0) {
+                toast.innerText = "تِقني: تأكد من إغلاق علامات التنصيص \"";
+                toast.style.display = 'block';
+            } else {
+                toast.style.display = 'none';
+            }
+        }
+
+        window.notifyAI = function(msg) {
+            const toast = document.getElementById('smart-toast');
+            toast.innerText = "تِقني: " + msg;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        };
+
+        // المساعدة السحرية (ذكاء اصطناعي مرتبط بالكود)
+        async function askAIAboutCode() {
+            const code = document.getElementById('editor').value;
+            toggleAIWindow();
+            addChat("user", "حلل كودي وصححه لي:\n" + code);
+            const loading = addChat("ai", "تِقني يحلل الكود... ✍️");
+            
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({messages: [{role:'system', content:'أنت تِقني، معلم حاسوب عماني ذكي.'}, {role:'user', content:val}]})
+                    body: JSON.stringify({
+                        messages: [
+                            {role: 'system', content: 'أنت تِقني معلم مدرسة صلالة الشرقية. حلل كود الطالب وأعطه نصائح برمجية بسيطة.'},
+                            {role: 'user', content: "هذا كودي: " + code}
+                        ]
+                    })
                 });
-                botMsg.innerText = await res.text();
-            } catch { botMsg.innerText = "خطأ في الاتصال."; }
+                loading.innerText = await res.text();
+            } catch { loading.innerText = "خطأ في الاتصال بالمساعد."; }
+        }
+
+        function loadLesson(code, name) {
+            document.getElementById('editor').value = code;
+            switchView('view-editor', document.getElementById('nav-editor'));
+            window.notifyAI("تم تحميل " + name);
+        }
+
+        async function sendAI() {
+            const input = document.getElementById('ai-input');
+            const txt = input.value.trim();
+            if(!txt) return;
+            addChat("user", txt);
+            input.value = "";
+            const bot = addChat("ai", "يفكر...");
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({messages: [{role:'user', content:txt}]})
+            });
+            bot.innerText = await res.text();
         }
 
         function addChat(role, text) {
             const flow = document.getElementById('chat-flow');
             const div = document.createElement('div');
-            div.style = role === 'user' ? "align-self:flex-end; background:#dcf8c6; padding:10px; border-radius:10px; font-size:0.85rem;" : "align-self:flex-start; background:white; padding:10px; border-radius:10px; font-size:0.85rem; border-right:3px solid var(--ai-color);";
+            div.style = role === 'user' ? "align-self:flex-end; background:#dcf8c6; padding:10px; border-radius:10px; font-size:0.85rem; max-width:80%;" : "align-self:flex-start; background:white; padding:10px; border-radius:10px; font-size:0.85rem; max-width:80%; border-right:3px solid var(--ai-color);";
             div.innerText = text;
             flow.appendChild(div);
             flow.scrollTop = flow.scrollHeight;
             return div;
-        }
-
-        function askMagic() {
-            const code = document.getElementById('editor').value;
-            toggleChat();
-            addChat('user', "حلل لي هذا الكود: " + code);
-            sendAI();
         }
     </script>
 </body>
