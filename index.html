@@ -1,35 +1,30 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة تقنية المعلومات | التاسع</title>
+    <title>منصة تقنية المعلومات الذكية</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <header>
-        <h1>بوابة تقنية المعلومات - سلطنة عمان</h1>
-        <p>الصف التاسع | الفصل الدراسي الثاني</p>
+<body style="display: block; overflow: auto;"> <header>
+        <h1>مرحباً بك في المختبر الذكي لتقنية المعلومات</h1>
+        <p>بوابتك التفاعلية لتعلم البرمجة وقواعد البيانات - الصف التاسع</p>
     </header>
-    <nav>
-        <a href="index.html">الرئيسية</a>
-        <a href="python.html">وحدة البرمجة</a>
-        <a href="database.html">قواعد البيانات</a>
-        <a href="security.html">أمن المعلومات</a>
+
+    <nav style="background: #34495e; display: flex; justify-content: center; padding: 10px;">
+        <a href="index.html" style="color:white; margin:0 15px; text-decoration:none;">الرئيسية</a>
+        <a href="python_lab.html" style="color:white; margin:0 15px; text-decoration:none;">مختبر بايثون</a>
+        <a href="database.html" style="color:white; margin:0 15px; text-decoration:none;">قواعد البيانات</a>
     </nav>
-    <div class="container">
+
+    <div class="container" style="max-width: 900px; margin: 40px auto; padding: 20px;">
         <div class="card">
-            <h2>مرحباً بك في رحلة التعلم الرقمي</h2>
-            <p>هذه المنصة صممت خصيصاً لمساعدتك في إتقان مهارات البرمجة ببايثون وإدارة قواعد البيانات وفق المنهج العماني المطور.</p>
+            <h2>كيف تستخدم المنصة؟</h2>
+            <p>1. اختر <strong>مختبر بايثون</strong> من القائمة العلوية.</p>
+            <p>2. اختر النشاط المطلوب من فهرس الكتاب على اليمين.</p>
+            <p>3. ابدأ بكتابة الكود، وسيقوم المساعد <strong>"تِقني"</strong> بمراقبتك وتوجيهك فوراً.</p>
         </div>
+        
+        
     </div>
-    <div id="ai-chat">
-        <div id="chat-header">تِقني: مساعدك الذكي 🤖</div>
-        <div id="chat-body">مرحباً! أنا أراقب كودك الآن لمساعدتك. اسألني أي شيء عن بايثون.</div>
-        <div id="chat-input-area">
-            <input type="text" id="user-msg" placeholder="اكتب سؤالك هنا...">
-            <button onclick="sendMsg()">إرسال</button>
-        </div>
-    </div>
-    <script src="ai-engine.js"></script>
 </body>
 </html>
