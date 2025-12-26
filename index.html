@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني | نسخة المساعد العائم</title>
+    <title>مختبر تِقني | نسخة الهاتف الكاملة</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,73 +12,83 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
 
     <style>
-        :root { --primary: #4f46e5; --success: #10b981; --dark-bg: #0f172a; --ai-color: #00f2fe; }
+        :root { --primary: #4f46e5; --success: #10b981; --danger: #ef4444; --dark-bg: #0f172a; }
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-bg); overflow: hidden; display: flex; flex-direction: column; }
 
         /* شريط المراقبة العلوي */
-        .ai-top-bar { height: 45px; background: rgba(255,255,255,0.03); display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #1e293b; flex-shrink: 0; }
+        .ai-top-bar { height: 45px; background: rgba(255,255,255,0.05); display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #1e293b; flex-shrink: 0; }
         #observer-msg { font-size: 0.75rem; color: #94a3b8; font-weight: bold; }
 
         /* المحرر والنتائج */
         .main-content { flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden; }
-        #editor { flex: 1.2; width: 100%; background: #0b0f1a; color: #67e8f9; padding: 15px; font-family: monospace; font-size: 1.05rem; border: none; outline: none; line-height: 1.5; white-space: pre-wrap; }
-        #console-area { flex: 0.8; background: #000; border-top: 2px solid #334155; padding: 10px; color: var(--success); font-family: monospace; overflow-y: auto; font-size: 0.85rem; }
+        #editor { flex: 1.2; width: 100%; background: #0b0f1a; color: #67e8f9; padding: 15px; font-family: monospace; font-size: 1.1rem; border: none; outline: none; line-height: 1.5; white-space: pre-wrap; }
+        
+        #console-area { 
+            flex: 0.8; background: #000; border-top: 2px solid #334155; 
+            padding: 10px; color: var(--success); font-family: monospace; 
+            overflow-y: auto; font-size: 0.85rem; width: 100%;
+        }
 
-        /* --- الأيقونة العائمة الذكية --- */
-        .fab-wrapper { position: fixed; bottom: 100px; left: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .fab-main { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; box-shadow: 0 0 20px var(--primary); border: 2px solid rgba(255,255,255,0.2); animation: float 3s infinite; }
-        .fab-sub { width: 45px; height: 45px; background: #f59e0b; border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
-        .fab-wrapper:active .fab-sub, .fab-wrapper.open .fab-sub { display: flex; }
+        /* --- الأيقونة العائمة الذكية (تحليل + دردشة) --- */
+        .fab-wrapper { position: fixed; bottom: 100px; left: 20px; z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .fab-main { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; box-shadow: 0 0 20px var(--primary); border: 2px solid rgba(255,255,255,0.2); }
+        .fab-sub { width: 45px; height: 45px; background: #f59e0b; border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .fab-wrapper.open .fab-sub { display: flex; animation: slideUp 0.3s; }
 
-        /* شريط التحكم السفلي */
-        .bottom-nav { height: 75px; background: #1e293b; display: flex; align-items: center; padding: 0 10px; gap: 10px; flex-shrink: 0; }
-        .btn-run { flex: 1; height: 50px; background: var(--success); color: white; border-radius: 14px; border: none; font-weight: 900; font-size: 1rem; }
+        /* شريط التحكم السفلي (زر تشغيل + زر مسح) */
+        .bottom-nav { height: 75px; background: #1e293b; display: flex; align-items: center; padding: 0 10px; gap: 10px; flex-shrink: 0; width: 100%; }
+        .btn-run { flex: 3; height: 50px; background: var(--success); color: white; border-radius: 12px; border: none; font-weight: 900; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-clear { flex: 1; height: 50px; background: #334155; color: #f87171; border-radius: 12px; border: 1px solid #475569; font-weight: bold; font-size: 0.85rem; }
 
-        /* نوافذ المساعد (دردشة وتحليل) */
+        /* نوافذ المساعد */
         .ai-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; flex-direction: column; padding: 15px; backdrop-filter: blur(10px); }
-        .modal-body { background: white; border-radius: 20px; padding: 20px; color: #1e293b; max-height: 85%; display: flex; flex-direction: column; }
-        #ai-text-output { overflow-y: auto; margin: 15px 0; font-size: 0.95rem; line-height: 1.6; }
-        .chat-input-row { display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-        #chat-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 10px; }
+        .modal-body { background: white; border-radius: 20px; padding: 20px; color: #1e293b; max-height: 85%; display: flex; flex-direction: column; width: 100%; }
+        #ai-text-output { overflow-y: auto; margin: 15px 0; font-size: 0.95rem; line-height: 1.6; text-align: right; }
+        .chat-input-row { display: flex; gap: 8px; border-top: 1px solid #eee; padding-top: 10px; }
+        #chat-input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 10px; outline: none; font-size: 0.9rem; }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="brython()">
 
     <div class="ai-top-bar">
-        <div id="observer-msg">تِقني: مستعد لمتابعة كودك..</div>
+        <div id="observer-msg">تِقني: بانتظار إبداعك البرمجي..</div>
     </div>
 
     <main class="main-content">
-        <textarea id="editor" spellcheck="false" oninput="monitor()"># اكتب كودك
-print("مرحباً بك")</textarea>
-        <div id="console-area">>>> مخرجات البرنامج ستظهر هنا</div>
+        <textarea id="editor" spellcheck="false" oninput="monitor()"># ابدأ الكتابة هنا
+print("مرحباً بك في تِقني")</textarea>
+        <div id="console-area">>>> المخرجات ستظهر هنا</div>
     </main>
 
     <div class="fab-wrapper" id="fab-menu" onclick="this.classList.toggle('open')">
-        <div class="fab-sub" onclick="startAnalysis()" title="تحليل الكود"><i class="fas fa-microchip"></i></div>
-        <div class="fab-sub" onclick="openChat()" style="background:var(--primary);" title="دردشة"><i class="fas fa-comment"></i></div>
+        <div class="fab-sub" onclick="startAnalysis()"><i class="fas fa-microchip"></i></div>
+        <div class="fab-sub" onclick="openChat()" style="background:var(--primary);"><i class="fas fa-comment"></i></div>
         <div class="fab-main"><i class="fas fa-robot"></i></div>
     </div>
 
     <footer class="bottom-nav">
-        <button class="btn-run" onclick="runCode()">▶ تشغيل البرنامج</button>
+        <button class="btn-clear" onclick="clearCode()">
+            <i class="fas fa-eraser"></i> مسح
+        </button>
+        <button class="btn-run" onclick="runCode()">
+            <i class="fas fa-play"></i> تشغيل البرنامج
+        </button>
     </footer>
 
     <div id="ai-modal" class="ai-overlay">
         <div class="modal-body">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong id="modal-title" style="color:var(--primary)">تِقني الذكي</strong>
-                <i class="fas fa-times" onclick="closeModal()" style="font-size:1.5rem; cursor:pointer;"></i>
+                <i class="fas fa-times" onclick="closeModal()" style="font-size:1.5rem; cursor:pointer; color:#64748b;"></i>
             </div>
-            <div id="ai-text-output">جاري التحليل... ✨</div>
+            <div id="ai-text-output"></div>
             <div class="chat-input-row" id="chat-controls" style="display:none;">
-                <input type="text" id="chat-input" placeholder="اسأل تِقني...">
-                <button onclick="sendChat()" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="chat-input" placeholder="اسأل تِقني عن أي شيء...">
+                <button onclick="sendChat()" style="background:var(--primary); color:white; border:none; padding:10px 15px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -101,46 +111,44 @@ print("مرحباً بك")</textarea>
         function monitor() {
             const code = document.getElementById('editor').value;
             const msg = document.getElementById('observer-msg');
-            if(code.includes('print') && !code.includes('(')) msg.innerText = "تِقني: تذكر الأقواس () في الطباعة!";
-            else msg.innerText = "تِقني يراقب كودك.. أنت مبدع!";
+            if(code.includes('print') && !code.includes('(')) msg.innerText = "تِقني: انتبه! دالة print تحتاج لأقواس ().";
+            else msg.innerText = "تِقني: يراقب كودك.. استمر!";
         }
 
         function updateObs(status) {
-            document.getElementById('observer-msg').innerText = status === "نجاح" ? "تِقني: أحسنت! الكود عمل بنجاح." : "تِقني: اكتشفت خطأ، اضغط على الأيقونة العائمة للتحليل.";
+            document.getElementById('observer-msg').innerText = status === "نجاح" ? "تِقني: مذهل! الكود يعمل بنجاح." : "تِقني: اكتشفت خطأ! اضغط على أيقونة الروبوت للتحليل.";
         }
 
-        // تحليل فوري
         async function startAnalysis() {
-            openModal("تحليل الكود الفوري", false);
+            openModal("تحليل الكود المباشر", false);
             const code = document.getElementById('editor').value;
             const output = document.getElementById('ai-text-output');
-            output.innerText = "تِقني يقرأ كودك ويحلل المنطق... ✨";
+            output.innerText = "تِقني يقوم بتشريح الكود برمجياً... ⏳";
             
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [{role: 'system', content: 'أنت تِقني معلم حاسوب عماني، حلل الكود التالي بوضوح واشرح للطالب ماذا يفعل وما هي الأخطاء ونصيحة.'}, {role: 'user', content: code}]
+                        messages: [{role: 'system', content: 'أنت تِقني، معلم حاسوب عماني. حلل كود الطالب وقدم شرحاً مبسطاً جداً لما يفعله الكود وهل هناك أخطاء.'}, {role: 'user', content: code}]
                     })
                 });
                 output.innerText = await res.text();
-            } catch { output.innerText = "عذراً، تِقني غير متصل بالإنترنت حالياً."; }
+            } catch { output.innerText = "تِقني: تعذر الاتصال بالذكاء الاصطناعي."; }
         }
 
-        // فتح الدردشة
         function openChat() {
-            openModal("دردشة مع تِقني", true);
-            document.getElementById('ai-text-output').innerText = "أهلاً بك! أنا مستعد للإجابة على أسئلتك حول البرمجة.";
+            openModal("دردشة تعليمية", true);
+            document.getElementById('ai-text-output').innerHTML = "مرحباً بك! أنا مستعد للإجابة على أسئلتك البرمجية أو شرح درس اليوم.";
         }
 
         async function sendChat() {
             const input = document.getElementById('chat-input');
             const output = document.getElementById('ai-text-output');
-            const userMsg = input.value;
-            if(!userMsg) return;
+            if(!input.value) return;
             
-            output.innerHTML += `<div style="color:var(--primary); margin-top:10px;"><b>أنت:</b> ${userMsg}</div>`;
+            const userText = input.value;
+            output.innerHTML += `<div style="color:var(--primary); margin-top:15px; border-right:3px solid #ddd; padding-right:10px;"><b>أنت:</b> ${userText}</div>`;
             input.value = "";
             
             try {
@@ -148,13 +156,13 @@ print("مرحباً بك")</textarea>
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [{role: 'system', content: 'أنت تِقني، ساعد الطالب بأسلوب تعليمي مبسط.'}, {role: 'user', content: userMsg}]
+                        messages: [{role: 'system', content: 'أنت تِقني مساعد الطلاب. أجب باختصار وود متبوعة بنصيحة برمجية.'}, {role: 'user', content: userText}]
                     })
                 });
                 const data = await res.text();
-                output.innerHTML += `<div style="margin-top:5px;"><b>تِقني:</b> ${data}</div>`;
+                output.innerHTML += `<div style="margin-top:10px; background:#f8fafc; padding:10px; border-radius:10px;"><b>تِقني:</b> ${data}</div>`;
                 output.scrollTop = output.scrollHeight;
-            } catch { output.innerHTML += "<div>عذراً، تعذر الرد حالياً.</div>"; }
+            } catch { output.innerHTML += "<div>تِقني: آسف، تعذر الرد الآن.</div>"; }
         }
 
         function openModal(title, showChat) {
@@ -164,8 +172,17 @@ print("مرحباً بك")</textarea>
         }
 
         function closeModal() { document.getElementById('ai-modal').style.display = 'none'; }
+        
         function runCode() { window.runPy(); }
-        function clearCode() { document.getElementById('editor').value = ""; }
+        
+        // وظيفة زر المسح
+        function clearCode() {
+            if(confirm("هل أنت متأكد من مسح كافة الكود؟")) {
+                document.getElementById('editor').value = "";
+                document.getElementById('console-area').innerText = ">>> تم مسح منطقة العمل";
+                document.getElementById('observer-msg').innerText = "تِقني: جاهز للبدء من جديد!";
+            }
+        }
     </script>
 </body>
 </html>
