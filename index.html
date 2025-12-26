@@ -3,72 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة صلالة الشرقية للابتكار</title>
+    <title>منصة صلالة الشرقية الذكية | بايثون</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.5/brython_stdlib.min.js"></script>
 </head>
 <body onload="brython()">
 
-    <div id="welcome-screen" class="welcome-overlay">
+    <div id="welcome-overlay" class="welcome-overlay">
         <div class="welcome-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" class="oman-logo-big">
-            <h2>مرحباً بك في مختبر صلالة الشرقية الذكي</h2>
-            <p>وحدة البرمجة بلغة بايثون - المنهج العماني</p>
-            <button class="entry-btn" onclick="enterPlatform()">ابدأ رحلة البرمجة <i class="fa-solid fa-rocket"></i></button>
+            <div class="oman-shield">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" alt="Oman Emblem">
+            </div>
+            <h2>مختبر البرمجة الذكي</h2>
+            <h3>مدرسة صلالة الشرقية (5-9)</h3>
+            <p>نظام "تِقني" المدعوم بالذكاء الاصطناعي لتعلّم لغة بايثون</p>
+            <button class="start-btn" onclick="launchPlatform()">دخول المنصة <i class="fa-solid fa-rocket"></i></button>
         </div>
     </div>
 
-    <div id="main-platform" class="hidden">
-        <header class="top-nav">
-            <div class="nav-right">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" width="40">
-                <div class="nav-text">
-                    <span class="school-name">مدرسة صلالة الشرقية للتعليم الأساسي (5-9)</span>
-                    <span class="platform-tag">نظام تِقني للذكاء الاصطناعي v2.0</span>
+    <div id="main-app" class="main-app hidden">
+        <header class="top-bar">
+            <div class="right-info">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" height="40">
+                <div class="title-group">
+                    <h1>منصة صلالة الشرقية التعليمية</h1>
+                    <span class="status"><i class="fa-solid fa-circle-check"></i> الخادم نشط (AI Online)</span>
                 </div>
             </div>
-            <div class="nav-left">
-                <div class="status-indicator"><span class="pulse"></span> AI Server Online</div>
+            <div class="left-actions">
+                <button class="nav-tool-btn" onclick="location.reload()"><i class="fa-solid fa-house"></i></button>
             </div>
         </header>
 
-        <div class="app-body">
-            <aside class="side-menu">
-                <div class="menu-header">أنشطة المنهج</div>
-                <div id="task-list"></div>
+        <div class="content-wrapper">
+            <aside class="activities-sidebar">
+                <div class="sidebar-head">أنشطة المنهج</div>
+                <div id="activities-list"></div>
             </aside>
 
-            <main class="code-zone">
-                <div class="toolbar">
-                    <div class="task-badge" id="active-task-title">مختبر بايثون الحر</div>
-                    <div class="btn-group">
-                        <button class="action-btn run" id="run_btn"><i class="fa-solid fa-play"></i> تنفيذ</button>
-                        <button class="action-btn hint" onclick="requestAIHint()"><i class="fa-solid fa-wand-magic-sparkles"></i> شرح النشاط</button>
+            <main class="editor-container">
+                <div class="editor-toolbar">
+                    <span id="task-title">محرر بايثون الحر</span>
+                    <div class="buttons">
+                        <button class="run-btn" id="run_button"><i class="fa-solid fa-play"></i> تشغيل</button>
+                        <button class="clear-btn" onclick="document.getElementById('output').innerText='>>> '"><i class="fa-solid fa-eraser"></i> مسح</button>
                     </div>
                 </div>
-                <textarea id="editor" spellcheck="false">print("مرحباً بك في منصة صلالة الشرقية")</textarea>
+                <textarea id="code-editor" spellcheck="false" placeholder="اكتب كودك هنا..."></textarea>
                 <div class="terminal">
-                    <div class="term-nav">المخرجات البرمجية</div>
-                    <pre id="output"></pre>
+                    <div class="terminal-label">شاشة المخرجات</div>
+                    <pre id="output">>>> النتائج تظهر هنا...</pre>
                 </div>
             </main>
 
-            <section class="ai-chat">
-                <div class="chat-head">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="35">
-                    <div>
-                        <strong>تِقني (Smart Assistant)</strong>
-                        <small>مدعوم بتقنيات الـ LLM</small>
+            <section class="ai-assistant">
+                <div class="ai-header">
+                    <div class="ai-status">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" width="40">
+                        <div>
+                            <strong>المساعد تِقني</strong>
+                            <span>متصل الآن</span>
+                        </div>
                     </div>
                 </div>
-                <div class="chat-content" id="chat-messages">
-                    <div class="msg ai">أهلاً بك! أنا "تِقني" مساعدك الذكي المطور. اسألني عن بايثون، أو اطلب مني كتابة كود، وسأجيبك بدقة شات جي بي تي.</div>
+                <div id="chat-messages" class="chat-messages">
+                    <div class="msg bot">مرحباً بك في مدرسة صلالة الشرقية! أنا "تِقني"، مساعدك الذكي. يمكنني شرح الدروس أو كتابة الكود لك. جرب سؤالي!</div>
                 </div>
-                <div class="chat-input-box">
-                    <input type="text" id="ai-input" placeholder="اسأل تِقني أي شيء..." onkeypress="handleEnter(event)">
-                    <button onclick="aiCoreProcess()"><i class="fa-solid fa-paper-plane"></i></button>
+                <div class="chat-input">
+                    <input type="text" id="ai-input" placeholder="اسأل تِقني..." onkeypress="if(event.key==='Enter') sendToAI()">
+                    <button onclick="sendToAI()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </section>
         </div>
@@ -76,16 +82,17 @@
 
     <script type="text/python">
         from browser import document, window
-        def run_py(ev):
+        def execute_code(ev):
             document["output"].text = ""
-            code = document["editor"].value
+            src = document["code-editor"].value
+            def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
-                def p(*args): document["output"].text += " ".join(map(str, args)) + "\n"
-                exec(code, {"print": p, "input": window.prompt})
+                exec(src, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["output"].text = f"❌ خطأ: {e}"
-        document["run_btn"].bind("click", run_py)
+                document["output"].text = f"❌ خطأ برمي: {e}"
+        document["run_button"].bind("click", execute_code)
     </script>
-    <script src="engine.js"></script>
+
+    <script src="logic.js"></script>
 </body>
 </html>
