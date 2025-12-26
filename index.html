@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة مدرسة صلالة الشرقية الذكية</title>
+    <title>منصة صلالة الشرقية الذكية</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -14,192 +14,132 @@
     <style>
         :root {
             --oman-red: #d92027; --oman-green: #007e33; --tech-blue: #004a99;
-            --dark-bg: #1e1e1e; --sidebar-w: 260px; --ai-w: 380px;
+            --dark-bg: #1e1e1e; --sidebar-w: 250px; --ai-w: 380px;
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        
-        /* منع التداخل وضمان ظهور الكل */
-        html, body { 
-            margin: 0; padding: 0; 
-            height: 100%; width: 100%;
-            overflow: hidden; /* يمنع السحب الخارجي للمتصفح */
-            display: flex; flex-direction: column;
-            background: #f0f2f5;
-        }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; display: flex; flex-direction: column; background: #f0f2f5; }
 
-        /* شاشة الترحيب */
-        #welcome-screen {
-            position: fixed; inset: 0; background: linear-gradient(135deg, var(--tech-blue), #001a33);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-        }
-        .welcome-card {
-            background: white; padding: 40px; border-radius: 25px; text-align: center;
-            width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .start-btn {
-            background: var(--oman-red); color: white; border: none; padding: 15px 30px;
-            border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem;
-        }
-
-        /* الهيكل الرئيسي (توزيع مرن) */
-        .main-layout {
-            display: flex; flex: 1; width: 100%; height: 100%; overflow: hidden;
-        }
+        /* الهيكل */
+        .main-layout { display: flex; flex: 1; width: 100%; height: 100%; overflow: hidden; }
 
         /* القائمة الجانبية */
-        .sidebar {
-            width: var(--sidebar-w); background: white; border-left: 2px solid #ddd;
-            display: flex; flex-direction: column;
-        }
-        .sidebar-header { background: var(--tech-blue); color: white; padding: 15px; font-weight: bold; }
+        .sidebar { width: var(--sidebar-w); background: white; border-left: 2px solid #ddd; display: flex; flex-direction: column; }
+        .sidebar-header { background: var(--tech-blue); color: white; padding: 15px; font-weight: bold; text-align: center; }
         .lesson-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .lesson-item { 
-            padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 8px;
-            cursor: pointer; font-size: 0.9rem; border-right: 4px solid var(--oman-red);
-        }
+        .lesson-item { padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 8px; cursor: pointer; border-right: 4px solid var(--oman-red); font-size: 0.9rem; transition: 0.3s; }
+        .lesson-item:hover { background: #e3f2fd; }
 
-        /* منطقة المحرر (الوسط) */
-        .editor-zone {
-            flex: 1; display: flex; flex-direction: column; background: #fff; padding: 10px;
-        }
-        .toolbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;
-        }
-        #editor {
-            flex: 1; background: var(--dark-bg); color: #adff2f; padding: 15px;
-            border-radius: 10px; font-family: monospace; font-size: 1.1rem;
-            resize: none; border: none; outline: none;
-        }
-        .terminal {
-            height: 130px; background: #000; color: #fff; margin-top: 10px;
-            border-radius: 10px; padding: 10px; overflow-y: auto; font-family: monospace;
-            border: 2px solid #444; font-size: 0.9rem;
-        }
+        /* الوسط (المحرر) */
+        .editor-zone { flex: 1; display: flex; flex-direction: column; padding: 10px; background: #fff; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
+        #editor { flex: 1; background: var(--dark-bg); color: #adff2f; padding: 15px; border-radius: 10px; font-family: 'Consolas', monospace; font-size: 1.1rem; resize: none; border: none; outline: none; }
+        .terminal { height: 120px; background: #000; color: #fff; margin-top: 10px; border-radius: 10px; padding: 10px; overflow-y: auto; font-family: monospace; border: 2px solid #444; }
 
-        /* واجهة المساعد (كبيرة وواضحة) */
-        .ai-panel {
-            width: var(--ai-w); background: #e5ddd5; border-right: 2px solid #ddd;
-            display: flex; flex-direction: column;
-        }
-        .ai-header {
-            padding: 15px; background: #075e54; color: white; display: flex; align-items: center; gap: 10px;
-        }
-        .chat-flow {
-            flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-        }
-        .msg { padding: 12px; border-radius: 12px; max-width: 85%; font-size: 0.95rem; line-height: 1.4; }
-        .msg.ai { background: white; align-self: flex-start; box-shadow: 0 2px 2px rgba(0,0,0,0.1); }
+        /* المساعد AI */
+        .ai-panel { width: var(--ai-w); background: #e5ddd5; border-right: 2px solid #ddd; display: flex; flex-direction: column; }
+        .ai-header { padding: 15px; background: #075e54; color: white; display: flex; align-items: center; gap: 10px; }
+        .chat-flow { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 12px; border-radius: 12px; max-width: 85%; font-size: 0.95rem; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .msg.ai { background: white; align-self: flex-start; border-right: 4px solid var(--oman-green); }
         .msg.user { background: #dcf8c6; align-self: flex-end; }
+        .chat-footer { padding: 10px; background: #f0f0f0; display: flex; gap: 8px; border-top: 1px solid #ddd; }
+        .chat-footer input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
+        .send-btn { background: #075e54; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 
-        /* شريط الإدخال (مهم جداً أن يظل ظاهراً) */
-        .chat-footer {
-            padding: 15px; background: #f0f0f0; display: flex; gap: 10px;
-            border-top: 1px solid #ddd;
-        }
-        .chat-footer input {
-            flex: 1; padding: 12px 18px; border-radius: 25px; border: 1px solid #ccc;
-            outline: none; font-size: 1rem;
-        }
-        .send-btn {
-            background: #075e54; color: white; border: none; width: 45px; height: 45px;
-            border-radius: 50%; cursor: pointer;
-        }
+        /* نافذة الكتاب */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 600px; height: 80vh; border-radius: 15px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-body { flex: 1; padding: 20px; overflow-y: auto; text-align: center; line-height: 1.6; }
+        .modal-footer { padding: 15px; background: #eee; display: flex; justify-content: space-between; }
 
-        /* تحسين الهاتف */
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main-layout { flex-direction: column; }
-            .ai-panel { width: 100%; height: 40%; }
-            .editor-zone { height: 60%; }
-        }
-
-        .hidden { display: none !important; }
+        .hidden { display: none; }
+        @media (max-width: 900px) { .sidebar { display: none; } .main-layout { flex-direction: column; } .ai-panel { width: 100%; height: 45%; } }
     </style>
 </head>
 <body onload="brython()">
 
-    <div id="welcome-screen">
-        <div class="welcome-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Oman_National_Emblem.svg" width="80">
-            <h2 style="color: var(--tech-blue)">مختبر تِقني الذكي</h2>
-            <p>مدرسة صلالة الشرقية - سلطنة عُمان</p>
-            <button class="start-btn" onclick="startApp()">دخول المختبر <i class="fa-solid fa-arrow-left"></i></button>
-        </div>
-    </div>
-
-    <div class="main-layout hidden" id="app-ui">
-        
+    <div class="main-layout">
         <aside class="sidebar">
-            <div class="sidebar-header">الدروس والأنشطة</div>
-            <div class="lesson-list" id="lessons">
-                <div class="lesson-item" onclick="loadCode('print(\'أهلاً بكم في صلالة\')', 'درس الطباعة')">1. دالة الطباعة</div>
-                <div class="lesson-item" onclick="loadCode('x = 10\ny = 20\nprint(x + y)', 'درس المتغيرات')">2. المتغيرات</div>
-                <div class="lesson-item" onclick="loadCode('grade = 90\nif grade >= 50:\n  print(\'ناجح\')', 'درس الشروط')">3. جملة if</div>
+            <div class="sidebar-header">مختبر البرمجة</div>
+            <div class="lesson-list">
+                <div class="lesson-item" onclick="setLesson('print(\'مدرسة صلالة الشرقية\')', 'نشاط 1')">نشاط 1: الطباعة</div>
+                <div class="lesson-item" onclick="setLesson('x = 5\ny = 3\nprint(x + y)', 'نشاط 2')">نشاط 2: الحساب</div>
+                <div class="lesson-item" onclick="openBook()">📖 تصفح الكتاب المدرسي</div>
             </div>
         </aside>
 
         <section class="editor-zone">
             <div class="toolbar">
-                <span id="lesson-name" style="font-weight:bold; color:var(--tech-blue)">المحرر الحر</span>
+                <strong id="task-title" style="color:var(--tech-blue)">التمرين الحر</strong>
                 <div>
-                    <button onclick="askAIAbtCode()" style="background:#673ab7; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-left:5px;">مساعدة سحرية ✨</button>
+                    <button onclick="magicHelp()" style="background:#9c27b0; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">مساعدة سحرية ✨</button>
                     <button id="run_btn" style="background:var(--oman-green); color:white; border:none; padding:8px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">تشغيل ▶</button>
                 </div>
             </div>
-            <textarea id="editor" spellcheck="false"># اكتب كود بايثون هنا
-print("مرحباً بكم مبرمجي المستقبل")</textarea>
-            <div class="terminal" id="output">>>> النتائج تظهر هنا...</div>
+            <textarea id="editor" spellcheck="false">print("مرحباً بك في تِقني الذكي")</textarea>
+            <div class="terminal" id="output">>>> المخرجات ستظهر هنا...</div>
         </section>
 
         <section class="ai-panel">
-            <div class="ai-header">
-                <i class="fa-solid fa-robot" style="font-size: 1.5rem;"></i>
-                <strong>المساعد تِقني AI</strong>
-            </div>
+            <div class="ai-header"><i class="fa-solid fa-robot"></i> <strong>المساعد تِقني</strong></div>
             <div class="chat-flow" id="chat-flow">
-                <div class="msg ai">مرحباً! أنا تِقني. سأساعدك في حل أنشطة كتاب تقنية المعلومات. اسألني عن أي شيء في بايثون!</div>
+                <div class="msg ai">أهلاً بك! اكتب سؤالك أو اضغط "مساعدة سحرية" لأحلل لك الكود.</div>
             </div>
             <div class="chat-footer">
-                <input type="text" id="user-input" placeholder="اكتب سؤالك للمساعد..." onkeypress="if(event.key==='Enter') sendMessage()">
-                <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="ai-input" placeholder="اسأل تِقني عن أي شيء..." onkeypress="if(event.key==='Enter') userSendMessage()">
+                <button class="send-btn" onclick="userSendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </section>
     </div>
 
+    <div id="book-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-body" id="book-content">
+                <h3>كتاب تقنية المعلومات</h3>
+                <p>جاري تحميل محتوى الدرس...</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBook()">إغلاق</button>
+                <span>الصفحة 1 من 1</span>
+            </div>
+        </div>
+    </div>
+
     <script type="text/python">
         from browser import document, window
-        def run_it(ev):
+        def run_code(ev):
             document["output"].text = ""
             def log(*args): document["output"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
                 document["output"].text = f"خطأ: {e}"
-        document["run_btn"].bind("click", run_it)
+        document["run_btn"].bind("click", run_code)
     </script>
 
     <script>
-        function startApp() {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-ui').classList.remove('hidden');
-        }
-
-        function loadCode(code, name) {
-            document.getElementById('editor').value = code;
-            document.getElementById('lesson-name').innerText = name;
-            addChatMsg("ai", "ممتاز! قمت بتحميل " + name + ". جرب تشغيله الآن.");
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
+        // إرسال رسالة من الطالب
+        async function userSendMessage() {
+            const input = document.getElementById('ai-input');
             const text = input.value.trim();
             if (!text) return;
-
-            addChatMsg("user", text);
+            await processAIRequest(text);
             input.value = "";
-            const loading = addChatMsg("ai", "تِقني يفكر... ✍️");
+        }
+
+        // دالة المساعدة السحرية (الآن تعمل بشكل مستقل)
+        async function magicHelp() {
+            const code = document.getElementById('editor').value;
+            const task = document.getElementById('task-title').innerText;
+            const prompt = `أنا أحاول حل "${task}". هذا هو الكود الخاص بي: \n${code}\n اشرح لي الخطأ وساعدني في الحل.`;
+            await processAIRequest(prompt);
+        }
+
+        // محرك الذكاء الاصطناعي المركزي
+        async function processAIRequest(message) {
+            addChat("user", message);
+            const loading = addChat("ai", "تِقني يفكر... ✍️");
 
             try {
                 const response = await fetch('https://text.pollinations.ai/', {
@@ -207,23 +147,19 @@ print("مرحباً بكم مبرمجي المستقبل")</textarea>
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         messages: [
-                            { role: 'system', content: 'أنت تِقني، معلم حاسوب في مدرسة صلالة الشرقية بعمان. أجب بلطف وببساطة عن البرمجة.' },
-                            { role: 'user', content: text }
+                            { role: 'system', content: 'أنت تِقني، معلم حاسوب عماني ذكي ومساعد للطلاب.' },
+                            { role: 'user', content: message }
                         ]
                     })
                 });
-                loading.innerText = await response.text();
+                const data = await response.text();
+                loading.innerText = data;
             } catch (e) {
-                loading.innerText = "عذراً، حدث خطأ في الاتصال.";
+                loading.innerText = "عذراً، لم أستطع الاتصال بالخادم.";
             }
         }
 
-        function askAIAbtCode() {
-            const code = document.getElementById('editor').value;
-            sendMessage("اشرح لي هذا الكود وهل هو صحيح؟ \n" + code);
-        }
-
-        function addChatMsg(role, text) {
+        function addChat(role, text) {
             const flow = document.getElementById('chat-flow');
             const div = document.createElement('div');
             div.className = "msg " + role;
@@ -232,6 +168,21 @@ print("مرحباً بكم مبرمجي المستقبل")</textarea>
             flow.scrollTop = flow.scrollHeight;
             return div;
         }
+
+        function setLesson(code, title) {
+            document.getElementById('editor').value = code;
+            document.getElementById('task-title').innerText = title;
+        }
+
+        function openBook() { 
+            document.getElementById('book-modal').style.display = 'flex';
+            document.getElementById('book-content').innerHTML = `
+                <img src="https://img.freepik.com/free-vector/code-testing-concept-illustration_114360-1141.jpg" width="200">
+                <h3>الوحدة الأولى: البرمجة</h3>
+                <p>دالة الطباعة <b>print</b> تستخدم لعرض النتائج على الشاشة. <br> مثال: <code>print("صلالة")</code></p>
+            `;
+        }
+        function closeBook() { document.getElementById('book-modal').style.display = 'none'; }
     </script>
 </body>
 </html>
