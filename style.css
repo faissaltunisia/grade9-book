@@ -1,62 +1,58 @@
 :root {
-    --primary: #4a90e2;
-    --secondary: #2ecc71;
-    --bg: #f5f7fa;
-    --text: #2d3436;
-    --white: #ffffff;
+    --oman-red: #d92027;
+    --oman-green: #007e33;
+    --tech-blue: #0056b3;
+    --bg-light: #f4f6f9;
+    --dark-text: #2c3e50;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    direction: rtl; margin: 0; background: var(--bg); color: var(--text);
-    display: flex; height: 100vh;
+body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg-light); display: flex; flex-direction: column; height: 100vh; direction: rtl; }
+
+/* الشريط العلوي */
+.top-platform-bar {
+    height: 70px; background: white; border-bottom: 3px solid var(--oman-red);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index: 100;
 }
+.oman-emblem { height: 45px; margin-left: 15px; }
+.platform-info h1 { font-size: 1.1rem; margin: 0; color: var(--tech-blue); }
+.platform-info p { font-size: 0.8rem; margin: 0; color: var(--oman-green); font-weight: bold; }
+
+.main-container { display: flex; flex: 1; overflow: hidden; }
 
 /* القائمة الجانبية */
-.sidebar {
-    width: 350px; background: var(--white); border-left: 1px solid #e1e4e8;
-    display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+.sidebar { width: 280px; background: white; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+.sidebar-title { padding: 20px; font-weight: bold; color: var(--dark-text); border-bottom: 1px solid #eee; }
+.activities-scroll { flex: 1; overflow-y: auto; padding: 10px; }
+.act-item { 
+    padding: 12px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; 
+    cursor: pointer; transition: 0.3s; font-size: 0.9rem;
 }
+.act-item:hover { background: #f0f7ff; border-color: var(--tech-blue); color: var(--tech-blue); }
 
-.header-box { padding: 20px; background: var(--primary); color: white; text-align: center; }
+/* المساعد الذكي (WhatsApp Style) */
+.ai-chat-interface { width: 350px; background: #e5ddd5; display: flex; flex-direction: column; }
+.ai-chat-header { background: #075e54; color: white; padding: 10px 15px; display: flex; align-items: center; gap: 12px; }
+.ai-avatar { position: relative; }
+.ai-avatar img { width: 40px; border-radius: 50%; background: white; }
+.online-status { width: 10px; height: 10px; background: #25d366; border-radius: 50%; position: absolute; bottom: 0; right: 0; border: 2px solid #075e54; }
+.ai-name { display: flex; flex-direction: column; font-size: 0.85rem; }
 
-.lessons-list { flex: 1; overflow-y: auto; padding: 15px; }
+.chat-window { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+.msg { padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; max-width: 85%; line-height: 1.5; position: relative; }
+.ai-msg { background: white; align-self: flex-start; border-radius: 0 12px 12px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.user-msg { background: #dcf8c6; align-self: flex-end; border-radius: 12px 0 12px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
-.activity-card {
-    background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 10px;
-    margin-bottom: 15px; cursor: pointer; transition: 0.3s;
-}
-.activity-card:hover { border-color: var(--primary); transform: scale(1.02); }
-.activity-card h4 { margin: 0 0 5px 0; color: var(--primary); }
+.chat-footer { padding: 10px; background: #f0f0f0; display: flex; gap: 10px; align-items: center; }
+.chat-footer input { flex: 1; padding: 12px; border: none; border-radius: 25px; outline: none; }
+.send-btn { background: #075e54; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
-/* منطقة العمل */
-.editor-main { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 15px; }
-
-#code-editor {
-    flex: 1; background: #fafbfc; border: 2px solid #e1e4e8; border-radius: 12px;
-    padding: 20px; font-size: 18px; font-family: 'Consolas', monospace; outline: none;
-}
-
-.controls { display: flex; gap: 10px; }
-.btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-.btn-run { background: var(--secondary); color: white; }
-.btn-hint { background: #f1c40f; color: white; }
-
-#console-out {
-    height: 120px; background: #2d3436; color: #fff; padding: 15px;
-    border-radius: 12px; overflow-y: auto; font-family: monospace; white-space: pre-wrap;
-}
-
-/* المساعد الذكي */
-.ai-section {
-    width: 380px; background: var(--white); border-right: 1px solid #e1e4e8;
-    display: flex; flex-direction: column;
-}
-
-.chat-box { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; }
-.bubble { padding: 12px; border-radius: 15px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
-.bot-msg { background: #e3f2fd; color: #1565c0; align-self: flex-start; border-right: 4px solid var(--primary); }
-.user-msg { background: #f1f1f1; align-self: flex-end; }
-
-.chat-input-area { padding: 15px; display: flex; gap: 5px; background: white; border-top: 1px solid #eee; }
-.chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
+/* منطقة المحرر */
+.editor-section { flex: 1; background: #fff; display: flex; flex-direction: column; padding: 15px; }
+#code-editor { flex: 1; background: #fafafa; border: 1px solid #ddd; border-radius: 10px; padding: 20px; font-family: 'Consolas', monospace; font-size: 1.1rem; resize: none; outline: none; }
+.terminal-output { height: 140px; background: #1e1e1e; color: #fff; margin-top: 15px; border-radius: 10px; display: flex; flex-direction: column; }
+.terminal-head { padding: 5px 15px; background: #333; font-size: 0.7rem; color: #aaa; border-radius: 10px 10px 0 0; }
+#output-screen { padding: 10px 15px; overflow-y: auto; color: #00ff00; font-family: monospace; }
+.btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+.btn-run { background: var(--oman-green); color: white; }
+.btn-help { background: #f39c12; color: white; }
