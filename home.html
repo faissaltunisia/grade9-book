@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة تِقني AI المتقدمة | أ. فيصل العريبي</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
+
+    <style>
+        :root {
+            --neon-purple: #a855f7;
+            --neon-cyan: #22d3ee;
+            --neon-green: #10b981;
+            --neon-gold: #fbbf24;
+            --dark-core: #030712;
+            --glass: rgba(15, 23, 42, 0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: all 0.3s ease; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-core); color: #e2e8f0; overflow: hidden; }
+
+        /* --- شاشات النظام --- */
+        .screen { position: fixed; inset: 0; display: none; z-index: 10; }
+        .active-screen { display: flex; flex-direction: column; }
+
+        /* --- شاشة الترحيب --- */
+        #welcome-screen {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
+            align-items: center; justify-content: center; z-index: 5000;
+        }
+        .welcome-logo { font-size: 3.5rem; font-weight: 900; color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        /* --- البطاقات العائمة (Overlays) --- */
+        .overlay-card {
+            position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px; background: var(--glass);
+            backdrop-filter: blur(20px); border: 1px solid var(--neon-purple);
+            border-radius: 25px 25px 0 0; padding: 25px; z-index: 2000;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+        }
+        .overlay-card.show { bottom: 85px; } /* يظهر فوق الشريط السفلي */
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .list-item { background: rgba(255,255,255,0.05); margin: 10px 0; padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 1px solid transparent; }
+        .list-item:hover { background: rgba(168, 85, 247, 0.2); border-color: var(--neon-cyan); transform: scale(1.02); }
+
+        /* --- لوحة تحكم المعلم --- */
+        .admin-form input, .admin-form textarea {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--neon-purple);
+            color: white; padding: 12px; margin-bottom: 10px; border-radius: 8px;
+        }
+
+        /* --- الشريط السفلي (Dock) --- */
+        .bottom-nav {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 70px; background: var(--glass);
+            backdrop-filter: blur(15px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-around; align-items: center; z-index: 3000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #94a3b8; cursor: pointer; font-size: 0.7rem; }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
+        .nav-item.active { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+
+        /* --- صفحة البرمجة --- */
+        #editor { flex: 1; background: #010409; color: #79c0ff; padding: 15px; font-family: 'Fira Code'; font-size: 1rem; border: none; outline: none; direction: ltr; }
+        #console { height: 150px; background: #000; color: var(--neon-green); padding: 15px; font-family: 'Fira Code'; overflow-y: auto; border-top: 1px solid var(--neon-purple); direction: ltr; }
+        
+        /* البطاقة التعريفية للنشاط (قبل البرمجة) */
+        #brief-card { text-align: center; }
+        .btn-start-code { background: var(--neon-green); color: white; padding: 15px 30px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
+
+        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    </style>
+</head>
+<body onload="brython(); initData();">
+
+    <div id="welcome-screen" class="screen active-screen">
+        <div class="welcome-logo">تِقني AI</div>
+        <div class="designer-label">أ. فيصل العريبي</div>
+        <button onclick="showMainApp()" style="padding:15px 40px; border-radius:30px; border:2px solid var(--neon-cyan); background:transparent; color:white; cursor:pointer;">ابدأ الرحلة <i class="fas fa-rocket"></i></button>
+    </div>
+
+    <div id="main-app" class="screen">
+        <header style="padding:15px; background:var(--glass); border-bottom:1px solid var(--neon-purple); display:flex; justify-content:space-between;">
+            <span id="current-task-name" style="color:var(--neon-gold); font-weight:bold;">اختر نشاطاً للبدء</span>
+            <span style="font-size:0.8rem; opacity:0.6;">تِقني PRO</span>
+        </header>
+
+        <div style="flex:1; display:flex; flex-direction:column; position:relative;">
+            <div id="fix-loader" class="loader">
+                <div style="text-align:center"><i class="fas fa-magic fa-spin fa-2x"></i><p>المعلم يكتب...</p></div>
+            </div>
+            
+            <textarea id="editor" spellcheck="false" placeholder="# الكود سيظهر هنا بعد اختيار النشاط"></textarea>
+            
+            <div style="display:flex; gap:10px; padding:10px; background:#0f172a;">
+                <button class="btn-start-code" style="flex:2; margin:0;" onclick="window.run_it()"><i class="fas fa-play"></i> تشغيل</button>
+                <button class="btn-start-code" style="flex:1; margin:0; background:var(--neon-gold); color:black;" onclick="autoFix()"><i class="fas fa-wand-magic"></i></button>
+                <button class="btn-start-code" style="flex:1; margin:0; background:var(--neon-purple);" onclick="analyzeCode()"><i class="fas fa-brain"></i></button>
+            </div>
+
+            <div id="console"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('home', this)">
+                <i class="fas fa-home"></i><span>الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="openLessons()">
+                <i class="fas fa-book-open"></i><span>الدروس</span>
+            </div>
+            <div class="nav-item" onclick="openAdmin()">
+                <i class="fas fa-user-tie"></i><span>الإدارة</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="lessons-card" class="overlay-card">
+        <div class="card-header">
+            <h3><i class="fas fa-layer-group"></i> دروس المنهج</h3>
+            <i class="fas fa-times" onclick="closeOverlays()"></i>
+        </div>
+        <div id="lessons-list"></div>
+    </div>
+
+    <div id="activities-card" class="overlay-card">
+        <div class="card-header">
+            <h3 id="selected-lesson-name">الأنشطة</h3>
+            <i class="fas fa-chevron-left" onclick="openLessons()"></i>
+        </div>
+        <div id="activities-list"></div>
+    </div>
+
+    <div id="brief-card" class="overlay-card">
+        <div class="card-header">
+            <h3 id="brief-title">تفاصيل النشاط</h3>
+            <i class="fas fa-times" onclick="closeOverlays()"></i>
+        </div>
+        <div style="text-align:right; margin-bottom:20px;">
+            <p><b style="color:var(--neon-cyan)">المحتوى:</b> <span id="brief-content"></span></p>
+            <p><b style="color:var(--neon-gold)">المطلوب:</b> <span id="brief-req"></span></p>
+            <div style="background:rgba(255,215,0,0.1); padding:10px; border-radius:10px; font-size:0.85rem; border-right:4px solid var(--neon-gold)">
+                <i class="fas fa-lightbulb"></i> <span id="brief-guide"></span>
+            </div>
+        </div>
+        <button class="btn-start-code" onclick="startProgramming()">لنبدأ البرمجة <i class="fas fa-code"></i></button>
+    </div>
+
+    <div id="admin-card" class="overlay-card">
+        <div class="card-header">
+            <h3><i class="fas fa-plus-circle"></i> إضافة نشاط جديد</h3>
+            <i class="fas fa-times" onclick="closeOverlays()"></i>
+        </div>
+        <div class="admin-form">
+            <input type="text" id="adm-lesson" placeholder="اسم الدرس (مثال: الوحدة الأولى)">
+            <input type="text" id="adm-title" placeholder="اسم النشاط">
+            <textarea id="adm-content" placeholder="محتوى النشاط..."></textarea>
+            <textarea id="adm-req" placeholder="المطلوب من الطالب..."></textarea>
+            <textarea id="adm-guide" placeholder="توجيهات مساعدة..."></textarea>
+            <button class="btn-start-code" onclick="saveActivity()">حفظ ونشر النشاط</button>
+        </div>
+    </div>
+
+    <div id="analysis-pop" class="overlay-card" style="height:50%; overflow-y:auto;">
+        <div class="card-header"><b>تحليل المعلم الذكي</b><i class="fas fa-times" onclick="this.parentElement.parentElement.classList.remove('show')"></i></div>
+        <div id="analysis-text" style="font-size:0.9rem; line-height:1.6"></div>
+    </div>
+
+    <script type="text/python">
+        from browser import document, window
+        def r(e):
+            document["console"].text = ""
+            def log(*a): document["console"].text += " ".join(map(str, a)) + "\n"
+            try: exec(document["editor"].value, {"print": log, "input": window.prompt})
+            except Exception as ex: document["console"].text = f"Error: {ex}"
+        window.run_it = r
+    </script>
+
+    <script>
+        let activities = [];
+        let currentActivity = null;
+
+        function initData() {
+            const saved = localStorage.getItem('tech_ai_data');
+            activities = saved ? JSON.parse(saved) : [
+                { id: 1, lesson: 'أساسيات بايثون', title: 'دالة الطباعة', content: 'الطباعة هي وسيلة التواصل مع المستخدم.', req: 'اطبع جملة (أنا مبرمج ذكي).', guide: 'استخدم print() وضع النص بين علامات تنصيص.' }
+            ];
+        }
+
+        function showMainApp() {
+            document.getElementById('welcome-screen').classList.remove('active-screen');
+            document.getElementById('main-app').classList.add('active-screen');
+        }
+
+        function closeOverlays() {
+            document.querySelectorAll('.overlay-card').forEach(c => c.classList.remove('show'));
+        }
+
+        function openLessons() {
+            closeOverlays();
+            const list = document.getElementById('lessons-list');
+            const lessons = [...new Set(activities.map(a => a.lesson))];
+            list.innerHTML = lessons.map(l => `
+                <div class="list-item" onclick="openActivityList('${l}')">
+                    <i class="fas fa-folder" style="color:var(--neon-purple)"></i>
+                    <span>${l}</span>
+                </div>
+            `).join('');
+            document.getElementById('lessons-card').classList.add('show');
+        }
+
+        function openActivityList(lessonName) {
+            closeOverlays();
+            document.getElementById('selected-lesson-name').innerText = lessonName;
+            const list = document.getElementById('activities-list');
+            const filtered = activities.filter(a => a.lesson === lessonName);
+            list.innerHTML = filtered.map(a => `
+                <div class="list-item" onclick="openBrief(${a.id})">
+                    <div style="background:var(--neon-cyan); color:black; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">${a.id}</div>
+                    <span>${a.title}</span>
+                </div>
+            `).join('');
+            document.getElementById('activities-card').classList.add('show');
+        }
+
+        function openBrief(id) {
+            closeOverlays();
+            currentActivity = activities.find(a => a.id === id);
+            document.getElementById('brief-title').innerText = currentActivity.title;
+            document.getElementById('brief-content').innerText = currentActivity.content;
+            document.getElementById('brief-req').innerText = currentActivity.req;
+            document.getElementById('brief-guide').innerText = currentActivity.guide;
+            document.getElementById('brief-card').classList.add('show');
+        }
+
+        function startProgramming() {
+            closeOverlays();
+            document.getElementById('current-task-name').innerText = currentActivity.title;
+            document.getElementById('editor').value = `# نشاط: ${currentActivity.title}\n# المطلوب: ${currentActivity.req}\n\n`;
+            document.getElementById('console').innerText = ">>> بانتظار تشغيل الكود...";
+        }
+
+        function openAdmin() {
+            const p = prompt("كلمة مرور المعلم:");
+            if(p === "1234") {
+                closeOverlays();
+                document.getElementById('admin-card').classList.add('show');
+            }
+        }
+
+        function saveActivity() {
+            const newAct = {
+                id: activities.length + 1,
+                lesson: document.getElementById('adm-lesson').value,
+                title: document.getElementById('adm-title').value,
+                content: document.getElementById('adm-content').value,
+                req: document.getElementById('adm-req').value,
+                guide: document.getElementById('adm-guide').value
+            };
+            activities.push(newAct);
+            localStorage.setItem('tech_ai_data', JSON.stringify(activities));
+            alert("تم إضافة النشاط بنجاح!");
+            closeOverlays();
+        }
+
+        async function autoFix() {
+            const loader = document.getElementById('fix-loader');
+            loader.style.display = 'flex';
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    messages: [
+                        {role: 'system', content: 'You are a Python teacher. Return only fixed code.'},
+                        {role: 'user', content: `Task: ${currentActivity ? currentActivity.req : 'Free code'}\nCode: ${document.getElementById('editor').value}`}
+                    ]
+                })
+            });
+            document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
+            loader.style.display = 'none';
+        }
+
+        async function analyzeCode() {
+            const pop = document.getElementById('analysis-pop');
+            const txt = document.getElementById('analysis-text');
+            pop.classList.add('show');
+            txt.innerText = "جاري التحليل...";
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    messages: [{role:'system', content:'حلل الكود بالعربي بأسلوب تعليمي.'}, {role:'user', content: document.getElementById('editor').value}]
+                })
+            });
+            txt.innerText = await res.text();
+        }
+    </script>
+</body>
+</html>
