@@ -13,189 +13,141 @@
 
     <style>
         :root {
-            --bg-main: #020617;
+            --bg-dark: #0f172a;
             --primary: #6366f1;
             --success: #10b981;
             --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.07);
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; outline: none; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--bg-main); color: white; overflow: hidden; display: flex; flex-direction: column; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--bg-dark); color: white; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- شاشة الترحيب --- */
-        #splash {
-            position: fixed; inset: 0; background: var(--bg-main);
-            z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.8s ease-out;
-        }
-        .splash-robot { font-size: 4rem; color: var(--success); filter: drop-shadow(0 0 15px var(--success)); animation: float 3s infinite ease-in-out; }
+        header { height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--glass); }
 
-        /* --- الهيكل الرئيسي --- */
-        header { 
-            height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid var(--glass);
-        }
-
-        .main-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 10px; gap: 10px; }
+        .workspace { flex: 1; display: flex; flex-direction: column; padding: 10px; position: relative; gap: 10px; }
         
-        #editor { 
-            flex: 1.2; width: 100%; background: #0b1120; color: #38bdf8; padding: 15px; 
-            border-radius: 15px; border: 1px solid var(--glass); font-family: 'Consolas', monospace; 
-            font-size: 1.1rem; resize: none; line-height: 1.5;
+        #editor { flex: 1.2; background: #0b1120; color: #38bdf8; padding: 15px; border-radius: 15px; border: 1px solid var(--glass); font-family: monospace; font-size: 1.1rem; outline: none; resize: none; }
+        
+        #console { flex: 0.8; background: #000; color: var(--success); padding: 15px; border-radius: 15px; border: 1px solid rgba(16, 185, 129, 0.2); overflow-y: auto; font-family: monospace; }
+
+        /* --- بطاقة الإرشاد العائمة (المراقب الذكي) --- */
+        #smart-guide-card {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 250px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none; /* تظهر عند الكتابة */
+            animation: slideIn 0.5s ease-out;
         }
 
-        #console { 
-            flex: 0.8; width: 100%; background: #000; color: var(--success); padding: 15px; 
-            border-radius: 15px; border: 1px solid rgba(16, 185, 129, 0.2); overflow-y: auto; font-family: monospace;
-        }
+        .guide-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--glass); padding-bottom: 5px; }
+        #guide-msg { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
 
-        /* --- المساعد الذكي الموجه (Smart Guide) --- */
-        #smart-assistant {
-            position: fixed; bottom: 100px; left: 20px; width: 65px; height: 65px;
-            background: linear-gradient(135deg, #4f46e5, #9333ea); border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 999; cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2); animation: pulse 2s infinite;
-        }
+        /* أزرار التحكم السفلي */
+        footer { height: 85px; background: #1e293b; display: flex; align-items: center; padding: 0 10px; gap: 10px; border-top: 1px solid var(--glass); }
+        .btn { height: 55px; border-radius: 12px; border: none; color: white; font-weight: 900; font-size: 1rem; flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-run { background: var(--success); flex: 2; }
+        .btn-clear { background: #334155; color: #fca5a5; flex: 0.7; }
 
-        /* نافذة التوجيه (تِقني) */
-        #guide-window {
-            position: fixed; inset: 0; background: var(--bg-main); z-index: 2001;
-            display: none; flex-direction: column; animation: slideUp 0.3s ease-out;
-        }
-        .guide-header { padding: 20px; background: var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        #guide-content { flex: 1; padding: 20px; overflow-y: auto; line-height: 1.8; font-size: 1.1rem; background: radial-gradient(circle at top, #1e293b, #020617); }
-
-        /* --- شريط الأزرار النصية --- */
-        footer { 
-            height: 85px; background: #0f172a; display: flex; align-items: center; 
-            padding: 0 10px; gap: 10px; border-top: 1px solid var(--glass);
-        }
-        .btn {
-            height: 55px; border-radius: 12px; border: none; color: white; 
-            font-weight: 900; font-size: 1rem; flex: 1; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-run { background: var(--success); flex: 1.8; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
-        .btn-analyze { background: var(--warning); color: #000; }
-        .btn-clear { background: #334155; color: #fca5a5; flex: 0.6; }
-
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body onload="brython()">
 
-    <div id="splash">
-        <div class="splash-robot"><i class="fas fa-robot"></i></div>
-        <h1 style="margin:20px 0 5px; font-weight:900;">تِقني الذكي</h1>
-        <p style="color:var(--primary); font-weight:bold;">بإشراف أ. فيصل العريبي</p>
-        <button onclick="document.getElementById('splash').style.opacity='0'; setTimeout(()=>document.getElementById('splash').style.display='none',800)" 
-                style="margin-top:30px; padding:15px 40px; border-radius:30px; border:none; background:var(--success); color:white; font-weight:900; cursor:pointer;">
-            دخول المختبر
-        </button>
-    </div>
-
     <header>
-        <div style="font-weight: 900; font-size: 1.2rem; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-brain" style="color:var(--primary)"></i> تِقني LAB
-        </div>
-        <div style="font-size: 0.8rem; opacity: 0.7; font-weight:bold;">أ. فيصل العريبي</div>
+        <div style="font-weight: 900; font-size: 1.2rem;">تِقني <span style="color:var(--primary)">LAB</span></div>
+        <div style="font-size: 0.8rem; opacity: 0.7;">أ. فيصل العريبي</div>
     </header>
 
-    <div class="main-container">
-        <textarea id="editor" spellcheck="false"># اكتب كودك هنا وسيراقبك تِقني
-اسم = "فيصل"
-print("مرحباً بك يا", اسم)</textarea>
-        
-        <div id="console">>>> بانتظار تشغيل الكود...</div>
-    </div>
-
-    <div id="smart-assistant" onclick="openGuide()">
-        <i class="fas fa-robot" style="font-size: 2rem;"></i>
-    </div>
-
-    <div id="guide-window">
-        <div class="guide-header">
-            <strong style="font-size:1.2rem;"><i class="fas fa-magic"></i> توجيهات تِقني الذكية</strong>
-            <i class="fas fa-times" onclick="closeGuide()" style="font-size:1.8rem; cursor:pointer;"></i>
-        </div>
-        <div id="guide-content">
-            <div style="background:var(--glass); padding:20px; border-radius:15px; border-right:4px solid var(--success);">
-                أهلاً بك! أنا **تِقني**. سأقوم بمراقبة كودك وتوجيهك. <br><br>
-                💡 **نصيحة:** ابدأ دائماً بتعريف المتغيرات بأسماء واضحة، ولا تنسَ الأقواس في دالة `print`.
+    <div class="workspace">
+        <div id="smart-guide-card">
+            <div class="guide-header">
+                <span style="font-weight:bold; font-size:0.9rem; color:var(--success)"><i class="fas fa-robot"></i> تِقني يراقبك..</span>
+                <i class="fas fa-times" onclick="closeGuide()" style="cursor:pointer; font-size:1rem;"></i>
             </div>
-            <div id="ai-response-area" style="margin-top:20px;"></div>
+            <div id="guide-msg">ابدأ الكتابة وسأقوم بتحليل منطقك البرمجي هنا لتوجيهك.</div>
         </div>
-        <div style="padding:15px; border-top:1px solid var(--glass); display:flex; gap:10px; background:#0f172a;">
-            <input type="text" id="user-ask" placeholder="اسأل تِقني عن أي شيء..." style="flex:1; padding:15px; border-radius:12px; border:none; background:var(--glass); color:white;">
-            <button onclick="askAI()" style="width:60px; border-radius:12px; border:none; background:var(--primary); color:white;"><i class="fas fa-paper-plane"></i></button>
-        </div>
+
+        <textarea id="editor" oninput="handleTyping()" spellcheck="false" placeholder="ابدأ كتابة كود Python هنا..."></textarea>
+        <div id="console">>>> المخرجات ستظهر هنا...</div>
     </div>
 
     <footer>
         <button class="btn btn-clear" onclick="clearAll()">مسح</button>
         <button class="btn btn-run" onclick="runCode()">تشغيل البرنامج</button>
-        <button class="btn btn-analyze" onclick="analyzeLogic()">تحليل المنطق</button>
     </footer>
 
     <script type="text/python">
         from browser import document, window
-        def main_run(ev=None):
+        def execute_py(ev=None):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["console"].text = f"⚠️ تنبيه من تِقني:\nلديك خطأ في السطور. تأكد من الكتابة الصحيحة.\nالتفاصيل: {str(e)}"
-        window.execute_py = main_run
+                document["console"].text = f"خطأ برمي:\n{str(e)}"
+        window.bryRun = execute_py
     </script>
 
     <script>
-        function runCode() { window.execute_py(); }
-        
-        function openGuide() { document.getElementById('guide-window').style.display = 'flex'; }
-        function closeGuide() { document.getElementById('guide-window').style.display = 'none'; }
+        let typingTimer;
+        const guideCard = document.getElementById('smart-guide-card');
+        const guideMsg = document.getElementById('guide-msg');
 
-        async function analyzeLogic() {
-            openGuide();
-            const resArea = document.getElementById('ai-response-area');
-            resArea.innerHTML = "<div style='color:var(--warning)'>جاري مراقبة الكود وتحليله... ✨</div>";
+        function handleTyping() {
+            // إظهار البطاقة عند أول كتابة
+            if (guideCard.style.display !== 'block') {
+                guideCard.style.display = 'block';
+            }
+
+            // تصفير المؤقت وبدء التحليل بعد توقف الطالب عن الكتابة بـ 2 ثانية
+            clearTimeout(typingTimer);
+            guideMsg.innerHTML = "<i class='fas fa-spinner fa-spin'></i> جاري تحليل كودك الآن...";
             
+            typingTimer = setTimeout(performLiveAnalysis, 2000);
+        }
+
+        async function performLiveAnalysis() {
+            const code = document.getElementById('editor').value;
+            if (!code.trim()) return;
+
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         messages: [
-                            {role: 'system', content: 'أنت تِقني، مساعد ذكي يراقب طالب برمجة. حلل الكود بأسلوب تعليمي موجه: 1. ماذا يفعل الكود؟ 2. هل هناك أخطاء؟ 3. كيف يطوره؟ اجعل كلامك قصيراً ومحفزاً.'},
-                            {role: 'user', content: document.getElementById('editor').value}
+                            {role: 'system', content: 'أنت تِقني، مساعد برمجي ذكي. حلل هذا الكود الصغير للطالب وقدم له توجيهاً قصيراً جداً (سطرين) لإصلاح خطأ أو تحسين كوده بأسلوب تعليمي.'},
+                            {role: 'user', content: code}
                         ]
                     })
                 });
-                resArea.innerHTML = `<div style="background:rgba(99,102,241,0.1); padding:20px; border-radius:15px; border-right:4px solid var(--primary);">${await res.text()}</div>`;
-            } catch { resArea.innerHTML = "تعذر على تِقني الوصول للتحليل، تأكد من الإنترنت."; }
+                const data = await res.text();
+                guideMsg.innerText = data;
+            } catch {
+                guideMsg.innerText = "واجهت مشكلة في الاتصال، لكن استمر في المحاولة!";
+            }
         }
 
-        async function askAI() {
-            const input = document.getElementById('user-ask');
-            const resArea = document.getElementById('ai-response-area');
-            if(!input.value) return;
-            const q = input.value; input.value = "";
-            resArea.innerHTML = `<div style="text-align:left; color:var(--success); margin-bottom:10px;">سؤالك: ${q}</div>` + resArea.innerHTML;
-            
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'user', content: q}]})
-            });
-            resArea.innerHTML = `<div style="padding:15px; background:var(--glass); border-radius:10px; margin-bottom:20px;">تِقني: ${await res.text()}</div>` + resArea.innerHTML;
+        function closeGuide() {
+            guideCard.style.display = 'none';
         }
 
-        function clearAll() { if(confirm("أستاذ فيصل يسألك: هل تريد مسح الكود فعلاً؟")) document.getElementById('editor').value = ""; }
+        function runCode() { window.bryRun(); }
+        function clearAll() { 
+            if(confirm("مسح الكود؟")) {
+                document.getElementById('editor').value = "";
+                closeGuide();
+            }
+        }
     </script>
 </body>
 </html>
