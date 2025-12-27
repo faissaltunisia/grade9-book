@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تِقني AI - النسخة المطورة | أ. فيصل العريبي</title>
+    <title>منصة تِقني AI الشاملة | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,199 +13,221 @@
 
     <style>
         :root {
-            --p-color: #a855f7; --c-color: #22d3ee; --g-color: #10b981;
-            --gold: #fbbf24; --bg: #030712; --glass: rgba(15, 23, 42, 0.98);
+            --neon-purple: #a855f7; --neon-cyan: #22d3ee; --neon-green: #10b981;
+            --neon-gold: #fbbf24; --dark-bg: #030712; --glass: rgba(15, 23, 42, 0.98);
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--bg); color: #fff; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-bg); color: #fff; overflow: hidden; }
 
         /* --- 1. شاشة الترحيب الخيالية --- */
         #page-welcome {
             position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000;
         }
-        .portal-light {
-            position: absolute; width: 350px; height: 350px; background: var(--c-color);
-            filter: blur(130px); border-radius: 50%; opacity: 0.3; animation: pulse 4s infinite; pointer-events: none;
-        }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.8); opacity: 0.4; } }
-        .robot-img { font-size: 6rem; color: var(--c-color); filter: drop-shadow(0 0 20px var(--c-color)); animation: float 3s infinite ease-in-out; }
+        .portal-glow { position: absolute; width: 350px; height: 350px; background: var(--neon-cyan); filter: blur(130px); border-radius: 50%; opacity: 0.3; pointer-events: none; }
+        .robot-head { font-size: 6rem; color: var(--neon-cyan); filter: drop-shadow(0 0 20px var(--neon-cyan)); margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        
+        .entry-btn {
+            padding: 18px 50px; font-size: 1.4rem; font-weight: 900; color: #fff; background: transparent;
+            border: 2px solid var(--neon-cyan); border-radius: 50px; cursor: pointer; transition: 0.3s; position: relative; z-index: 10005;
+        }
+        .entry-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 40px var(--neon-cyan); }
 
-        /* --- نظام الصفحات المستقلة --- */
-        .page { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--bg); z-index: 10; }
+        /* --- نظام الصفحات --- */
+        .page { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--dark-bg); z-index: 10; }
         .page-active { display: flex; }
 
-        /* --- التصميم العام --- */
+        /* --- المحتوى (دمج الدروس والأنشطة) --- */
         .container { flex: 1; padding: 25px; overflow-y: auto; padding-bottom: 100px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.2); padding: 30px; border-radius: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .card:hover { border-color: var(--c-color); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card:hover { border-color: var(--neon-cyan); transform: translateY(-5px); }
 
-        /* --- شريط الأزرار الموزع (نصوص) --- */
-        .bottom-nav {
+        /* --- شريط الأزرار النصي الموزع --- */
+        .nav-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
-            background: var(--glass); backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            background: var(--glass); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1);
             display: flex; justify-content: space-between; align-items: center; padding: 0 25px; z-index: 5000;
         }
         .btn-group { display: flex; align-items: center; gap: 20px; }
-        .btn-txt { color: #fff; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
-        .btn-txt.danger { color: #ef4444; }
-        .btn-txt.success { color: var(--g-color); font-size: 1.1rem; border: 1px solid var(--g-color); padding: 8px 18px; border-radius: 12px; }
-        .teacher-icon { width: 52px; height: 52px; background: var(--gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 0 15px var(--gold); transition: 0.3s; }
-        .teacher-icon:hover { transform: scale(1.1) rotate(15deg); }
+        .btn-text { color: #fff; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
+        .btn-text.danger { color: #ef4444; }
+        .btn-text.success { color: var(--neon-green); font-size: 1.1rem; border: 1px solid var(--neon-green); padding: 8px 18px; border-radius: 12px; }
+        
+        .teacher-icon { 
+            width: 52px; height: 52px; background: var(--neon-gold); color: #000; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; 
+            box-shadow: 0 0 15px var(--neon-gold); 
+        }
 
-        /* --- منطقة البرمجة --- */
-        .editor-space { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
+        /* --- المحرر والكونسول --- */
+        .editor-wrapper { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
         #editor { flex: 1.5; background: #010409; color: #79c0ff; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #333; outline: none; direction: ltr; font-size: 1.1rem; }
-        #console { flex: 1; background: #000; color: var(--g-color); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; }
+        #console { flex: 1; background: #000; color: var(--neon-green); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; }
 
         /* --- البطاقات العائمة --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 9000; backdrop-filter: blur(10px); }
-        .modal { width: 85%; max-width: 500px; background: var(--glass); border: 2px solid var(--c-color); padding: 30px; border-radius: 30px; text-align: center; }
-        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; color: var(--gold); }
+        .modal { width: 85%; max-width: 500px; background: var(--glass); border: 2px solid var(--neon-cyan); padding: 30px; border-radius: 30px; text-align: center; }
+        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; color: var(--neon-gold); }
     </style>
 </head>
 <body onload="brython();">
 
     <div id="page-welcome" class="page page-active">
-        <div class="portal-light"></div>
-        <i class="fas fa-robot robot-img"></i>
-        <h1 style="font-size: 3.5rem; margin: 20px 0; font-weight: 900; color: var(--c-color);">تِقني AI</h1>
-        <p style="opacity: 0.7; letter-spacing: 5px; margin-bottom: 30px;">بوابة أ. فيصل العريبي للبرمجة</p>
-        <div class="btn-txt success" style="font-size: 1.3rem;" onclick="showPage('page-lessons')">دخول العالم الافتراضي</div>
+        <div class="portal-glow"></div>
+        <i class="fas fa-robot robot-head"></i>
+        <h1 style="font-size: 3.5rem; margin-bottom: 10px; font-weight: 900; color: var(--neon-cyan);">تِقني AI</h1>
+        <p style="opacity: 0.7; letter-spacing: 5px; margin-bottom: 40px;">العالم الافتراضي للأستاذ فيصل العريبي</p>
+        <button class="entry-btn" onclick="showPage('page-hub')">دخول المنصة</button>
     </div>
 
-    <div id="page-lessons" class="page">
-        <header style="padding: 30px; border-bottom: 1px solid #222;">
-            <h2><i class="fas fa-layer-group" style="color:var(--p-color)"></i> الوحدات الدراسية</h2>
+    <div id="page-hub" class="page">
+        <header style="padding: 25px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;">
+            <div id="hub-header-title"><h2><i class="fas fa-layer-group"></i> الوحدات الدراسية</h2></div>
+            <div id="back-to-units" style="display: none;" class="btn-text" onclick="renderUnits()"><i class="fas fa-arrow-right"></i> رجوع للوحدات</div>
         </header>
-        <div class="container grid">
-            <div class="card" onclick="openActivities('الوحدة 1: الأساسيات')">
-                <i class="fas fa-code-branch" style="font-size: 2.5rem; color: var(--c-color); margin-bottom: 15px;"></i>
-                <h3>الوحدة 1: الأساسيات</h3>
-                <p>تعلم مدخل البرمجة بلغة بايثون.</p>
+        
+        <div class="container grid" id="hub-container">
             </div>
-        </div>
-        <div class="bottom-nav"><div class="btn-txt danger" onclick="location.reload()">خروج</div></div>
-    </div>
 
-    <div id="page-activities" class="page">
-        <header style="padding: 20px; display: flex; align-items: center; gap: 20px;">
-            <div class="btn-txt" onclick="showPage('page-lessons')"><i class="fas fa-arrow-right"></i> رجوع</div>
-            <h2 id="unit-title-display">الأنشطة</h2>
-        </header>
-        <div class="container grid" id="activities-container"></div>
+        <div class="nav-bar" id="hub-nav">
+            <div class="btn-text danger" onclick="location.reload()">تسجيل الخروج</div>
+            <div class="btn-text" style="color: var(--neon-gold)">أ. فيصل العريبي</div>
+        </div>
     </div>
 
     <div id="page-editor" class="page">
-        <div class="editor-space">
+        <div class="editor-wrapper">
             <div style="position: relative; flex: 1.5;">
-                <div id="ai-loader" class="loader"><i class="fas fa-magic fa-spin fa-2x"></i><br>تِقني يفكر...</div>
+                <div id="ai-loading" class="loader"><i class="fas fa-wand-magic-sparkles fa-spin fa-2x"></i><br>تِقني يفكر...</div>
                 <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
             </div>
             <div id="console"></div>
         </div>
         
-        <div class="bottom-nav">
+        <div class="nav-bar">
             <div class="btn-group">
-                <div class="btn-txt" onclick="showPage('page-activities')">تغيير النشاط</div>
-                <div class="btn-txt danger" onclick="clearEditor()">مسح</div>
+                <div class="btn-text" onclick="showPage('page-hub')">تغيير النشاط</div>
+                <div class="btn-text danger" onclick="clearAll()">مسح الكود</div>
             </div>
             <div class="btn-group">
-                <div class="teacher-icon" onclick="askTeacher()" title="المعلم الذكي"><i class="fas fa-wand-magic-sparkles"></i></div>
-                <div class="btn-txt" style="color:var(--c-color)" onclick="analyzeCode()">تحليل الكود</div>
-                <div class="btn-txt success" id="run-btn">تشغيل البرمجة</div>
+                <div class="teacher-icon" onclick="aiTeacher()" title="المعلم الذكي"><i class="fas fa-magic"></i></div>
+                <div class="btn-text" style="color:var(--neon-cyan)" onclick="aiAnalyze()">تحليل الكود</div>
+                <div class="btn-text success" id="run-btn">تشغيل البرمجة</div>
             </div>
         </div>
     </div>
 
-    <div id="brief-overlay" class="overlay">
+    <div id="task-overlay" class="overlay">
         <div class="modal">
-            <h2 id="modal-title" style="color: var(--gold);"></h2>
-            <div id="modal-desc" style="text-align: right; margin: 25px 0; line-height: 1.7;"></div>
-            <div class="btn-txt success" style="display: block; text-align: center;" onclick="startCoding()">نبدأ البرمجة</div>
-            <p style="margin-top: 20px; cursor: pointer; opacity: 0.5;" onclick="closeOverlays()">إغلاق</p>
+            <h2 id="task-title" style="color: var(--neon-gold);"></h2>
+            <div id="task-desc" style="text-align: right; margin: 25px 0; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;"></div>
+            <button class="entry-btn" style="width: 100%; font-size: 1.1rem;" onclick="launchLab()">ابدأ التحدي الآن</button>
+            <p style="margin-top: 20px; cursor: pointer; opacity: 0.5;" onclick="closeOverlays()">إلغاء</p>
         </div>
     </div>
 
-    <div id="teacher-overlay" class="overlay">
-        <div class="modal" style="border-color: var(--gold);">
-            <h3 style="color: var(--gold);"><i class="fas fa-robot"></i> المعلم المذكي يقول:</h3>
-            <div id="teacher-text" style="text-align: right; margin: 20px 0; max-height: 300px; overflow-y: auto;"></div>
-            <div class="btn-txt" style="background: var(--gold); color: #000; padding: 10px; border-radius: 10px;" onclick="closeOverlays()">فهمت، سأحاول</div>
+    <div id="ai-overlay" class="overlay">
+        <div class="modal" style="border-color: var(--neon-gold);">
+            <h3 id="ai-modal-title" style="color: var(--neon-gold);"></h3>
+            <div id="ai-modal-body" style="text-align: right; margin: 20px 0; max-height: 300px; overflow-y: auto;"></div>
+            <button class="btn-text success" style="padding: 10px 30px;" onclick="closeOverlays()">مفهوم</button>
         </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def execute_py(ev):
+        def run_python(ev):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e: document["console"].text = f"⚠️ خطأ:\n{e}"
-        document["run-btn"].bind("click", execute_py)
+        document["run-btn"].bind("click", run_python)
     </script>
 
     <script>
-        const db = [
-            { id: 1, unit: 'الوحدة 1: الأساسيات', title: 'مرحباً بالعالم', desc: 'المطلوب: اجعل الروبوت يطبع نص "أنا مبرمج المستقبل".' },
-            { id: 2, unit: 'الوحدة 1: الأساسيات', title: 'حساب المسافة', desc: 'عرف متغير x=5 و y=10 ثم اطبع ناتج ضربهما.' }
+        const data = [
+            { id: 1, unit: 'الوحدة 1: لغة الآلة', title: 'تحية الروبوت', desc: 'اكتب كود يطبع عبارة "مرحباً بك في تِقني AI".' },
+            { id: 2, unit: 'الوحدة 1: لغة الآلة', title: 'حساب العمر', desc: 'عرف متغير باسم year واجعل قيمته 2025 ثم اطبعه.' },
+            { id: 3, unit: 'الوحدة 2: المنطق البرمجي', title: 'مستشعر الضوء', desc: 'استخدم if لطباعة "إضاءة" إذا كان المتغير light يساوي 1.' }
         ];
-        let currentAct = null;
+        
+        const units = [...new Set(data.map(item => item.unit))];
+        let activeTask = null;
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
             document.getElementById(id).classList.add('page-active');
+            if(id === 'page-hub') renderUnits();
         }
 
-        function openActivities(unit) {
-            showPage('page-activities');
-            document.getElementById('unit-title-display').innerText = unit;
-            const container = document.getElementById('activities-container');
-            const filtered = db.filter(a => a.unit === unit);
-            container.innerHTML = filtered.map(a => `
-                <div class="card" onclick="openBrief(${a.id})">
-                    <h3>${a.title}</h3>
-                    <small style="color:var(--g-color)">عرض النشاط ←</small>
+        function renderUnits() {
+            document.getElementById('hub-header-title').innerHTML = `<h2><i class="fas fa-layer-group"></i> الوحدات الدراسية</h2>`;
+            document.getElementById('back-to-units').style.display = 'none';
+            const container = document.getElementById('hub-container');
+            container.innerHTML = units.map(u => `
+                <div class="card" onclick="renderActivities('${u}')">
+                    <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                    <h3>${u}</h3>
+                    <small style="color:var(--neon-green)">عرض الأنشطة ←</small>
                 </div>
             `).join('');
         }
 
-        function openBrief(id) {
-            currentAct = db.find(a => a.id === id);
-            document.getElementById('modal-title').innerText = currentAct.title;
-            document.getElementById('modal-desc').innerText = currentAct.desc;
-            document.getElementById('brief-overlay').style.display = 'flex';
+        function renderActivities(unitName) {
+            document.getElementById('hub-header-title').innerHTML = `<h2><i class="fas fa-tasks"></i> ${unitName}</h2>`;
+            document.getElementById('back-to-units').style.display = 'block';
+            const container = document.getElementById('hub-container');
+            const filtered = data.filter(a => a.unit === unitName);
+            container.innerHTML = filtered.map(a => `
+                <div class="card" onclick="openTask(${a.id})">
+                    <h3>${a.title}</h3>
+                    <small style="color:var(--neon-gold)">فتح التحدي <i class="fas fa-play"></i></small>
+                </div>
+            `).join('');
         }
 
-        function startCoding() {
+        function openTask(id) {
+            activeTask = data.find(a => a.id === id);
+            document.getElementById('task-title').innerText = activeTask.title;
+            document.getElementById('task-desc').innerText = activeTask.desc;
+            document.getElementById('task-overlay').style.display = 'flex';
+        }
+
+        function launchLab() {
             closeOverlays();
             showPage('page-editor');
-            document.getElementById('editor').value = `# نشاط: ${currentAct.title}\n# المطلوب: ${currentAct.desc}\n\n`;
+            document.getElementById('editor').value = `# نشاط: ${activeTask.title}\n# المطلوب: ${activeTask.desc}\n\n`;
         }
 
         function closeOverlays() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
 
-        async function askTeacher() {
-            document.getElementById('ai-loader').style.display = 'flex';
+        async function aiTeacher() {
+            document.getElementById('ai-loading').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'You are a Python Teacher. Give a hint or correct the code in Arabic.'}, {role: 'user', content: document.getElementById('editor').value}]})
+                body: JSON.stringify({messages: [{role: 'system', content: 'Python expert. Complete the student code or fix it. Return ONLY code.'}, {role: 'user', content: document.getElementById('editor').value}]})
             });
-            document.getElementById('teacher-text').innerText = await res.text();
-            document.getElementById('ai-loader').style.display = 'none';
-            document.getElementById('teacher-overlay').style.display = 'flex';
+            document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
+            document.getElementById('ai-loading').style.display = 'none';
         }
 
-        async function analyzeCode() {
-            alert("تِقني يقوم بتحليل منطق الكود...");
-            askTeacher(); 
+        async function aiAnalyze() {
+            document.getElementById('ai-loading').style.display = 'flex';
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({messages: [{role: 'system', content: 'حلل كود الطالب باللغة العربية بأسلوب تعليمي مشجع.'}, {role: 'user', content: document.getElementById('editor').value}]})
+            });
+            const text = await res.text();
+            document.getElementById('ai-modal-title').innerText = "تحليل تِقني AI";
+            document.getElementById('ai-modal-body').innerText = text;
+            document.getElementById('ai-loading').style.display = 'none';
+            document.getElementById('ai-overlay').style.display = 'flex';
         }
 
-        function clearEditor() { if(confirm("هل تريد مسح الكود؟")) document.getElementById('editor').value = ""; }
+        function clearAll() { if(confirm("هل تريد مسح كودك بالكامل؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
