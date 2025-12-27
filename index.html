@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني الاحترافية | أ. فيصل العريبي</title>
+    <title>منصة تِقني AI المتقدمة | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -16,6 +16,7 @@
             --neon-purple: #a855f7;
             --neon-cyan: #22d3ee;
             --neon-green: #10b981;
+            --neon-gold: #fbbf24;
             --dark-core: #030712;
             --glass: rgba(255, 255, 255, 0.03);
         }
@@ -34,7 +35,7 @@
             border-bottom: 1px solid rgba(168, 85, 247, 0.3);
         }
         .brand { font-weight: 900; font-size: 1.4rem; }
-        .brand span { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+        .brand span { color: var(--neon-cyan); }
 
         .main-lab { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 10px; position: relative; }
         
@@ -49,13 +50,11 @@
             border: none; outline: none; resize: none; line-height: 1.6;
         }
 
-        /* بطاقة تحليل الكود العائمة */
         #analysis-card {
-            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            position: absolute; bottom: 15px; left: 15px; right: 15px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
             border: 1px solid var(--neon-cyan); border-radius: 12px;
-            padding: 15px; display: none; z-index: 100;
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+            padding: 12px; display: none; z-index: 100;
         }
 
         #console { 
@@ -65,7 +64,7 @@
             overflow-y: auto; font-size: 0.9rem;
         }
 
-        /* أيقونة المساعد للاستفسارات */
+        /* أيقونة المساعد الروبوت */
         #helper-bot {
             position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px;
             background: linear-gradient(135deg, var(--neon-purple), #6366f1);
@@ -78,63 +77,67 @@
         #chat-popup {
             position: fixed; bottom: 170px; left: 25px; width: 320px; height: 400px;
             background: #0f172a; border: 1px solid var(--neon-purple); border-radius: 15px;
-            display: none; flex-direction: column; z-index: 2000; box-shadow: 0 10px 30px #000;
+            display: none; flex-direction: column; z-index: 2000;
         }
 
+        /* شريط الأزرار - 3 أزرار */
         footer { 
             height: 80px; background: #0f172a; display: flex; align-items: center; 
-            padding: 0 15px; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 0 10px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05);
         }
         .btn-core {
-            height: 55px; border-radius: 12px; border: none; color: white; 
-            font-weight: 900; font-size: 0.95rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1;
+            height: 52px; border-radius: 10px; border: none; color: white; 
+            font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 5px; flex: 1;
         }
-        .btn-run { background: var(--neon-green); flex: 1.5; }
+        .btn-run { background: var(--neon-green); flex: 1.2; }
         .btn-analyze { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .btn-fix { background: transparent; border: 1px solid var(--neon-gold); color: var(--neon-gold); }
+
+        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 15px; }
     </style>
 </head>
 <body onload="brython()">
 
     <header>
-        <div class="brand">تِقني <span>AI.LAB</span></div>
+        <div class="brand">تِقني <span>AI.PRO</span></div>
         <div style="font-size: 0.8rem;">أ. فيصل العريبي</div>
     </header>
 
     <div class="main-lab">
         <div class="editor-wrapper">
+            <div id="loader" class="loading-overlay"><i class="fas fa-magic fa-spin"></i> جاري التصحيح...</div>
             <textarea id="editor" spellcheck="false" placeholder="اكتب كودك هنا..."></textarea>
             
             <div id="analysis-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <b style="color:var(--neon-cyan); font-size:0.8rem;">نتائج تحليل الكود:</b>
+                    <b style="color:var(--neon-cyan); font-size:0.8rem;">تحليل تِقني:</b>
                     <i class="fas fa-times" onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer"></i>
                 </div>
-                <div id="analysis-text" style="font-size:0.85rem; line-height:1.5;"></div>
+                <div id="analysis-text" style="font-size:0.8rem; line-height:1.4;"></div>
             </div>
         </div>
         <div id="console"></div>
     </div>
 
-    <div id="helper-bot" onclick="toggleChat()">
-        <i class="fas fa-comment-dots"></i>
-    </div>
+    <div id="helper-bot" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
 
     <div id="chat-popup">
-        <div style="padding:12px; background:var(--neon-purple); display:flex; justify-content:space-between;">
-            <b>مساعد تِقني</b>
+        <div style="padding:12px; background:var(--neon-purple); display:flex; justify-content:space-between; border-radius:15px 15px 0 0;">
+            <b>مساعد الدردشة</b>
             <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
         </div>
-        <div id="chat-box" style="flex:1; padding:10px; overflow-y:auto; font-size:0.85rem;">أهلاً بك! اسألني أي سؤال حول الدرس.</div>
-        <div style="padding:10px; border-top:1px solid var(--glass); display:flex; gap:5px;">
+        <div id="chat-box" style="flex:1; padding:10px; overflow-y:auto; font-size:0.85rem; background:#020617;"></div>
+        <div style="padding:10px; display:flex; gap:5px;">
             <input type="text" id="chat-in" style="flex:1; background:#1e293b; border:none; color:white; padding:8px; border-radius:5px;">
             <button onclick="askBot()" style="background:var(--neon-purple); border:none; color:white; padding:5px 10px; border-radius:5px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <footer>
-        <button class="btn-core btn-analyze" onclick="analyzeCode()"><i class="fas fa-microchip"></i> تحليل الكود</button>
-        <button class="btn-core btn-run" onclick="window.run_it()"><i class="fas fa-play"></i> تشغيل البرنامج</button>
+        <button class="btn-core btn-analyze" onclick="analyzeCode()"><i class="fas fa-search"></i> تحليل</button>
+        <button class="btn-core btn-fix" onclick="autoFixCode()"><i class="fas fa-magic"></i> تصحيح تلقائي</button>
+        <button class="btn-core btn-run" onclick="window.run_it()"><i class="fas fa-play"></i> تشغيل</button>
     </footer>
 
     <script type="text/python">
@@ -143,44 +146,66 @@
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
-            except Exception as e: document["console"].text = f"Error: {str(e)}"
+            except Exception as e: document["console"].text = f">> Error: {str(e)}"
         window.run_it = run_py
     </script>
 
     <script>
-        // وظيفة تحليل الكود (لزر التحليل)
         async function analyzeCode() {
             const card = document.getElementById('analysis-card');
             const txt = document.getElementById('analysis-text');
             card.style.display = 'block';
-            txt.innerHTML = "جاري فحص المنطق البرمجي...";
-            
+            txt.innerHTML = "جاري فحص المنطق...";
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'system', content:'حلل كود الطالب ووضح الأخطاء أو التحسينات باختصار.'}, {role:'user', content: document.getElementById('editor').value}]})
+                body: JSON.stringify({messages: [{role:'system', content:'حلل الكود باختصار شديد ووضح الخطأ.'}, {role:'user', content: document.getElementById('editor').value}]})
             });
             txt.innerText = await res.text();
         }
 
-        // وظيفة المساعد للإجابة على الأسئلة (للأيقونة)
+        async function autoFixCode() {
+            const editor = document.getElementById('editor');
+            const loader = document.getElementById('loader');
+            if(!editor.value.trim()) return;
+
+            loader.style.display = 'flex';
+            try {
+                const res = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        messages: [
+                            {role:'system', content:'أنت مصحح أكواد بايثون. أعد كتابة الكود الذي يرسله الطالب بشكل صحيح تماماً. أرسل الكود فقط بدون أي شرح أو نص.'},
+                            {role:'user', content: editor.value}
+                        ]
+                    })
+                });
+                const fixedCode = await res.text();
+                // تنظيف الاستجابة من علامات Markdown إذا وجدت
+                editor.value = fixedCode.replace(/```python|```/g, '').trim();
+            } catch {
+                alert("تعذر الاتصال بالمساعد الذكي.");
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
         function toggleChat() { 
             const pop = document.getElementById('chat-popup');
             pop.style.display = pop.style.display === 'flex' ? 'none' : 'flex'; 
         }
 
         async function askBot() {
-            const inp = document.getElementById('chat-in');
-            const box = document.getElementById('chat-box');
+            const inp = document.getElementById('chat-in'), box = document.getElementById('chat-box');
             if(!inp.value) return;
             const q = inp.value; inp.value = "";
-            box.innerHTML += `<div style="color:var(--neon-cyan); margin-top:10px;">أنت: ${q}</div>`;
+            box.innerHTML += `<div style="color:var(--neon-cyan)">أنت: ${q}</div>`;
             const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({messages: [{role:'user', content: q}]})
             });
-            box.innerHTML += `<div style="margin-top:5px;">تِقني: ${await res.text()}</div>`;
+            box.innerHTML += `<div style="margin-top:5px; padding-bottom:10px;">تِقني: ${await res.text()}</div>`;
             box.scrollTop = box.scrollHeight;
         }
     </script>
