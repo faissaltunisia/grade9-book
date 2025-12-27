@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني الاحترافية | أ. فيصل العريبي</title>
+    <title>منصة تِقني AI | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
@@ -15,132 +15,89 @@
         :root {
             --neon-purple: #a855f7;
             --neon-cyan: #22d3ee;
-            --neon-green: #10b981;
-            --dark-core: #030712;
-            --glass: rgba(255, 255, 255, 0.03);
+            --dark-bg: #030712;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-bg); color: white; overflow: hidden; display: flex; flex-direction: column; }
+
+        header { height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--neon-purple); }
+
+        .workspace { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; position: relative; }
+        #editor { flex: 1; background: #010409; color: #79c0ff; padding: 15px; border-radius: 12px; border: 1px solid var(--glass); font-family: monospace; font-size: 1.1rem; outline: none; resize: none; }
         
-        body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100vw; 
-            background: var(--dark-core); color: #e2e8f0; overflow: hidden;
-            display: flex; flex-direction: column;
-        }
+        #console { height: 120px; background: #000; color: #10b981; padding: 15px; border-radius: 12px; border: 1px solid rgba(168, 85, 247, 0.2); overflow-y: auto; font-family: monospace; }
 
-        /* خلفية برمجية متحركة خفيفة */
-        body::before {
-            content: "0110101011001"; position: fixed; top: 0; left: 0; 
-            font-family: monospace; font-size: 10px; color: rgba(34, 211, 238, 0.02);
-            word-break: break-all; width: 100%; z-index: -1; line-height: 1;
-        }
-
-        /* --- Header الاحترافي --- */
-        header { 
-            height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
-        }
-        .brand { font-weight: 900; font-size: 1.4rem; letter-spacing: 1px; }
-        .brand span { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
-
-        /* --- منطقة العمل --- */
-        .main-lab { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 10px; position: relative; }
-        
-        .editor-wrapper { 
-            flex: 1.2; position: relative; border-radius: 15px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        #editor { 
-            width: 100%; height: 100%; background: #010409; color: #79c0ff; 
-            padding: 20px; font-family: 'Fira Code', monospace; font-size: 1rem;
-            border: none; outline: none; resize: none; line-height: 1.6;
-        }
-
-        /* --- بطاقة الإرشاد العائمة المتطورة --- */
-        #smart-guide {
-            position: absolute; bottom: 20px; left: 20px; right: 20px;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px);
-            border: 1px solid var(--neon-purple); border-radius: 12px;
-            padding: 15px; display: none; z-index: 100;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* --- Console النتائج --- */
-        #console { 
-            flex: 0.8; background: #000; border-radius: 15px; 
-            border: 1px solid rgba(34, 211, 238, 0.2); padding: 15px;
-            font-family: 'Fira Code', monospace; color: var(--neon-green);
-            overflow-y: auto; font-size: 0.9rem; position: relative;
-        }
-        #console::before { content: "TERMINAL"; position: absolute; top: 5px; left: 10px; font-size: 0.6rem; opacity: 0.4; }
-
-        /* --- أيقونة المساعد الروبوت --- */
-        #ai-trigger {
-            position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px;
+        /* --- أيقونة المساعد الروبوت العائمة --- */
+        #ai-chat-trigger {
+            position: fixed; bottom: 100px; left: 20px; width: 60px; height: 60px;
             background: linear-gradient(135deg, var(--neon-purple), #6366f1);
-            border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 1.8rem; color: white; cursor: pointer; z-index: 1000;
-            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); border: 1px solid rgba(255,255,255,0.2);
-            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); border: 2px solid rgba(255,255,255,0.2);
+            animation: pulse 2s infinite;
         }
-        #ai-trigger:active { transform: scale(0.9); }
 
-        /* --- شريط الأزرار الفاخر --- */
-        footer { 
-            height: 80px; background: #0f172a; display: flex; align-items: center; 
-            padding: 0 15px; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05);
+        /* --- نافذة الدردشة المستقلة --- */
+        #chat-window {
+            position: fixed; bottom: 170px; left: 20px; width: 320px; height: 450px;
+            max-width: 85vw; max-height: 60vh; background: #0f172a; border: 1px solid var(--neon-purple);
+            border-radius: 20px; display: none; flex-direction: column; z-index: 2000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow: hidden;
+            animation: slideIn 0.3s ease-out;
         }
-        .btn-core {
-            height: 55px; border-radius: 12px; border: none; color: white; 
-            font-weight: 900; font-size: 0.95rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.2s;
-        }
-        .run-master { background: var(--neon-green); flex: 2; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
-        .analyze-master { background: transparent; border: 1px solid var(--neon-purple); flex: 1.2; color: var(--neon-purple); }
-        .clear-master { background: rgba(248, 113, 113, 0.1); color: #f87171; width: 60px; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-header { padding: 15px; background: var(--neon-purple); display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; background: #020617; }
+        .msg-bot { background: var(--glass); padding: 10px; border-radius: 15px 15px 15px 0; border: 1px solid rgba(168, 85, 247, 0.2); align-self: flex-start; max-width: 85%; }
+        .msg-user { background: var(--neon-purple); color: white; padding: 10px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; }
+        
+        .chat-input-area { padding: 10px; background: #0f172a; display: flex; gap: 8px; border-top: 1px solid var(--glass); }
+        .chat-input-area input { flex: 1; background: #1e293b; border: none; padding: 10px; border-radius: 10px; color: white; outline: none; }
+        .chat-input-area button { background: var(--neon-purple); border: none; width: 40px; border-radius: 10px; color: white; cursor: pointer; }
+
+        footer { height: 80px; background: #0f172a; display: flex; align-items: center; padding: 0 10px; gap: 10px; border-top: 1px solid var(--glass); }
+        .btn { height: 50px; border-radius: 10px; border: none; color: white; font-weight: bold; flex: 1; cursor: pointer; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="brython()">
 
     <header>
-        <div class="brand">تِقني <span>AI.LAB</span></div>
-        <div style="font-size: 0.8rem; border-right: 2px solid var(--neon-purple); padding-right: 10px;">
-            المشرف: <b>أ. فيصل العريبي</b>
-        </div>
+        <div style="font-weight: 900; font-size: 1.2rem;">تِقني <span style="color:var(--neon-cyan)">AI</span></div>
+        <div style="font-size: 0.8rem; opacity: 0.7;">أ. فيصل العريبي</div>
     </header>
 
-    <div class="main-lab">
-        <div class="editor-wrapper">
-            <textarea id="editor" oninput="showQuickHint()" spellcheck="false"># اكتب شيئاً مذهلاً اليوم
-name = "فيصل"
-print(f"مرحباً بك في مختبر الذكاء الاصطناعي، أستاذ {name}")</textarea>
-            
-            <div id="smart-guide">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span style="color:var(--neon-cyan); font-weight:bold; font-size:0.8rem;"><i class="fas fa-satellite-dish"></i> تحليل المسار الذكي:</span>
-                    <i class="fas fa-times" onclick="closeGuide()" style="cursor:pointer; opacity:0.5;"></i>
-                </div>
-                <div id="guide-content" style="font-size:0.85rem; color:#94a3b8; line-height:1.5;">جاهز لمراقبة كودك وتوجيهك خطوة بخطوة...</div>
-            </div>
-        </div>
-
+    <div class="workspace">
+        <textarea id="editor" spellcheck="false" placeholder="اكتب كودك هنا..."></textarea>
         <div id="console"></div>
     </div>
 
-    <div id="ai-trigger" onclick="deepAnalysis()">
+    <div id="ai-chat-trigger" onclick="toggleChat()">
         <i class="fas fa-robot"></i>
     </div>
 
+    <div id="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span><i class="fas fa-brain"></i> مساعد تِقني الذكي</span>
+            <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
+        </div>
+        <div class="chat-messages" id="chatMsgs">
+            <div class="msg-bot">أهلاً بك! أنا تِقني، مساعد الأستاذ فيصل العريبي. كيف يمكنني مساعدتك في فهم البرمجة اليوم؟</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="اسأل تِقني..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
     <footer>
-        <button class="btn-core clear-master" onclick="clearLab()"><i class="fas fa-trash-alt"></i></button>
-        <button class="btn-core run-master" onclick="runLab()"><i class="fas fa-play"></i> تشغيل النظام</button>
-        <button class="btn-core analyze-master" onclick="deepAnalysis()"><i class="fas fa-microchip"></i> تحليل تِقني</button>
+        <button class="btn" style="background:#334155;" onclick="document.getElementById('editor').value=''">مسح</button>
+        <button class="btn" style="background:#10b981; flex: 2;" onclick="window.run_it()">تشغيل البرنامج</button>
+        <button class="btn" style="background:var(--neon-purple);" onclick="toggleChat()">اسأل تِقني</button>
     </footer>
 
     <script type="text/python">
@@ -151,46 +108,48 @@ print(f"مرحباً بك في مختبر الذكاء الاصطناعي، أس
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["console"].text = f">> ERROR DETECTED:\n{str(e)}"
+                document["console"].text = f"خطأ برمي:\n{str(e)}"
         window.run_it = execute_py
     </script>
 
     <script>
-        function showQuickHint() {
-            const guide = document.getElementById('smart-guide');
-            const code = document.getElementById('editor').value;
-            if(code.length > 5) guide.style.display = 'block';
-            
-            // تحليل ذكي سريع
-            const content = document.getElementById('guide-content');
-            if(code.includes('print') && !code.includes('(')) {
-                content.innerHTML = "💡 <span style='color:white'>تنبيه:</span> يبدو أنك تحاول الطباعة، تذكر استخدام الأقواس `()` في Python 3.";
-            } else {
-                content.innerText = "أنت تكتب كوداً منظماً، استمر! اضغط على زر التحليل لفحص المنطق.";
-            }
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        async function deepAnalysis() {
-            const guide = document.getElementById('smart-guide');
-            const content = document.getElementById('guide-content');
-            guide.style.display = 'block';
-            content.innerHTML = "<i class='fas fa-sync fa-spin'></i> جاري فحص المصفوفات والمنطق البرمجي...";
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const msgs = document.getElementById('chatMsgs');
+            if(!input.value.trim()) return;
+
+            const userText = input.value;
+            msgs.innerHTML += `<div class="msg-user">${userText}</div>`;
+            input.value = "";
+            msgs.scrollTop = msgs.scrollHeight;
+
+            // استجابة الذكاء الاصطناعي
+            const loadingId = "load-" + Date.now();
+            msgs.innerHTML += `<div class="msg-bot" id="${loadingId}">... جاري التفكير</div>`;
             
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [{role:'system', content:'أنت تِقني، مساعد خبير. حلل الكود للطالب بأسلوب "سايبر" احترافي ومختصر جداً.'}, {role:'user', content: document.getElementById('editor').value}]
+                        messages: [
+                            {role: 'system', content: 'أنت تِقني، مساعد ذكي للأستاذ فيصل العريبي. ساعد الطالب في فهم لغة بايثون والبرمجة بوضوح واحترام.'},
+                            {role: 'user', content: userText}
+                        ]
                     })
                 });
-                content.innerText = await res.text();
-            } catch { content.innerText = "عذراً، فشل الاتصال بالقاعدة المركزية."; }
+                const data = await res.text();
+                document.getElementById(loadingId).innerText = data;
+            } catch {
+                document.getElementById(loadingId).innerText = "عذراً، واجهت مشكلة في الاتصال.";
+            }
+            msgs.scrollTop = msgs.scrollHeight;
         }
-
-        function runLab() { window.run_it(); }
-        function closeGuide() { document.getElementById('smart-guide').style.display = 'none'; }
-        function clearLab() { if(confirm("تصفير المختبر؟")) { document.getElementById('editor').value = ""; closeGuide(); } }
     </script>
 </body>
 </html>
