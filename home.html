@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تِقني AI Pro | أ. فيصل العريبي</title>
+    <title>تِقني AI Pro Mobile | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,131 +13,120 @@
 
     <style>
         :root {
-            --accent: #22d3ee; --bg: #020617; --card-bg: rgba(30, 41, 59, 0.6);
+            --accent: #22d3ee; --bg: #020617; --card-bg: rgba(30, 41, 59, 0.8);
             --p-color: #a855f7; --gold: #fbbf24; --green: #10b981;
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: all 0.3s ease; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: 0.2s; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--bg); color: #fff; overflow: hidden; }
 
         /* --- شاشة الترحيب --- */
         #page-welcome {
             position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b, #020617);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; text-align: center; padding: 20px;
         }
-        .welcome-card { text-align: center; z-index: 10001; }
         .entry-btn { 
-            background: transparent; color: #fff; border: 3px solid var(--accent); padding: 18px 60px; 
-            border-radius: 50px; font-weight: 900; font-size: 1.4rem; cursor: pointer; 
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+            background: transparent; color: #fff; border: 2px solid var(--accent); padding: 15px 40px; 
+            border-radius: 50px; font-weight: 900; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
         }
-        .entry-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 40px var(--accent); }
 
-        /* --- الهيكل العام والصفحات --- */
+        /* --- نظام الصفحات --- */
         .page { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 100; background: var(--bg); }
         .page-active { display: flex; }
 
-        /* --- تصميم البطاقات العائمة --- */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 30px; }
+        /* --- تصميم البطاقات للهاتف --- */
+        .container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+        .grid { display: flex; flex-direction: column; gap: 15px; }
         .floating-card {
-            background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px; padding: 30px; cursor: pointer; text-align: center;
+            background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 20px; text-align: center;
         }
-        .floating-card:hover { transform: translateY(-10px); border-color: var(--accent); background: rgba(30, 41, 59, 0.9); }
-        .card-icon { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+        .floating-card:active { transform: scale(0.97); background: rgba(34, 211, 238, 0.1); }
 
-        /* --- المختبر البرمجي --- */
-        .lab-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
-        #editor { flex: 1.5; background: #010409; color: #e6edf3; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; font-size: 1.1rem; border: 1px solid #1e293b; outline: none; direction: ltr; }
-        #console { flex: 1; background: #000; color: var(--green); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #1e293b; overflow-y: auto; direction: ltr; }
+        /* --- المحرر البرمجي للهاتف --- */
+        .lab-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 8px; }
+        #editor { flex: 1.2; background: #010409; color: #e6edf3; border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.95rem; border: 1px solid #1e293b; outline: none; direction: ltr; resize: none; }
+        #console { flex: 0.8; background: #000; color: var(--green); border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.85rem; border: 1px solid #1e293b; overflow-y: auto; direction: ltr; }
 
-        /* --- المساعد الذكي --- */
-        #ai-btn { position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px; background: var(--p-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 2000; box-shadow: 0 0 15px var(--p-color); }
-        #chat-window { 
-            position: fixed; bottom: 175px; left: 25px; width: 320px; height: 400px; 
-            background: #0f172a; border: 1px solid var(--p-color); border-radius: 20px; 
-            display: none; flex-direction: column; z-index: 2000; box-shadow: 0 10px 40px #000;
-        }
-
-        /* --- شريط الأزرار --- */
+        /* --- شريط التحكم السفلي (مضغوط للهاتف) --- */
         .nav-bar {
-            height: 85px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 25px; border-top: 1px solid #1e293b;
+            height: 75px; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-top: 1px solid #1e293b;
         }
-        .btn-text { cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
-        .run-btn { background: var(--green); color: #000; padding: 12px 25px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; }
+        .action-btn { color: #fff; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+        .action-btn i { font-size: 1.2rem; }
+        .run-btn-circle { background: var(--green); color: #000; width: 50px; height: 50px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 0 15px var(--green); }
 
-        /* --- بطاقة المهمة العائمة --- */
-        .overlay { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.95); display: none; align-items: center; justify-content: center; z-index: 5000; }
-        .task-card { width: 90%; max-width: 450px; background: var(--card-bg); border: 1px solid var(--accent); padding: 35px; border-radius: 30px; text-align: center; }
+        /* --- المساعد الذكي للهاتف --- */
+        #chat-window { 
+            position: fixed; top: 10%; left: 5%; width: 90%; height: 70%; 
+            background: #0f172a; border: 1px solid var(--p-color); border-radius: 20px; 
+            display: none; flex-direction: column; z-index: 5000; box-shadow: 0 10px 50px #000;
+        }
 
-        .loading-screen { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9000; color: var(--gold); flex-direction: column; gap: 10px; border-radius: 20px; }
+        /* --- بطاقة المهمة --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 6000; padding: 20px; }
+        .task-card { background: #1e293b; border: 1px solid var(--accent); padding: 25px; border-radius: 25px; text-align: center; width: 100%; }
+
+        .loading-screen { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 9000; color: var(--gold); flex-direction: column; border-radius: 15px; }
     </style>
 </head>
 <body onload="brython()">
 
     <div id="page-welcome">
-        <div class="welcome-card">
-            <i class="fas fa-robot" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--accent));"></i>
-            <h1 style="font-size: 3rem; margin: 0;">تِقني AI Pro</h1>
-            <p style="opacity: 0.6; margin-bottom: 40px;">العالم الافتراضي للأستاذ فيصل العريبي</p>
-            <button class="entry-btn" onclick="enterApp()">دخول المنصة <i class="fas fa-arrow-left"></i></button>
-        </div>
+        <i class="fas fa-robot" style="font-size: 4rem; color: var(--accent); margin-bottom: 15px;"></i>
+        <h1 style="font-size: 2.2rem; margin: 0;">تِقني AI</h1>
+        <p style="opacity: 0.6; font-size: 0.9rem; margin-bottom: 30px;">أ. فيصل العريبي</p>
+        <button class="entry-btn" onclick="enterApp()">دخول المنصة</button>
     </div>
 
     <div id="page-hub" class="page">
-        <header style="padding: 30px 40px 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1 id="hub-title"><i class="fas fa-map-signs"></i> خريطة الوحدات</h1>
-                <button id="back-to-units" style="display:none; background:none; border:1px solid #fff; color:#fff; padding:8px 15px; border-radius:10px; cursor:pointer;" onclick="renderUnits()">العودة للوحدات</button>
-            </div>
+        <header style="padding: 20px 15px 10px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 id="hub-title" style="margin:0; font-size:1.3rem;">خريطة الوحدات</h2>
+            <button id="back-to-units" style="display:none; background:none; border:1px solid #fff; color:#fff; font-size:0.8rem; padding:5px 10px; border-radius:8px;" onclick="renderUnits()">رجوع</button>
         </header>
-        <div class="grid-container" id="hub-content"></div>
-        <div class="nav-bar"><div class="btn-text" onclick="location.reload()"><i class="fas fa-power-off"></i> خروج</div></div>
+        <div class="container grid" id="hub-content"></div>
+        <div class="nav-bar">
+            <div class="action-btn" onclick="location.reload()"><i class="fas fa-power-off" style="color:#ef4444"></i>خروج</div>
+            <div style="font-size:0.8rem; opacity:0.5;">Mobile Version 1.0</div>
+        </div>
     </div>
 
     <div id="page-editor" class="page">
         <div class="lab-layout">
-            <div id="ai-loading" class="loading-screen"><i class="fas fa-magic fa-spin fa-2x"></i> تِقني يعالج طلبك...</div>
-            <textarea id="editor" spellcheck="false" placeholder="# ابدأ كتابة كود بايثون هنا..."></textarea>
+            <div id="ai-loading" class="loading-screen"><i class="fas fa-magic fa-spin fa-2x"></i> جاري المعالجة...</div>
+            <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
             <div id="console"></div>
         </div>
 
-        <div id="ai-btn" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
-        <div id="chat-window">
-            <div style="background:var(--p-color); padding:12px; font-weight:bold; display:flex; justify-content:space-between; border-radius:20px 20px 0 0;">
-                <span>دردشة تِقني AI</span>
-                <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
-            </div>
-            <div id="chat-box" style="flex:1; overflow-y:auto; padding:15px; font-size:0.85rem; line-height:1.6;"></div>
-            <div style="padding:10px; display:flex; gap:5px;">
-                <input type="text" id="chat-in" placeholder="اسأل تِقني..." style="flex:1; background:#1e293b; border:none; color:white; padding:8px; border-radius:8px;">
-                <button onclick="sendChat()" style="background:var(--p-color); border:none; color:white; padding:8px 12px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
-
         <div class="nav-bar">
-            <div class="btn-group" style="display:flex; gap:20px;">
-                <div class="btn-text" onclick="showPage('page-hub')"><i class="fas fa-exchange-alt"></i> تغيير النشاط</div>
-                <div class="btn-text" style="color:#ef4444" onclick="clearCode()"><i class="fas fa-trash-alt"></i> مسح</div>
-            </div>
-            <div class="btn-group" style="display:flex; gap:20px; align-items:center;">
-                <div class="btn-text" style="color:var(--gold)" onclick="aiTeacher()"><i class="fas fa-graduation-cap"></i> المعلم (حل)</div>
-                <div class="btn-text" style="color:var(--accent)" onclick="aiAnalyze()"><i class="fas fa-search-code"></i> محلل AI</div>
-                <button class="run-btn" id="run-btn">تشغيل <i class="fas fa-play"></i></button>
-            </div>
+            <div class="action-btn" onclick="showPage('page-hub')"><i class="fas fa-th"></i>الأنشطة</div>
+            <div class="action-btn" onclick="aiTeacher()" style="color:var(--gold)"><i class="fas fa-graduation-cap"></i>حل ذكي</div>
+            <button class="run-btn-circle" id="run-btn"><i class="fas fa-play"></i></button>
+            <div class="action-btn" onclick="aiAnalyze()" style="color:var(--accent)"><i class="fas fa-microscope"></i>تحليل</div>
+            <div class="action-btn" onclick="toggleChat()" style="color:var(--p-color)"><i class="fas fa-comment-dots"></i>تِقني</div>
+        </div>
+    </div>
+
+    <div id="chat-window">
+        <div style="background:var(--p-color); padding:10px; display:flex; justify-content:space-between; border-radius:20px 20px 0 0;">
+            <span>دردشة تِقني</span>
+            <i class="fas fa-times" onclick="toggleChat()"></i>
+        </div>
+        <div id="chat-box" style="flex:1; overflow-y:auto; padding:15px; font-size:0.85rem;"></div>
+        <div style="padding:10px; display:flex; gap:5px; background:rgba(255,255,255,0.05);">
+            <input type="text" id="chat-in" placeholder="اسأل هنا..." style="flex:1; background:#1e293b; border:none; color:white; padding:10px; border-radius:10px;">
+            <button onclick="sendChat()" style="background:var(--p-color); border:none; color:white; padding:10px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <div id="task-overlay" class="overlay">
         <div class="task-card">
-            <h2 id="t-title" style="color:var(--accent);"></h2>
-            <div style="text-align:right; margin:25px 0; background:rgba(0,0,0,0.2); padding:20px; border-radius:15px; border-right:4px solid var(--accent);">
-                <p><strong><i class="fas fa-flag"></i> الهدف:</strong> <span id="t-goal"></span></p>
-                <p><strong><i class="fas fa-lightbulb"></i> المهمة:</strong> <span id="t-task"></span></p>
-            </div>
-            <button class="entry-btn" style="width:100%" onclick="startCoding()">ابدأ التحدي <i class="fas fa-terminal"></i></button>
-            <p onclick="closeOverlay()" style="margin-top:20px; cursor:pointer; opacity:0.5;">إلغاء</p>
+            <h3 id="t-title" style="color:var(--accent); margin-top:0;"></h3>
+            <p id="t-task" style="font-size:0.9rem; line-height:1.6; text-align:right;"></p>
+            <button class="entry-btn" style="width:100%; margin-top:15px;" onclick="startCoding()">ابدأ الآن</button>
+            <p onclick="closeOverlay()" style="margin-top:15px; font-size:0.8rem; opacity:0.5;">إلغاء</p>
         </div>
     </div>
 
@@ -147,23 +136,19 @@
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
-            except Exception as e: document["console"].text = f"❌ خطأ في الكود:\n{e}"
+            except Exception as e: document["console"].text = f"خطأ:\n{e}"
         document["run-btn"].bind("click", run_py)
     </script>
 
     <script>
         const data = [
-            { id: 1, unit: 'الوحدة 1: الأساسيات', title: 'تحية تِقني', goal: 'تعلم دالة Print', task: 'اطبع رسالة ترحيبية باسمك الشخصي.' },
-            { id: 2, unit: 'الوحدة 1: الأساسيات', title: 'العمليات الحسابية', goal: 'استخدام المتغيرات', task: 'عرف متغيرين واطبع حاصل ضربهما.' },
-            { id: 3, unit: 'الوحدة 2: الشروط', title: 'مستشعر الذكاء', goal: 'فهم If Statement', task: 'اكتب كوداً يحدد إذا كان الرقم المدخل موجباً أو سالباً.' }
+            { id: 1, unit: 'الوحدة 1', title: 'دالة الطباعة', task: 'اطبع رسالة ترحيبية باسمك الشخصي باستخدام دالة print.' },
+            { id: 2, unit: 'الوحدة 1', title: 'المتغيرات', task: 'عرف متغير باسم x وقيمته 5 ثم اطبع المتغير.' }
         ];
 
         function enterApp() {
-            document.getElementById('page-welcome').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('page-welcome').style.display = 'none';
-                showPage('page-hub');
-            }, 500);
+            document.getElementById('page-welcome').style.display = 'none';
+            showPage('page-hub');
         }
 
         function showPage(id) {
@@ -173,14 +158,13 @@
         }
 
         function renderUnits() {
-            document.getElementById('hub-title').innerHTML = `<i class="fas fa-map-signs"></i> خريطة الوحدات`;
+            document.getElementById('hub-title').innerText = "خريطة الوحدات";
             document.getElementById('back-to-units').style.display = 'none';
             const units = [...new Set(data.map(d => d.unit))];
             document.getElementById('hub-content').innerHTML = units.map(u => `
                 <div class="floating-card" onclick="renderActivities('${u}')">
-                    <div class="card-icon"><i class="fas fa-folder"></i></div>
-                    <h3>${u}</h3>
-                    <p style="opacity:0.6">عرض الأنشطة المتاحة</p>
+                    <i class="fas fa-folder" style="font-size:2rem; color:var(--accent); margin-bottom:10px;"></i>
+                    <h3 style="margin:5px 0;">${u}</h3>
                 </div>
             `).join('');
         }
@@ -190,9 +174,8 @@
             document.getElementById('back-to-units').style.display = 'block';
             document.getElementById('hub-content').innerHTML = data.filter(d => d.unit === unit).map(d => `
                 <div class="floating-card" onclick="openTask(${d.id})">
-                    <div class="card-icon" style="color:var(--p-color)"><i class="fas fa-laptop-code"></i></div>
-                    <h3>${d.title}</h3>
-                    <p style="opacity:0.6">تحدي برمجي جديد</p>
+                    <i class="fas fa-code" style="font-size:1.5rem; color:var(--p-color); margin-bottom:10px;"></i>
+                    <h4 style="margin:5px 0;">${d.title}</h4>
                 </div>
             `).join('');
         }
@@ -201,7 +184,6 @@
         function openTask(id) {
             activeTask = data.find(d => d.id === id);
             document.getElementById('t-title').innerText = activeTask.title;
-            document.getElementById('t-goal').innerText = activeTask.goal;
             document.getElementById('t-task').innerText = activeTask.task;
             document.getElementById('task-overlay').style.display = 'flex';
         }
@@ -209,7 +191,7 @@
         function startCoding() {
             closeOverlay();
             showPage('page-editor');
-            document.getElementById('editor').value = `# نشاط: ${activeTask.title}\n# المهمة: ${activeTask.task}\n\n`;
+            document.getElementById('editor').value = `# ${activeTask.title}\n`;
         }
 
         function closeOverlay() { document.getElementById('task-overlay').style.display = 'none'; }
@@ -221,11 +203,7 @@
         async function aiTeacher() {
             document.getElementById('ai-loading').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [
-                    {role:'system', content:'You are a Python Tutor. Solve the student activity. Return ONLY code.'},
-                    {role:'user', content: `Activity: ${activeTask.task}`}
-                ]})
+                method: 'POST', body: JSON.stringify({messages: [{role:'system', content:'Solve the code. Return only code.'}, {role:'user', content: activeTask.task}]})
             });
             document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
             document.getElementById('ai-loading').style.display = 'none';
@@ -234,10 +212,9 @@
         async function aiAnalyze() {
             document.getElementById('ai-loading').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'system', content:'حلل كود الطالب بالعربي بوضوح.'}, {role:'user', content: document.getElementById('editor').value}]})
+                method: 'POST', body: JSON.stringify({messages: [{role:'user', content: "حلل كود بايثون التالي بالعربي: " + document.getElementById('editor').value}]})
             });
-            alert("تحليل تِقني AI:\n" + await res.text());
+            alert("تحليل تِقني:\n" + await res.text());
             document.getElementById('ai-loading').style.display = 'none';
         }
 
@@ -245,16 +222,11 @@
             const cin = document.getElementById('chat-in'), cbox = document.getElementById('chat-box');
             if(!cin.value) return;
             const msg = cin.value; cin.value = "";
-            cbox.innerHTML += `<div style="color:var(--accent); margin-bottom:5px;">أنت: ${msg}</div>`;
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'user', content: msg}]})
-            });
-            cbox.innerHTML += `<div style="color:white; opacity:0.8; margin-bottom:15px;">تِقني: ${await res.text()}</div>`;
+            cbox.innerHTML += `<div style="color:var(--accent); margin-bottom:10px;">أنت: ${msg}</div>`;
+            const res = await fetch('https://text.pollinations.ai/', { method: 'POST', body: JSON.stringify({messages: [{role:'user', content: msg}]}) });
+            cbox.innerHTML += `<div style="margin-bottom:15px; opacity:0.8;">تِقني: ${await res.text()}</div>`;
             cbox.scrollTop = cbox.scrollHeight;
         }
-
-        function clearCode() { if(confirm("حذف الكود بالكامل؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
