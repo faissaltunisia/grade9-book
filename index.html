@@ -13,206 +13,246 @@
 
     <style>
         :root {
-            --primary-gradient: linear-gradient(180deg, #1e293b 0%, #4c1d95 100%);
-            --btn-run: #10b981;
-            --btn-analyze: #ef4444;
-            --glass: rgba(255, 255, 255, 0.1);
-            --text-cyan: #22d3ee;
+            --bg-deep: #0b0f1a;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-glow: #22d3ee;
+            --glass-bg: rgba(255, 255, 255, 0.03);
         }
 
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100vw; 
-            background: var(--primary-gradient);
-            color: white; overflow: hidden;
+            background: var(--bg-deep); color: white; overflow: hidden;
         }
 
-        /* --- شاشة الترحيب (Splash) --- */
+        /* --- خلفية فضاء متحركة --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; opacity: 0.5; }
+
+        /* --- شاشة الدخول العصرية --- */
         #splash {
-            position: fixed; inset: 0; background: var(--primary-gradient);
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
             z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; transition: 1s ease;
+            transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .robot-logo {
-            font-size: 5rem; color: #fff; margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px var(--text-cyan));
-            animation: bounce 2s infinite;
-        }
-        .welcome-text { font-size: 2.5rem; font-weight: 900; margin-bottom: 5px; }
-        .designer-name { color: var(--text-cyan); font-weight: bold; margin-bottom: 40px; }
-        .enter-btn {
-            background: #10b981; border: none; padding: 15px 50px; border-radius: 30px;
-            color: white; font-weight: 900; font-size: 1.2rem; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        .splash-robot { font-size: 5rem; color: var(--accent-green); filter: drop-shadow(0 0 15px var(--accent-green)); animation: float 3s infinite ease-in-out; }
+        .platform-name { font-size: 3rem; font-weight: 900; margin: 15px 0; letter-spacing: -2px; }
+        .designer-tag { color: var(--text-glow); font-size: 1.1rem; margin-bottom: 40px; font-weight: bold; }
+        .start-btn {
+            background: var(--accent-green); color: white; border: none; padding: 18px 60px;
+            border-radius: 40px; font-weight: 900; font-size: 1.3rem; cursor: pointer;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
         }
 
-        /* --- الواجهة الرئيسية (التصميم المطابق للصور) --- */
-        .main-app { 
-            display: flex; flex-direction: column; height: 100vh; width: 100%;
-            opacity: 0; transition: 1s;
-        }
-
-        header {
+        /* --- الواجهة الرئيسية (Main UI) --- */
+        .app-container { display: flex; flex-direction: column; height: 100vh; opacity: 0; transition: 1s; }
+        
+        header { 
             padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);
         }
-        .header-title { display: flex; align-items: center; gap: 10px; font-weight: 900; }
+        .logo-text { font-weight: 900; font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
 
-        .editor-container {
-            flex: 1.2; padding: 15px; display: flex; flex-direction: column;
-        }
+        /* منطقة الكود والنتائج */
+        .workspace { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 12px; }
         #editor {
-            flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass);
-            border-radius: 20px; color: #d1d5db; padding: 20px;
-            font-family: 'Courier New', monospace; font-size: 1.1rem; outline: none; resize: none;
-        }
-
-        .output-container {
-            flex: 0.8; padding: 15px;
+            flex: 1.2; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; color: #a5f3fc; padding: 20px; font-family: 'Consolas', monospace;
+            font-size: 1.1rem; outline: none; line-height: 1.6;
         }
         #console {
-            height: 100%; background: rgba(0,0,0,0.6); border-radius: 20px;
-            border: 1px solid var(--glass); padding: 15px; font-family: monospace;
-            color: var(--btn-run); overflow-y: auto; font-size: 0.9rem;
+            flex: 0.8; background: rgba(0,0,0,0.8); border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px;
+            font-family: monospace; color: var(--accent-green); overflow-y: auto;
         }
 
-        /* المساعد العائم (مثل الدائرة في الصورة) */
+        /* --- أيقونة المساعد العائمة (Smart Bot) --- */
         #ai-fab {
-            position: fixed; bottom: 100px; left: 20px; width: 60px; height: 60px;
-            background: #4f46e5; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 1000;
-            border: 2px solid rgba(255,255,255,0.2);
+            position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, #4f46e5, #9333ea); border-radius: 20px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; cursor: pointer;
         }
 
-        /* شريط التحكم السفلي (الأزرار الدائرية والمميزة) */
-        .bottom-controls {
-            height: 90px; background: rgba(15, 23, 42, 0.9);
-            display: flex; align-items: center; justify-content: space-around;
-            padding: 0 10px; border-top: 1px solid var(--glass);
+        /* القائمة المساعدة (مثل التي في الصورة) */
+        #helper-menu {
+            position: fixed; bottom: 170px; left: 25px; width: 200px;
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 10px; display: none; flex-direction: column;
+            gap: 5px; border: 1px solid rgba(255,255,255,0.1); z-index: 1000;
         }
-        .btn-circle {
-            width: 55px; height: 55px; border-radius: 50%; border: none;
+        .menu-item {
+            padding: 12px; display: flex; align-items: center; gap: 10px;
+            font-size: 0.85rem; cursor: pointer; border-radius: 12px; transition: 0.2s;
+        }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: var(--text-glow); }
+
+        /* --- شريط التحكم السفلي (Navigation) --- */
+        .nav-bar {
+            height: 85px; background: #0f172a; display: flex; align-items: center;
+            justify-content: space-around; padding: 0 15px; border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-btn {
+            width: 55px; height: 55px; border-radius: 18px; border: none;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: white; cursor: pointer;
+            font-size: 1.3rem; color: white; cursor: pointer; transition: 0.3s;
         }
-        .run-btn { background: var(--btn-run); width: 70px; height: 55px; border-radius: 25px; }
-        .analyze-btn { background: var(--btn-analyze); }
-        .clear-btn { background: #374151; }
+        .btn-run { background: var(--accent-green); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); width: 75px; }
+        .btn-analyze { background: var(--accent-purple); box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3); }
+        .btn-trash { background: rgba(255,255,255,0.05); color: #94a3b8; }
 
-        /* نافذة التحليل والدردشة (Glassmorphism) */
-        .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; align-items: center; justify-content: center; z-index: 5000;
-            padding: 20px; backdrop-filter: blur(10px);
+        /* البطاقات المنبثقة */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 5000; display: none; align-items: center; justify-content: center; padding: 25px;
         }
-        .glass-card {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--glass);
+        .modal-card {
+            background: #1e293b; border: 1px solid var(--accent-purple);
             width: 100%; max-width: 400px; border-radius: 30px; padding: 25px;
-            display: flex; flex-direction: column; gap: 20px;
         }
 
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
     </style>
 </head>
 <body onload="brython()">
 
+    <canvas id="bg-canvas"></canvas>
+
     <div id="splash">
-        <div class="robot-logo"><i class="fas fa-robot"></i></div>
-        <div class="welcome-text">تِقني AI</div>
-        <div class="designer-name">تصميم أ. فيصل العريبي</div>
-        <button class="enter-btn" onclick="launchApp()">ابدأ البرمجة</button>
+        <div class="splash-robot"><i class="fas fa-robot"></i></div>
+        <div class="platform-name">تِقني AI</div>
+        <div class="designer-tag">بواسطة أ. فيصل العريبي</div>
+        <button class="start-btn" onclick="initApp()">دخول المنصة</button>
     </div>
 
-    <div class="main-app" id="app">
+    <div class="app-container" id="app">
         <header>
-            <div class="header-title"><i class="fas fa-code" style="color:var(--text-cyan)"></i> تِقني LAB</div>
-            <div style="font-size: 0.8rem; opacity: 0.7;">أ. فيصل العريبي</div>
+            <div class="logo-text"><i class="fas fa-terminal" style="color:var(--accent-green)"></i> تِقني LAB</div>
+            <div style="font-size: 0.75rem; opacity: 0.6;">إصدار برو | أ. فيصل العريبي</div>
         </header>
 
-        <div class="editor-container">
-            <textarea id="editor" spellcheck="false"># مرحباً بك في مختبرك
-print("أهلاً أستاذ فيصل")</textarea>
+        <div class="workspace">
+            <textarea id="editor" spellcheck="false"># مرحباً بك في عالم البرمجة
+print("أهلاً بك في منصة تِقني المطورة")</textarea>
+            
+            <div id="console">>>> جاهز لتشغيل التعليمات...</div>
         </div>
 
-        <div class="output-container">
-            <div id="console">>>> المخرجات ستظهر هنا...</div>
+        <div id="helper-menu">
+            <div class="menu-item" onclick="insertCode('print(\'Hello\')')"><i class="fas fa-print"></i> أمر الطباعة</div>
+            <div class="menu-item" onclick="insertCode('if x > 5:')"><i class="fas fa-code-branch"></i> الجمل الشرطية</div>
+            <div class="menu-item" onclick="insertCode('for i in range(5):')"><i class="fas fa-redo"></i> الحلقات التكرارية</div>
+            <div class="menu-item" onclick="insertCode('import math')"><i class="fas fa-square-root-alt"></i> مكتبة الرياضيات</div>
         </div>
 
-        <div id="ai-fab" onclick="openChat()">
-            <i class="fas fa-comment-dots"></i>
+        <div id="ai-fab" onclick="toggleHelper()">
+            <i class="fas fa-wand-magic-sparkles"></i>
         </div>
 
-        <footer class="bottom-controls">
-            <button class="btn-circle clear-btn" onclick="clearCode()"><i class="fas fa-eraser"></i></button>
-            <button class="btn-circle run-btn" onclick="runCode()"><i class="fas fa-play"></i></button>
-            <button class="btn-circle analyze-btn" onclick="openAnalysis()"><i class="fas fa-brain"></i></button>
-            <button class="btn-circle" style="background:#6366f1" onclick="window.location.reload()"><i class="fas fa-sync"></i></button>
+        <footer class="nav-bar">
+            <button class="nav-btn btn-trash" onclick="clearCode()"><i class="fas fa-trash-alt"></i></button>
+            <button class="nav-btn btn-run" onclick="runPyCode()"><i class="fas fa-play"></i></button>
+            <button class="nav-btn btn-analyze" onclick="startAIAnalysis()"><i class="fas fa-brain"></i></button>
+            <button class="nav-btn" style="background:#3b82f6" onclick="window.location.reload()"><i class="fas fa-home"></i></button>
         </footer>
     </div>
 
-    <div id="modal-overlay" class="overlay">
-        <div class="glass-card">
-            <h3 id="modal-title" style="margin:0; color:var(--text-cyan);"></h3>
-            <div id="modal-body" style="line-height:1.6; max-height:300px; overflow-y:auto;"></div>
-            <button onclick="closeModal()" style="background:var(--btn-run); border:none; padding:12px; border-radius:15px; color:white; font-weight:bold;">إغلاق والعودة</button>
+    <div class="modal-overlay" id="modal">
+        <div class="modal-card">
+            <h3 style="color:var(--text-glow); margin-top:0;"><i class="fas fa-atom"></i> تحليل الذكاء الاصطناعي</h3>
+            <div id="modal-text" style="color:#cbd5e1; line-height:1.6; margin-bottom:20px; font-size:0.9rem;"></div>
+            <button onclick="closeModal()" style="width:100%; background:var(--accent-purple); color:white; border:none; padding:15px; border-radius:15px; font-weight:bold;">موافق، أكمل</button>
         </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def run_py(ev=None):
+        def run_it(ev=None):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try:
                 exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["console"].text = f"خطأ:\n{str(e)}"
-        window.py_execute = run_py
+                document["console"].text = f"خطأ برمي:\n{str(e)}"
+        window.bryRun = run_it
     </script>
 
     <script>
-        function launchApp() {
+        // إعداد خلفية النجوم
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = Array(200).fill().map(() => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                v: Math.random() * 0.5
+            }));
+        }
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = 'white';
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+                s.y += s.v;
+                if(s.y > canvas.height) s.y = 0;
+            });
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener('resize', resize);
+        resize(); animate();
+
+        // وظائف المنصة
+        function initApp() {
             document.getElementById('splash').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('splash').style.display = 'none';
                 document.getElementById('app').style.opacity = '1';
-            }, 1000);
+            }, 800);
         }
 
-        function runCode() { window.py_execute(); }
+        function runPyCode() { window.bryRun(); }
 
-        async function openAnalysis() {
-            showModal("تحليل تِقني الذكي", "جاري تشريح الكود وفهم المنطق... ✨");
-            const code = document.getElementById('editor').value;
+        function toggleHelper() {
+            const menu = document.getElementById('helper-menu');
+            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function insertCode(code) {
+            const ed = document.getElementById('editor');
+            ed.value += "\n" + code;
+            toggleHelper();
+        }
+
+        async function startAIAnalysis() {
+            const modal = document.getElementById('modal');
+            const text = document.getElementById('modal-text');
+            modal.style.display = 'flex';
+            text.innerHTML = "تِقني يقوم بفحص الأكواد الآن... <i class='fas fa-spinner fa-spin'></i>";
+            
             try {
                 const res = await fetch('https://text.pollinations.ai/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        messages: [{role: 'system', content: 'أنت تِقني، معلم حاسوب. حلل الكود بوضوح.'}, {role: 'user', content: code}]
+                        messages: [{role: 'system', content: 'أنت تِقني، معلم حاسوب عماني خبير. حلل كود الطالب بوضوح وقدم له نصيحة تطويرية قصيرة.'}, {role: 'user', content: document.getElementById('editor').value}]
                     })
                 });
-                document.getElementById('modal-body').innerText = await res.text();
-            } catch { document.getElementById('modal-body').innerText = "تعذر الاتصال بالمساعد."; }
+                text.innerText = await res.text();
+            } catch { text.innerText = "تعذر الاتصال بخادم الذكاء الاصطناعي."; }
         }
 
-        function openChat() {
-            showModal("دردشة مع تِقني", "أهلاً بك! أنا مساعدك تِقني. اسألني عن أي شيء يخص درس اليوم أو الكود الخاص بك.");
-        }
-
-        function showModal(title, body) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerText = body;
-            document.getElementById('modal-overlay').style.display = 'flex';
-        }
-
-        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        
-        function clearCode() {
-            if(confirm("هل تريد مسح الكود؟")) document.getElementById('editor').value = "";
-        }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function clearCode() { if(confirm("مسح كافة العمل؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
