@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني AI المتقدمة | أ. فيصل العريبي</title>
+    <title>منصة تِقني AI الشاملة | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -24,98 +24,101 @@
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-core); color: #e2e8f0; overflow: hidden; }
 
-        /* --- 1. شاشة الترحيب --- */
+        /* 1. شاشة الترحيب */
         #welcome-screen {
             position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5000;
         }
-        .welcome-logo { font-size: 4rem; font-weight: 900; color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan); }
-        .designer-name { color: var(--neon-purple); font-size: 1.2rem; font-weight: bold; margin: 15px 0 40px 0; }
-        .btn-start { padding: 15px 40px; border-radius: 30px; border: 2px solid var(--neon-cyan); background: transparent; color: white; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
-        .btn-start:hover { background: var(--neon-cyan); color: black; box-shadow: 0 0 20px var(--neon-cyan); }
+        .welcome-logo { font-size: 3.5rem; font-weight: 900; color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan); }
+        .designer-label { color: var(--neon-purple); font-size: 1.1rem; margin-top: 10px; margin-bottom: 30px; font-weight: bold; }
 
-        /* --- 2. صفحة الدروس --- */
+        /* 2. صفحة الدروس */
         #lessons-screen {
             position: fixed; inset: 0; background: var(--dark-core); display: none; padding: 25px; overflow-y: auto; z-index: 4000;
         }
         .lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .pdf-btn { background: #ef4444; color: white; padding: 12px 25px; border-radius: 10px; text-decoration: none; font-weight: bold; }
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .activity-card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.3); padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; }
-        .activity-card:hover { border-color: var(--neon-cyan); transform: translateY(-5px); }
+        .pdf-btn { background: #ef4444; color: white; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: bold; }
 
-        /* --- 3. صفحة البرمجة (الوظائف الأصلية) --- */
+        /* 3. صفحة البرمجة */
         #coding-screen { display: none; height: 100%; flex-direction: column; }
         header { height: 60px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid var(--neon-purple); }
+        .activity-banner { background: #1e293b; padding: 10px 20px; border-bottom: 1px solid var(--neon-purple); }
         
-        .activity-info { background: #1e293b; padding: 12px 20px; border-bottom: 1px solid var(--neon-purple); }
-        .main-lab { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 10px; position: relative; }
-        .editor-wrapper { flex: 1.2; position: relative; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        #editor { width: 100%; height: 100%; background: #010409; color: #79c0ff; padding: 20px; font-family: 'Fira Code', monospace; font-size: 1.05rem; border: none; outline: none; resize: none; line-height: 1.6; text-align: left; direction: ltr; }
+        .main-lab { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; position: relative; }
+        .editor-wrapper { flex: 1.3; position: relative; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        #editor { width: 100%; height: 100%; background: #010409; color: #79c0ff; padding: 20px; font-family: 'Fira Code', monospace; font-size: 1rem; border: none; outline: none; direction: ltr; text-align: left; }
 
-        /* البطاقة العائمة */
-        #analysis-card { position: absolute; top: 20px; left: 20px; right: 20px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 15px; display: none; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #console { flex: 0.8; background: #000; border-radius: 15px; border: 1px solid rgba(34, 211, 238, 0.2); padding: 15px; font-family: 'Fira Code', monospace; color: var(--neon-green); overflow-y: auto; font-size: 0.95rem; direction: ltr; text-align: left; }
+        /* البطاقة العائمة للتحليل */
+        #analysis-card { position: absolute; top: 15px; left: 15px; right: 15px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--neon-cyan); border-radius: 12px; padding: 15px; display: none; z-index: 100; box-shadow: 0 10px 30px #000; }
+        
+        #console { flex: 0.7; background: #000; border-radius: 15px; border: 1px solid rgba(34, 211, 238, 0.2); padding: 15px; font-family: 'Fira Code', monospace; color: var(--neon-green); overflow-y: auto; direction: ltr; text-align: left; }
 
-        footer { height: 85px; background: #0f172a; display: flex; align-items: center; padding: 0 10px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .btn-core { height: 55px; border-radius: 12px; border: none; color: white; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1; }
+        /* مساعد ذكي (الروبوت) */
+        #helper-bot { position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--neon-purple), #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+        #chat-popup { position: fixed; bottom: 170px; left: 25px; width: 320px; height: 400px; background: #0f172a; border: 1px solid var(--neon-purple); border-radius: 15px; display: none; flex-direction: column; z-index: 2000; box-shadow: 0 10px 40px #000; overflow: hidden; }
+
+        footer { height: 80px; background: #0f172a; display: flex; align-items: center; padding: 0 10px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn-core { height: 50px; border-radius: 10px; border: none; color: white; font-weight: bold; cursor: pointer; flex: 1; font-size: 0.8rem; }
         .btn-run { background: var(--neon-green); flex: 1.5; }
         .btn-fix { background: var(--neon-gold); color: #000; }
-        .loader-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 15px; color: var(--neon-gold); text-align: center; }
+        
+        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 15px; color: var(--neon-gold); }
     </style>
 </head>
 <body onload="brython()">
 
     <div id="welcome-screen">
-        <div class="welcome-logo">تِقني AI.LAB</div>
-        <div class="designer-name">مصمم المساعد: أ. فيصل العريبي</div>
-        <button class="btn-start" onclick="showLessons()">دخول المنصة <i class="fas fa-sign-in-alt"></i></button>
+        <div class="welcome-logo">تِقني AI</div>
+        <div class="designer-label">مصمم المساعد الذكي: أ. فيصل العريبي</div>
+        <button style="padding: 15px 40px; border-radius: 30px; border: 2px solid var(--neon-cyan); background: transparent; color: white; cursor: pointer;" onclick="showLessons()">دخول المنصة <i class="fas fa-arrow-left"></i></button>
     </div>
 
     <div id="lessons-screen">
         <div class="lesson-header">
-            <h2><i class="fas fa-tasks"></i> الأنشطة والدروس البرمجية</h2>
+            <h2><i class="fas fa-graduation-cap"></i> الأنشطة البرمجية</h2>
             <a href="#" class="pdf-btn"><i class="fas fa-file-pdf"></i> كتاب الطالب PDF</a>
         </div>
         <div class="grid-container">
-            <div class="activity-card" onclick="goToCoding('نشاط 1: الطباعة', 'قم بكتابة برنامج يطبع (أهلاً بك في عالم البرمجة) و اسمك.')">
-                <h3>أساسيات الإخراج</h3>
+            <div class="activity-card" onclick="startActivity('نشاط 1', 'اكتب كود يطبع رسالة ترحيب باسمك.')">
+                <h3>أساسيات الطباعة</h3>
                 <p>تعلم استخدام دالة print.</p>
-                <span style="color:var(--neon-gold)">ابدأ النشاط ←</span>
+                <small style="color:var(--neon-gold)">ابدأ الآن ←</small>
             </div>
-            <div class="activity-card" onclick="goToCoding('نشاط 2: المتغيرات', 'عرف متغير باسم age وضع فيه عمرك، ثم اطبع رسالة تقول (عمري هو) مع المتغير.')">
-                <h3>المتغيرات الرقمية</h3>
-                <p>تخزين البيانات ومعالجتها.</p>
-                <span style="color:var(--neon-gold)">ابدأ النشاط ←</span>
+            <div class="activity-card" onclick="startActivity('نشاط 2', 'عرف متغير X بقيمة 10 ومتغير Y بقيمة 20 واطبع ناتج ضربهما.')">
+                <h3>العمليات الحسابية</h3>
+                <p>المتغيرات والضرب في بايثون.</p>
+                <small style="color:var(--neon-gold)">ابدأ الآن ←</small>
             </div>
         </div>
     </div>
 
     <div id="coding-screen">
         <header>
-            <div style="font-weight:900; font-size:1.2rem; color:var(--neon-cyan)">تِقني AI</div>
+            <div style="font-weight:900; color:var(--neon-cyan)">تِقني AI.PRO</div>
             <div style="font-size:0.8rem">أ. فيصل العريبي</div>
         </header>
 
-        <div class="activity-info">
-            <b id="act-title" style="color:var(--neon-gold)"></b>: <span id="act-desc" style="color:#cbd5e1; font-size:0.9rem"></span>
+        <div class="activity-banner">
+            <b id="act-title" style="color:var(--neon-gold)"></b>: <span id="act-desc"></span>
         </div>
 
         <div class="main-lab">
             <div class="editor-wrapper">
-                <div id="loading-overlay" class="loader-overlay">
-                    <div><i class="fas fa-wand-magic-sparkles fa-spin fa-2x"></i><p>المعلم يكتب الحل النموذجي...</p></div>
+                <div id="fix-loader" class="loader">
+                    <div style="text-align:center"><i class="fas fa-magic fa-spin fa-2x"></i><p>المعلم يكتب الكود...</p></div>
                 </div>
-                
+
                 <div id="analysis-card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <b style="color:var(--neon-cyan); font-size:0.9rem;"><i class="fas fa-microchip"></i> تحليل المعلم الذكي:</b>
+                        <b style="color:var(--neon-cyan); font-size:0.9rem;"><i class="fas fa-brain"></i> تحليل تِقني:</b>
                         <i class="fas fa-times" onclick="document.getElementById('analysis-card').style.display='none'" style="cursor:pointer"></i>
                     </div>
                     <div id="analysis-text" style="font-size:0.85rem; line-height:1.5;"></div>
                 </div>
 
-                <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
+                <textarea id="editor" spellcheck="false" placeholder="# اكتب كودك هنا..."></textarea>
             </div>
             <div id="console"></div>
         </div>
@@ -123,19 +126,32 @@
         <footer>
             <button class="btn-core" style="background:#334155; max-width:60px;" onclick="showLessons()"><i class="fas fa-home"></i></button>
             <button class="btn-core" style="background:transparent; border:1px solid var(--neon-cyan); color:var(--neon-cyan)" onclick="analyzeCode()">تحليل</button>
-            <button class="btn-core btn-fix" onclick="smartFix()"><i class="fas fa-magic"></i> المعلم الذكي</button>
-            <button class="btn-core btn-run" onclick="window.run_py()"><i class="fas fa-play"></i> تشغيل</button>
+            <button class="btn-core btn-fix" onclick="autoFix()"><i class="fas fa-wand-magic-sparkles"></i> المعلم الذكي</button>
+            <button class="btn-core btn-run" onclick="window.run_it()"><i class="fas fa-play"></i> تشغيل</button>
         </footer>
+    </div>
+
+    <div id="helper-bot" onclick="toggleChat()"><i class="fas fa-robot"></i></div>
+    <div id="chat-popup">
+        <div style="padding:15px; background:var(--neon-purple); display:flex; justify-content:space-between; font-weight:bold;">
+            <span>مساعد تِقني الذكي</span>
+            <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
+        </div>
+        <div id="chat-box" style="flex:1; padding:15px; overflow-y:auto; background:#020617; font-size:0.85rem;">كيف يمكنني مساعدتك في بايثون؟</div>
+        <div style="padding:10px; display:flex; gap:5px; background:#0f172a;">
+            <input type="text" id="chat-in" style="flex:1; background:#1e293b; border:none; color:white; padding:10px; border-radius:8px;">
+            <button onclick="askBot()" style="background:var(--neon-purple); border:none; color:white; padding:10px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
+        </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def execute_py(ev=None):
+        def run_py(ev=None):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
             except Exception as e: document["console"].text = f">> Error: {str(e)}"
-        window.run_py = execute_py
+        window.run_it = run_py
     </script>
 
     <script>
@@ -145,44 +161,39 @@
             document.getElementById('coding-screen').style.display = 'none';
         }
 
-        function goToCoding(title, desc) {
+        function startActivity(title, desc) {
             document.getElementById('lessons-screen').style.display = 'none';
             document.getElementById('coding-screen').style.display = 'flex';
             document.getElementById('act-title').innerText = title;
             document.getElementById('act-desc').innerText = desc;
             document.getElementById('editor').value = "";
-            document.getElementById('console').innerText = ">>> بانتظار كتابة الكود...";
+            document.getElementById('console').innerText = "";
         }
 
-        async function smartFix() {
+        async function autoFix() {
             const editor = document.getElementById('editor');
-            const loader = document.getElementById('loading-overlay');
-            const title = document.getElementById('act-title').innerText;
-            const desc = document.getElementById('act-desc').innerText;
-
+            const loader = document.getElementById('fix-loader');
             loader.style.display = 'flex';
-            try {
-                const res = await fetch('https://text.pollinations.ai/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        messages: [
-                            {role: 'system', content: `أنت معلم حاسب. الطالب يحل (${title}) ومطلوبه (${desc}). أكمل الكود بدلاً عنه واجعله مثالياً. أرسل الكود النقي فقط.`},
-                            {role: 'user', content: editor.value || "# ابدأ الحل"}
-                        ]
-                    })
-                });
-                let result = await res.text();
-                editor.value = result.replace(/```python/gi, '').replace(/```/g, '').trim();
-            } catch (e) { alert("خطأ في الاتصال."); }
-            finally { loader.style.display = 'none'; }
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    messages: [
+                        {role: 'system', content: 'You are an expert Python Teacher. Complete the code for the student. Return ONLY code.'},
+                        {role: 'user', content: `Activity: ${document.getElementById('act-desc').innerText}\nCode: ${editor.value}`}
+                    ]
+                })
+            });
+            let result = await res.text();
+            editor.value = result.replace(/```python/gi, '').replace(/```/g, '').trim();
+            loader.style.display = 'none';
         }
 
         async function analyzeCode() {
             const card = document.getElementById('analysis-card');
             const txt = document.getElementById('analysis-text');
             card.style.display = 'block';
-            txt.innerHTML = "جاري التحليل...";
+            txt.innerText = "جاري التحليل...";
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -191,6 +202,24 @@
                 })
             });
             txt.innerText = await res.text();
+        }
+
+        function toggleChat() {
+            const pop = document.getElementById('chat-popup');
+            pop.style.display = (pop.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        async function askBot() {
+            const inp = document.getElementById('chat-in'), box = document.getElementById('chat-box');
+            if(!inp.value) return;
+            const q = inp.value; inp.value = "";
+            box.innerHTML += `<div style="color:var(--neon-cyan); margin:5px 0;">أنت: ${q}</div>`;
+            const res = await fetch('https://text.pollinations.ai/', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({messages: [{role: 'user', content: q}]})
+            });
+            box.innerHTML += `<div style="margin-bottom:10px;">تِقني: ${await res.text()}</div>`;
+            box.scrollTop = box.scrollHeight;
         }
     </script>
 </body>
