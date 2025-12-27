@@ -13,150 +13,114 @@
 
     <style>
         :root {
-            --neon-purple: #a855f7; --neon-cyan: #22d3ee; --neon-green: #10b981;
-            --neon-gold: #fbbf24; --dark-bg: #030712; --glass: rgba(15, 23, 42, 0.98);
+            --neon-cyan: #22d3ee; --neon-gold: #fbbf24; --dark-bg: #030712; --glass: rgba(15, 23, 42, 0.98);
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-bg); color: #fff; overflow: hidden; }
 
-        /* --- شاشة الترحيب --- */
+        /* --- شاشة الترحيب (تم تأمينها) --- */
         #page-welcome {
-            position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000;
+            position: fixed; inset: 0; background: #030712;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999;
         }
-        .portal-glow { position: absolute; width: 350px; height: 350px; background: var(--neon-cyan); filter: blur(130px); border-radius: 50%; opacity: 0.3; pointer-events: none; }
-        .robot-head { font-size: 6rem; color: var(--neon-cyan); filter: drop-shadow(0 0 20px var(--neon-cyan)); margin-bottom: 20px; animation: float 3s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         
         .entry-btn {
-            padding: 18px 50px; font-size: 1.4rem; font-weight: 900; color: #fff; background: transparent;
-            border: 2px solid var(--neon-cyan); border-radius: 50px; cursor: pointer; transition: 0.3s; 
-            position: relative; z-index: 10005 !important; /* ضمان أولوية الضغط */
+            padding: 20px 60px; font-size: 1.5rem; font-weight: 900; color: #fff; 
+            background: transparent; border: 3px solid var(--neon-cyan); border-radius: 50px; 
+            cursor: pointer; transition: 0.3s; pointer-events: auto !important;
         }
-        .entry-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 40px var(--neon-cyan); transform: scale(1.05); }
-        .entry-btn:active { transform: scale(0.95); }
+        .entry-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 30px var(--neon-cyan); }
 
         /* --- نظام الصفحات --- */
-        .page { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--dark-bg); z-index: 10; }
+        .page { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--dark-bg); z-index: 100; }
         .page-active { display: flex; }
 
-        /* --- المحتوى (الوحدات والأنشطة) --- */
-        .container { flex: 1; padding: 25px; overflow-y: auto; padding-bottom: 100px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.2); padding: 30px; border-radius: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .card:hover { border-color: var(--neon-cyan); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        /* --- المحتوى --- */
+        .container { flex: 1; padding: 20px; overflow-y: auto; padding-bottom: 100px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .card { background: var(--glass); border: 1px solid #334155; padding: 25px; border-radius: 15px; cursor: pointer; text-align: center; }
 
-        /* --- شريط الأزرار الموزع --- */
+        /* --- الأزرار الموزعة --- */
         .nav-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
-            background: var(--glass); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 25px; z-index: 5000;
+            position: fixed; bottom: 0; width: 100%; height: 80px;
+            background: #0f172a; border-top: 1px solid #334155;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 500;
         }
-        .btn-group { display: flex; align-items: center; gap: 20px; }
-        .btn-text { color: #fff; font-weight: bold; cursor: pointer; font-size: 0.95rem; }
-        .btn-text.danger { color: #ef4444; }
-        .btn-text.success { color: var(--neon-green); font-size: 1.1rem; border: 1px solid var(--neon-green); padding: 8px 18px; border-radius: 12px; }
+        .btn-group { display: flex; align-items: center; gap: 15px; }
+        .btn-text { color: #fff; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .btn-run { background: #10b981; color: white; padding: 8px 20px; border-radius: 10px; border: none; font-weight: bold; }
         
-        .teacher-icon { 
-            width: 52px; height: 52px; background: var(--neon-gold); color: #000; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; 
-            box-shadow: 0 0 15px var(--neon-gold); 
-        }
+        .teacher-gold { width: 45px; height: 45px; background: var(--neon-gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         /* --- المحرر --- */
-        .editor-wrapper { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
-        #editor { flex: 1.5; background: #010409; color: #79c0ff; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #333; outline: none; direction: ltr; font-size: 1.1rem; }
-        #console { flex: 1; background: #000; color: var(--neon-green); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; }
+        #editor { flex: 1.5; background: #010409; color: #79c0ff; border: none; padding: 20px; font-family: 'Fira Code'; direction: ltr; font-size: 1rem; outline: none; }
+        #console { flex: 1; background: #000; color: #10b981; padding: 20px; font-family: 'Fira Code'; border-top: 1px solid #334155; overflow-y: auto; direction: ltr; }
 
-        /* --- البطاقات العائمة --- */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 11000; backdrop-filter: blur(10px); }
-        .modal { width: 85%; max-width: 500px; background: var(--glass); border: 2px solid var(--neon-cyan); padding: 30px; border-radius: 30px; text-align: center; }
-        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; color: var(--neon-gold); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal { width: 90%; max-width: 400px; background: #1e293b; padding: 25px; border-radius: 20px; text-align: center; border: 1px solid var(--neon-cyan); }
     </style>
 </head>
-<body onload="brython();">
+<body onload="brython()">
 
-    <div id="page-welcome" class="page page-active">
-        <div class="portal-glow"></div>
-        <i class="fas fa-robot robot-head"></i>
-        <h1 style="font-size: 3.5rem; margin-bottom: 10px; font-weight: 900; color: var(--neon-cyan);">تِقني AI</h1>
-        <p style="opacity: 0.7; letter-spacing: 5px; margin-bottom: 40px;">بوابة أ. فيصل العريبي</p>
-        <button class="entry-btn" onclick="showPage('page-hub')">دخول المنصة</button>
+    <div id="page-welcome">
+        <i class="fas fa-robot" style="font-size: 5rem; color: var(--neon-cyan); margin-bottom: 20px;"></i>
+        <h1 style="margin-bottom: 40px;">تِقني AI</h1>
+        <button class="entry-btn" onclick="goToHub()">دخول المنصة</button>
     </div>
 
     <div id="page-hub" class="page">
-        <header style="padding: 25px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;">
-            <div id="hub-header-title"><h2><i class="fas fa-layer-group"></i> الوحدات الدراسية</h2></div>
-            <div id="back-to-units" style="display: none;" class="btn-text" onclick="renderUnits()"><i class="fas fa-arrow-right"></i> رجوع للوحدات</div>
+        <header style="padding: 20px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between;">
+            <h2 id="hub-title">الوحدات الدراسية</h2>
+            <button id="back-btn" style="display:none; background:none; border:1px solid #fff; color:#fff; border-radius:5px;" onclick="renderUnits()">رجوع</button>
         </header>
-        
         <div class="container grid" id="hub-container"></div>
-
-        <div class="nav-bar">
-            <div class="btn-text danger" onclick="location.reload()">تسجيل الخروج</div>
-            <div class="btn-text" style="color: var(--neon-gold)">أ. فيصل العريبي</div>
-        </div>
     </div>
 
     <div id="page-editor" class="page">
-        <div class="editor-wrapper">
-            <div style="position: relative; flex: 1.5;">
-                <div id="ai-loading" class="loader"><i class="fas fa-magic fa-spin fa-2x"></i><br>تِقني يفكر...</div>
-                <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
-            </div>
-            <div id="console"></div>
-        </div>
-        
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div id="console"></div>
         <div class="nav-bar">
             <div class="btn-group">
                 <div class="btn-text" onclick="showPage('page-hub')">تغيير النشاط</div>
-                <div class="btn-text danger" onclick="clearAll()">مسح</div>
+                <div class="btn-text" style="color:#ef4444" onclick="document.getElementById('editor').value=''">مسح</div>
             </div>
             <div class="btn-group">
-                <div class="teacher-icon" onclick="aiTeacher()"><i class="fas fa-wand-magic-sparkles"></i></div>
-                <div class="btn-text" style="color:var(--neon-cyan)" onclick="aiAnalyze()">تحليل</div>
-                <div class="btn-text success" id="run-btn">تشغيل</div>
+                <div class="teacher-gold" onclick="alert('تِقني يساعدك...')"><i class="fas fa-magic"></i></div>
+                <div class="btn-text" style="color:var(--neon-cyan)" onclick="alert('تحليل الكود...')">تحليل</div>
+                <button class="btn-run" id="run-it">تشغيل</button>
             </div>
         </div>
     </div>
 
     <div id="task-overlay" class="overlay">
         <div class="modal">
-            <h2 id="task-title" style="color: var(--neon-gold);"></h2>
-            <div id="task-desc" style="text-align: right; margin: 25px 0; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;"></div>
-            <button class="entry-btn" style="width: 100%; font-size: 1.1rem; padding: 15px;" onclick="launchLab()">ابدأ البرمجة</button>
-            <p style="margin-top: 20px; cursor: pointer; opacity: 0.5;" onclick="closeOverlays()">إلغاء</p>
-        </div>
-    </div>
-
-    <div id="ai-overlay" class="overlay">
-        <div class="modal" style="border-color: var(--neon-gold);">
-            <h3 id="ai-modal-title" style="color: var(--neon-gold);"></h3>
-            <div id="ai-modal-body" style="text-align: right; margin: 20px 0; max-height: 300px; overflow-y: auto;"></div>
-            <button class="btn-text success" style="padding: 10px 30px;" onclick="closeOverlays()">مفهوم</button>
+            <h3 id="task-title"></h3>
+            <p id="task-desc" style="margin: 20px 0; font-size: 0.9rem;"></p>
+            <button class="btn-run" style="width:100%" onclick="startCoding()">ابدأ التحدي</button>
         </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def run_python(ev):
+        def run_py(ev):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
-            except Exception as e: document["console"].text = f"❌ خطأ:\n{e}"
-        document["run-btn"].bind("click", run_python)
+            except Exception as e: document["console"].text = f"Error: {e}"
+        document["run-it"].bind("click", run_py)
     </script>
 
     <script>
-        const activitiesData = [
-            { id: 1, unit: 'الوحدة 1: لغة الآلة', title: 'أمر الطباعة', desc: 'اطبع جملة "مرحباً بكم في عالم البرمجة".' },
-            { id: 2, unit: 'الوحدة 1: لغة الآلة', title: 'المتغيرات', desc: 'عرف متغير x بقيمة 10 واطبعه.' },
-            { id: 3, unit: 'الوحدة 2: الشروط', title: 'دالة IF', desc: 'اكتب كود يفحص إذا كان الرقم أكبر من 5.' }
+        const tasks = [
+            { id: 1, unit: 'الوحدة 1', title: 'الطباعة', desc: 'اطبع جملة "مرحباً"' },
+            { id: 2, unit: 'الوحدة 1', title: 'المتغيرات', desc: 'عرف x=10 واطبعه' }
         ];
-        
-        const units = [...new Set(activitiesData.map(item => item.unit))];
-        let activeTask = null;
+
+        function goToHub() {
+            document.getElementById('page-welcome').style.display = 'none';
+            showPage('page-hub');
+        }
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
@@ -165,69 +129,34 @@
         }
 
         function renderUnits() {
-            document.getElementById('hub-header-title').innerHTML = `<h2><i class="fas fa-layer-group"></i> الوحدات الدراسية</h2>`;
-            document.getElementById('back-to-units').style.display = 'none';
+            document.getElementById('hub-title').innerText = "الوحدات الدراسية";
+            document.getElementById('back-btn').style.display = 'none';
             const container = document.getElementById('hub-container');
-            container.innerHTML = units.map(u => `
-                <div class="card" onclick="renderActivities('${u}')">
-                    <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--neon-cyan); margin-bottom: 15px;"></i>
-                    <h3>${u}</h3>
-                    <small style="color:var(--neon-green)">عرض الدروس ←</small>
-                </div>
+            container.innerHTML = '<div class="card" onclick="renderTasks(\'الوحدة 1\')"><h3>الوحدة 1</h3><p>أساسيات البرمجة</p></div>';
+        }
+
+        function renderTasks(unit) {
+            document.getElementById('hub-title').innerText = unit;
+            document.getElementById('back-btn').style.display = 'block';
+            const container = document.getElementById('hub-container');
+            container.innerHTML = tasks.filter(t => t.unit === unit).map(t => `
+                <div class="card" onclick="selectTask(${t.id})"><h3>${t.title}</h3></div>
             `).join('');
         }
 
-        function renderActivities(unitName) {
-            document.getElementById('hub-header-title').innerHTML = `<h2><i class="fas fa-tasks"></i> ${unitName}</h2>`;
-            document.getElementById('back-to-units').style.display = 'block';
-            const container = document.getElementById('hub-container');
-            const filtered = activitiesData.filter(a => a.unit === unitName);
-            container.innerHTML = filtered.map(a => `
-                <div class="card" onclick="openTask(${a.id})">
-                    <h3>${a.title}</h3>
-                    <small style="color:var(--neon-gold)">بدء النشاط <i class="fas fa-play"></i></small>
-                </div>
-            `).join('');
-        }
-
-        function openTask(id) {
-            activeTask = activitiesData.find(a => a.id === id);
-            document.getElementById('task-title').innerText = activeTask.title;
-            document.getElementById('task-desc').innerText = activeTask.desc;
+        let selected = null;
+        function selectTask(id) {
+            selected = tasks.find(t => t.id === id);
+            document.getElementById('task-title').innerText = selected.title;
+            document.getElementById('task-desc').innerText = selected.desc;
             document.getElementById('task-overlay').style.display = 'flex';
         }
 
-        function launchLab() {
-            closeOverlays();
+        function startCoding() {
+            document.getElementById('task-overlay').style.display = 'none';
             showPage('page-editor');
-            document.getElementById('editor').value = `# نشاط: ${activeTask.title}\n# المطلوب: ${activeTask.desc}\n\n`;
+            document.getElementById('editor').value = `# نشاط: ${selected.title}\n`;
         }
-
-        function closeOverlays() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
-
-        async function aiTeacher() {
-            document.getElementById('ai-loading').style.display = 'flex';
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'Python tutor. Fix code. Return code only.'}, {role: 'user', content: document.getElementById('editor').value}]})
-            });
-            document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
-            document.getElementById('ai-loading').style.display = 'none';
-        }
-
-        async function aiAnalyze() {
-            document.getElementById('ai-loading').style.display = 'flex';
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'حلل الكود بالعربية بوضوح.'}, {role: 'user', content: document.getElementById('editor').value}]})
-            });
-            document.getElementById('ai-modal-title').innerText = "تحليل المعلم الذكي";
-            document.getElementById('ai-modal-body').innerText = await res.text();
-            document.getElementById('ai-loading').style.display = 'none';
-            document.getElementById('ai-overlay').style.display = 'flex';
-        }
-
-        function clearAll() { if(confirm("مسح المحرر؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
