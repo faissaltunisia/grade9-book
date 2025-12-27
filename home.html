@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تِقني AI Pro | أ. فيصل العريبي</title>
+    <title>تِقني AI Pro | بوابة الدخول</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Fira+Code&display=swap" rel="stylesheet">
@@ -20,155 +20,185 @@
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; background: var(--bg); color: #fff; overflow: hidden; position: fixed; }
 
-        /* --- الصفحات --- */
+        /* --- شاشة الدخول (Login Card) --- */
+        #login-page {
+            position: fixed; inset: 0; z-index: 2000;
+            background: radial-gradient(circle at top, #1e1b4b, #020617);
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 30px; border-radius: 35px; backdrop-filter: blur(15px);
+            width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .login-card i.main-icon { font-size: 4rem; color: var(--accent); margin-bottom: 20px; }
+        
+        .entry-btn {
+            width: 100%; padding: 16px; margin: 10px 0; border: none; border-radius: 15px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+        }
+        .btn-student { background: var(--accent); color: #000; }
+        .btn-teacher { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+        .entry-btn:active { transform: scale(0.96); opacity: 0.9; }
+
+        /* --- صفحات النظام --- */
         .page { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 100; background: var(--bg); }
         .page-active { display: flex; }
-
-        /* --- شاشة الترحيب --- */
-        #page-welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 1000; background: radial-gradient(circle at center, #1e1b4b, #020617); }
-        .welcome-logo { font-size: 5rem; color: var(--accent); margin-bottom: 20px; animation: glow 2s infinite alternate; }
-        @keyframes glow { from { filter: drop-shadow(0 0 5px var(--accent)); } to { filter: drop-shadow(0 0 20px var(--accent)); } }
 
         /* --- شريط العناوين --- */
         .top-bar { background: #111827; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); }
 
-        /* --- البطاقات والدروس --- */
+        /* --- المحتوى والدروس --- */
         .scroll-area { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
         .activity-card { 
             background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; 
-            border-right: 5px solid var(--accent); position: relative; cursor: pointer;
+            border-right: 5px solid var(--accent); position: relative;
         }
-        .del-icon { position: absolute; top: 15px; left: 15px; color: var(--red); display: none; padding: 10px; z-index: 10; }
+        .del-icon { position: absolute; top: 15px; left: 15px; color: var(--red); display: none; cursor: pointer; padding: 5px; }
 
-        /* --- المحرر والكونسول --- */
+        /* --- المختبر --- */
         .lab-layout { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 8px; }
-        #editor { flex: 1.2; background: #010409; color: #e6edf3; border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.95rem; border: 1px solid #1e293b; direction: ltr; outline: none; }
-        #console { flex: 0.8; background: #000; color: var(--green); border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.85rem; overflow-y: auto; direction: ltr; border: 1px solid #1e293b; }
+        #editor { flex: 1.2; background: #010409; color: #e6edf3; border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.9rem; border: 1px solid #1e293b; direction: ltr; outline: none; }
+        #console { flex: 0.8; background: #000; color: var(--green); border-radius: 15px; padding: 15px; font-family: 'Fira Code'; font-size: 0.8rem; overflow-y: auto; direction: ltr; }
 
         /* --- شريط التنقل السفلي --- */
         .nav-bar { height: 80px; background: rgba(15, 23, 42, 0.98); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1e293b; }
-        .nav-btn { color: #fff; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex: 1; transition: 0.2s; }
+        .nav-btn { color: #fff; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; flex: 1; }
         .nav-btn i { font-size: 1.4rem; }
-        .nav-btn:active { transform: scale(0.9); color: var(--accent); }
         .run-main { color: var(--green) !important; font-weight: bold; }
-        .run-main i { font-size: 2rem !important; }
 
-        /* --- لوحة المعلم --- */
+        /* --- نافذة الإضافة (Popup) --- */
         #admin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-box { background: #1e293b; padding: 25px; border-radius: 25px; width: 100%; max-width: 400px; border: 1px solid var(--accent); }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 12px; font-size: 0.9rem; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 12px; }
 
         .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 9000; flex-direction: column; color: var(--gold); }
     </style>
 </head>
 <body onload="brython()">
 
-    <div id="page-welcome" class="page page-active">
-        <i class="fas fa-terminal welcome-logo"></i>
-        <h1 style="font-size: 2.2rem; margin: 0; font-weight: 900;">تِقني AI Pro</h1>
-        <p style="opacity: 0.6; margin-bottom: 40px;">منصة البرمجة - أ. فيصل العريبي</p>
-        <button onclick="showPage('page-hub')" style="background:var(--accent); color:#000; border:none; padding:18px 60px; border-radius:50px; font-weight:900; font-size:1.2rem; cursor:pointer;">دخول المنصة</button>
+    <div id="login-page">
+        <div class="login-card">
+            <i class="fas fa-user-shield main-icon"></i>
+            <h1 style="margin:0 0 10px 0;">تِقني AI Pro</h1>
+            <p style="opacity: 0.6; margin-bottom: 30px;">اختر نوع الحساب للمتابعة</p>
+            
+            <button class="entry-btn btn-student" onclick="accessApp('student')">
+                <i class="fas fa-user-graduate"></i> دخول الطلاب
+            </button>
+            
+            <button class="entry-btn btn-teacher" onclick="accessApp('teacher')">
+                <i class="fas fa-chalkboard-teacher"></i> بوابة المعلم
+            </button>
+            
+            <div style="margin-top: 25px; font-size: 0.7rem; opacity: 0.4;">بإشراف أ. فيصل العريبي</div>
+        </div>
     </div>
 
     <div id="page-hub" class="page">
         <div class="top-bar">
-            <span><i class="fas fa-layer-group"></i> الأنشطة المتاحة</span>
-            <div style="display: flex; gap: 10px;">
-                <button id="btn-add" style="display:none; background:var(--accent); border:none; padding:8px 12px; border-radius:10px; font-weight:bold;" onclick="toggleModal(true)">+ نشاط</button>
-                <button id="btn-teacher" onclick="teacherLogin()" style="background:none; border:1px solid var(--accent); color:var(--accent); padding:6px 12px; border-radius:10px; font-size:0.75rem;">دخول المعلم</button>
-            </div>
+            <span id="role-title"><i class="fas fa-tasks"></i> دروس المنصة</span>
+            <button id="add-btn-ui" style="display:none; background:var(--accent); border:none; padding:8px 15px; border-radius:10px; font-weight:bold;" onclick="toggleModal(true)">+ إضافة نشاط</button>
         </div>
-        <div class="scroll-area" id="list-container"></div>
+        <div class="scroll-area" id="activity-list"></div>
         <div class="nav-bar">
-            <div class="nav-btn" onclick="appLogout()" style="color:var(--red)"><i class="fas fa-sign-out-alt"></i>خروج</div>
-            <div id="status-tag" style="font-size: 0.7rem; opacity: 0.4;">وضع الطالب</div>
+            <div class="nav-btn" onclick="logout()" style="color:var(--red)"><i class="fas fa-sign-out-alt"></i> خروج</div>
+            <div id="status-label" style="font-size:0.7rem; opacity:0.4;">نسخة الطالب</div>
         </div>
     </div>
 
     <div id="page-editor" class="page">
         <div class="lab-layout">
-            <div id="ai-loader" class="loader"><i class="fas fa-robot fa-spin fa-2x"></i> تِقني يحلل الكود...</div>
+            <div id="ai-loading" class="loader"><i class="fas fa-robot fa-spin fa-2x"></i> تِقني يحلل كودك...</div>
             <textarea id="editor" spellcheck="false"></textarea>
             <div id="console"></div>
         </div>
         <div class="nav-bar">
-            <div class="nav-btn" onclick="showPage('page-hub')"><i class="fas fa-tasks"></i>الأنشطة</div>
-            <div class="nav-btn" onclick="aiAction('solve')" style="color:var(--gold)"><i class="fas fa-magic"></i>تِقني حل</div>
-            <div class="nav-btn run-main" id="run-btn"><i class="fas fa-play-circle"></i></div>
-            <div class="nav-btn" onclick="aiAction('analyze')" style="color:var(--accent)"><i class="fas fa-microscope"></i>تحليل</div>
-            <div class="nav-btn" onclick="clearCode()" style="color:var(--red)"><i class="fas fa-eraser"></i>مسح</div>
+            <div class="nav-btn" onclick="showPage('page-hub')"><i class="fas fa-chevron-right"></i> الدروس</div>
+            <div class="nav-btn" onclick="aiBrain('solve')" style="color:var(--gold)"><i class="fas fa-lightbulb"></i> تِقني حل</div>
+            <div class="nav-btn run-main" id="run-btn"><i class="fas fa-play-circle" style="font-size:2rem;"></i></div>
+            <div class="nav-btn" onclick="aiBrain('analyze')" style="color:var(--accent)"><i class="fas fa-microscope"></i> تحليل</div>
+            <div class="nav-btn" onclick="if(confirm('مسح الكود؟')) document.getElementById('editor').value=''"><i class="fas fa-eraser"></i></div>
         </div>
     </div>
 
     <div id="admin-modal">
         <div class="modal-box">
-            <h3 style="margin:0 0 10px 0; color:var(--accent)">إضافة تحدي جديد</h3>
+            <h3 style="color:var(--accent); margin-top:0;">إضافة نشاط جديد</h3>
             <input type="text" id="in-unit" placeholder="اسم الوحدة">
             <input type="text" id="in-title" placeholder="عنوان الدرس">
-            <textarea id="in-task" rows="3" placeholder="المهمة المطلوبة من الطالب..."></textarea>
-            <button onclick="saveNewTask()" style="width:100%; padding:15px; background:var(--green); border:none; border-radius:12px; font-weight:bold; margin-top:10px;">نشر الآن</button>
-            <button onclick="toggleModal(false)" style="width:100%; background:none; color:gray; border:none; margin-top:10px;">إلغاء</button>
+            <textarea id="in-task" rows="3" placeholder="المهمة البرمجية..."></textarea>
+            <button onclick="saveTask()" style="width:100%; padding:15px; background:var(--green); border:none; border-radius:12px; font-weight:bold;">نشر النشاط</button>
+            <button onclick="toggleModal(false)" style="width:100%; margin-top:10px; background:none; color:gray; border:none;">إلغاء</button>
         </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def execute_py(ev):
-            document["console"].text = "جاري التشغيل...\n"
+        def run_code(ev):
+            document["console"].text = "جاري التنفيذ...\n"
             def out(*args): document["console"].text += " ".join(map(str, args)) + "\n"
-            try:
-                exec(document["editor"].value, {"print": out, "input": window.prompt})
-            except Exception as e:
-                document["console"].text = f"❌ خطأ:\n{e}"
-        document["run-btn"].bind("click", execute_py)
+            try: exec(document["editor"].value, {"print": out, "input": window.prompt})
+            except Exception as e: document["console"].text = f"❌ خطأ:\n{e}"
+        document["run-btn"].bind("click", run_code)
     </script>
 
     <script>
-        const TEACHER_PWD = "1234";
+        const TEACHER_PASS = "1234";
         let isTeacher = false;
-        let data = JSON.parse(localStorage.getItem('faisal_local_db')) || [
-            { id: 1, unit: 'الوحدة الأولى', title: 'البداية', task: 'اطبع جملة ترحيبية باسمك.' }
+        let tasks = JSON.parse(localStorage.getItem('faisal_secure_db')) || [
+            { id: 1, unit: 'الوحدة الأولى', title: 'بداية ممتعة', task: 'اطبع اسمك واسم معلمك أ. فيصل.' }
         ];
-        let currentTask = data[0];
+        let currentTask = tasks[0];
 
-        // 1. نظام التنقل والصفحات
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
-            document.getElementById(id).classList.add('page-active');
-            if(id === 'page-hub') renderTasks();
+        // --- نظام الدخول الاحترافي ---
+        function accessApp(role) {
+            if (role === 'teacher') {
+                let p = prompt("أدخل كلمة مرور المعلم:");
+                if (p === TEACHER_PASS) {
+                    isTeacher = true;
+                    document.getElementById('add-btn-ui').style.display = 'block';
+                    document.getElementById('status-label').innerText = "وضع المعلم (كامل الصلاحيات)";
+                    document.getElementById('role-title').innerText = "لوحة تحكم المعلم";
+                } else {
+                    alert("كلمة مرور خاطئة!");
+                    return;
+                }
+            } else {
+                isTeacher = false;
+                document.getElementById('add-btn-ui').style.display = 'none';
+                document.getElementById('status-label').innerText = "نسخة الطالب (مشاهدة فقط)";
+                document.getElementById('role-title').innerText = "دروس الطالب";
+            }
+            document.getElementById('login-page').style.display = 'none';
+            showPage('page-hub');
         }
 
-        // 2. زر الخروج (Logout)
-        function appLogout() {
-            if(confirm("هل تريد الخروج؟ سيتم إعادة ضبط صلاحيات المعلم.")) {
+        // --- نظام الخروج ---
+        function logout() {
+            if (confirm("هل تريد الخروج والعودة لشاشة الدخول؟")) {
                 isTeacher = false;
-                document.getElementById('btn-add').style.display = 'none';
-                document.getElementById('btn-teacher').style.display = 'block';
-                document.getElementById('status-tag').innerText = "وضع الطالب";
-                showPage('page-welcome');
+                document.getElementById('login-page').style.display = 'flex';
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
             }
         }
 
-        // 3. دخول المعلم
-        function teacherLogin() {
-            let p = prompt("أدخل كلمة المرور السرية:");
-            if(p === TEACHER_PWD) {
-                isTeacher = true;
-                document.getElementById('btn-add').style.display = 'block';
-                document.getElementById('btn-teacher').style.display = 'none';
-                document.getElementById('status-tag').innerText = "وضع المعلم مفعل ✅";
-                renderTasks();
-                alert("مرحباً بك أستاذ فيصل.");
-            } else { alert("كلمة المرور غير صحيحة!"); }
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
+            document.getElementById(id).classList.add('page-active');
+            if (id === 'page-hub') renderTasks();
         }
 
-        // 4. إدارة الدروس (عرض، إضافة، حذف)
         function renderTasks() {
-            const container = document.getElementById('list-container');
-            container.innerHTML = data.map(t => `
+            const list = document.getElementById('activity-list');
+            list.innerHTML = tasks.map(t => `
                 <div class="activity-card">
                     <i class="fas fa-trash-alt del-icon" style="display:${isTeacher?'block':'none'}" onclick="deleteTask(${t.id}, event)"></i>
-                    <div onclick="openTask(${t.id})">
+                    <div onclick="launchTask(${t.id})">
                         <small style="color:var(--accent)">${t.unit}</small>
                         <h3 style="margin:5px 0;">${t.title}</h3>
                         <p style="font-size:0.8rem; opacity:0.6; margin:0;">${t.task}</p>
@@ -177,54 +207,43 @@
             `).join('');
         }
 
-        function openTask(id) {
-            currentTask = data.find(t => t.id === id);
+        function launchTask(id) {
+            currentTask = tasks.find(t => t.id === id);
             showPage('page-editor');
             document.getElementById('editor').value = `# الدرس: ${currentTask.title}\n# المهمة: ${currentTask.task}\n\n`;
-            document.getElementById('console').innerText = "جاهز للتنفيذ...";
         }
 
-        function deleteTask(id, event) {
-            event.stopPropagation(); // منع فتح الدرس عند الضغط على حذف
-            if(confirm("حذف هذا النشاط نهائياً؟")) {
-                data = data.filter(t => t.id !== id);
-                localStorage.setItem('faisal_local_db', JSON.stringify(data));
-                renderTasks();
-            }
-        }
-
-        // 5. لوحة التحكم
         function toggleModal(show) { document.getElementById('admin-modal').style.display = show ? 'flex' : 'none'; }
-        
-        function saveNewTask() {
-            const u = document.getElementById('in-unit').value;
-            const t = document.getElementById('in-title').value;
-            const d = document.getElementById('in-task').value;
-            if(!u || !t || !d) return alert("يرجى تعبئة جميع الحقول");
-            data.push({ id: Date.now(), unit: u, title: t, task: d });
-            localStorage.setItem('faisal_local_db', JSON.stringify(data));
+
+        function saveTask() {
+            const u = document.getElementById('in-unit').value, t = document.getElementById('in-title').value, d = document.getElementById('in-task').value;
+            if(!u || !t || !d) return alert("أكمل البيانات");
+            tasks.push({ id: Date.now(), unit: u, title: t, task: d });
+            localStorage.setItem('faisal_secure_db', JSON.stringify(tasks));
             renderTasks();
             toggleModal(false);
             document.querySelectorAll('#admin-modal input, #admin-modal textarea').forEach(i=>i.value="");
         }
 
-        function clearCode() { if(confirm("هل تريد مسح منطقة الكود؟")) document.getElementById('editor').value = ""; }
+        function deleteTask(id, event) {
+            event.stopPropagation();
+            if(confirm("حذف النشاط نهائياً؟")) {
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('faisal_secure_db', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
 
-        // 6. تِقني AI
-        async function aiAction(mode) {
-            const loader = document.getElementById('ai-loader');
-            const editor = document.getElementById('editor');
-            let prompt = mode === 'solve' ? 
-                `Write python code for: ${currentTask.task}. Return only code.` : 
-                `Analyze this python code in Arabic: ${editor.value}`;
-            
+        async function aiBrain(mode) {
+            const loader = document.getElementById('ai-loading'), editor = document.getElementById('editor');
+            let prompt = (mode === 'solve') ? `Write python code for: ${currentTask.task}.` : `Analyze this code in Arabic: ${editor.value}`;
             loader.style.display = 'flex';
             try {
                 const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
                 const result = await res.text();
                 if(mode === 'solve') editor.value = result.replace(/```python|```/g, '').trim();
                 else alert("تحليل تِقني AI:\n" + result);
-            } catch(e) { alert("تِقني يطلب منك الاتصال بالإنترنت."); }
+            } catch(e) { alert("تِقني بحاجة لإنترنت."); }
             loader.style.display = 'none';
         }
     </script>
