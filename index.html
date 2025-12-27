@@ -35,139 +35,168 @@
             border-bottom: 1px solid rgba(168, 85, 247, 0.3);
         }
         .brand { font-weight: 900; font-size: 1.4rem; }
-        .brand span { color: var(--neon-cyan); }
+        .brand span { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 
+        /* منطقة العمل */
         .main-lab { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 10px; position: relative; }
         
         .editor-wrapper { 
             flex: 1.2; position: relative; border-radius: 15px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
 
         #editor { 
             width: 100%; height: 100%; background: #010409; color: #79c0ff; 
-            padding: 20px; font-family: 'Fira Code', monospace; font-size: 1rem;
+            padding: 20px; font-family: 'Fira Code', monospace; font-size: 1.05rem;
             border: none; outline: none; resize: none; line-height: 1.6;
         }
 
+        /* بطاقة التحليل العائمة */
         #analysis-card {
             position: absolute; bottom: 15px; left: 15px; right: 15px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
             border: 1px solid var(--neon-cyan); border-radius: 12px;
-            padding: 12px; display: none; z-index: 100;
+            padding: 15px; display: none; z-index: 100;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
         }
 
+        /* الشاشة السوداء للمخرجات */
         #console { 
             flex: 0.8; background: #000; border-radius: 15px; 
             border: 1px solid rgba(34, 211, 238, 0.2); padding: 15px;
             font-family: 'Fira Code', monospace; color: var(--neon-green);
-            overflow-y: auto; font-size: 0.9rem;
+            overflow-y: auto; font-size: 0.9rem; position: relative;
         }
 
-        /* أيقونة المساعد الروبوت */
+        /* أيقونة الروبوت المساعد */
         #helper-bot {
             position: fixed; bottom: 100px; left: 25px; width: 60px; height: 60px;
             background: linear-gradient(135deg, var(--neon-purple), #6366f1);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 1.8rem; color: white; cursor: pointer; z-index: 1000;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); border: 1px solid rgba(255,255,255,0.2);
+            transition: 0.3s;
         }
 
         /* نافذة الدردشة */
         #chat-popup {
-            position: fixed; bottom: 170px; left: 25px; width: 320px; height: 400px;
-            background: #0f172a; border: 1px solid var(--neon-purple); border-radius: 15px;
-            display: none; flex-direction: column; z-index: 2000;
+            position: fixed; bottom: 170px; left: 25px; width: 330px; height: 420px;
+            max-width: 85vw; background: #0f172a; border: 1px solid var(--neon-purple); border-radius: 20px;
+            display: none; flex-direction: column; z-index: 2000; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
+        .chat-header { padding: 15px; background: var(--neon-purple); display: flex; justify-content: space-between; font-weight: bold; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #020617; font-size: 0.85rem; }
 
-        /* شريط الأزرار - 3 أزرار */
+        /* شريط التحكم السفلي */
         footer { 
-            height: 80px; background: #0f172a; display: flex; align-items: center; 
+            height: 85px; background: #0f172a; display: flex; align-items: center; 
             padding: 0 10px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05);
         }
         .btn-core {
-            height: 52px; border-radius: 10px; border: none; color: white; 
-            font-weight: 700; font-size: 0.85rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 5px; flex: 1;
+            height: 55px; border-radius: 12px; border: none; color: white; 
+            font-weight: 900; font-size: 0.85rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 6px; flex: 1;
+            transition: 0.2s;
         }
-        .btn-run { background: var(--neon-green); flex: 1.2; }
+        .btn-run { background: var(--neon-green); flex: 1.4; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
         .btn-analyze { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
         .btn-fix { background: transparent; border: 1px solid var(--neon-gold); color: var(--neon-gold); }
 
-        .loading-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 15px; }
+        .loader-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 15px; color: var(--neon-gold); font-weight: bold; }
     </style>
 </head>
 <body onload="brython()">
 
     <header>
-        <div class="brand">تِقني <span>AI.PRO</span></div>
-        <div style="font-size: 0.8rem;">أ. فيصل العريبي</div>
+        <div class="brand">تِقني <span>AI.LAB</span></div>
+        <div style="font-size: 0.85rem; border-right: 2px solid var(--neon-purple); padding-right: 10px;">أ. فيصل العريبي</div>
     </header>
 
     <div class="main-lab">
         <div class="editor-wrapper">
-            <div id="loader" class="loading-overlay"><i class="fas fa-magic fa-spin"></i> جاري التصحيح...</div>
-            <textarea id="editor" spellcheck="false" placeholder="اكتب كودك هنا..."></textarea>
+            <div id="fix-loader" class="loader-overlay"><i class="fas fa-hammer fa-spin"></i> جاري إصلاح كودك...</div>
+            <textarea id="editor" spellcheck="false" placeholder="# اكتب كود بايثون هنا..."></textarea>
             
             <div id="analysis-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <b style="color:var(--neon-cyan); font-size:0.8rem;">تحليل تِقني:</b>
+                    <b style="color:var(--neon-cyan); font-size:0.85rem;"><i class="fas fa-microchip"></i> تحليل تِقني:</b>
                     <i class="fas fa-times" onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer"></i>
                 </div>
-                <div id="analysis-text" style="font-size:0.8rem; line-height:1.4;"></div>
+                <div id="analysis-text" style="font-size:0.85rem; line-height:1.5; color:#cbd5e1;"></div>
             </div>
         </div>
-        <div id="console"></div>
+        
+        <div id="console">>>> بانتظار تشغيل النظام...</div>
     </div>
 
-    <div id="helper-bot" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
+    <div id="helper-bot" onclick="toggleChat()">
+        <i class="fas fa-robot"></i>
+    </div>
 
     <div id="chat-popup">
-        <div style="padding:12px; background:var(--neon-purple); display:flex; justify-content:space-between; border-radius:15px 15px 0 0;">
-            <b>مساعد الدردشة</b>
+        <div class="chat-header">
+            <span><i class="fas fa-brain"></i> اسأل تِقني</span>
             <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
         </div>
-        <div id="chat-box" style="flex:1; padding:10px; overflow-y:auto; font-size:0.85rem; background:#020617;"></div>
-        <div style="padding:10px; display:flex; gap:5px;">
-            <input type="text" id="chat-in" style="flex:1; background:#1e293b; border:none; color:white; padding:8px; border-radius:5px;">
-            <button onclick="askBot()" style="background:var(--neon-purple); border:none; color:white; padding:5px 10px; border-radius:5px;"><i class="fas fa-paper-plane"></i></button>
+        <div id="chat-box" class="chat-messages">
+            <div style="background:var(--glass); padding:10px; border-radius:10px; border:1px solid rgba(168, 85, 247, 0.2);">أهلاً بك يا بطل! أنا تِقني، مساعد الأستاذ فيصل. كيف أساعدك اليوم؟</div>
+        </div>
+        <div style="padding:12px; background:#0f172a; display:flex; gap:8px;">
+            <input type="text" id="chat-in" placeholder="اكتب سؤالك هنا..." style="flex:1; background:#1e293b; border:none; color:white; padding:12px; border-radius:10px; outline:none;">
+            <button onclick="askBot()" style="background:var(--neon-purple); border:none; color:white; width:45px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <footer>
         <button class="btn-core btn-analyze" onclick="analyzeCode()"><i class="fas fa-search"></i> تحليل</button>
         <button class="btn-core btn-fix" onclick="autoFixCode()"><i class="fas fa-magic"></i> تصحيح تلقائي</button>
-        <button class="btn-core btn-run" onclick="window.run_it()"><i class="fas fa-play"></i> تشغيل</button>
+        <button class="btn-core btn-run" onclick="window.run_python()"><i class="fas fa-play"></i> تشغيل</button>
     </footer>
 
     <script type="text/python">
         from browser import document, window
-        def run_py(ev=None):
+        def run_it(ev=None):
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
-            try: exec(document["editor"].value, {"print": log, "input": window.prompt})
-            except Exception as e: document["console"].text = f">> Error: {str(e)}"
-        window.run_it = run_py
+            try:
+                exec(document["editor"].value, {"print": log, "input": window.prompt})
+            except Exception as e:
+                document["console"].text = f">> خطأ برمجي:\n{str(e)}"
+        window.run_python = run_it
     </script>
 
     <script>
+        // 1. وظيفة تحليل الكود
         async function analyzeCode() {
             const card = document.getElementById('analysis-card');
             const txt = document.getElementById('analysis-text');
+            if(!document.getElementById('editor').value.trim()) return;
+
             card.style.display = 'block';
-            txt.innerHTML = "جاري فحص المنطق...";
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'system', content:'حلل الكود باختصار شديد ووضح الخطأ.'}, {role:'user', content: document.getElementById('editor').value}]})
-            });
-            txt.innerText = await res.text();
+            txt.innerHTML = "<i class='fas fa-spinner fa-spin'></i> جاري قراءة منطق الكود...";
+            
+            try {
+                const res = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        messages: [
+                            {role:'system', content:'أنت مساعد خبير. حلل كود الطالب ووضح له الأخطاء أو كيف يحسن الكود باختصار شديد.'},
+                            {role:'user', content: document.getElementById('editor').value}
+                        ]
+                    })
+                });
+                txt.innerText = await res.text();
+            } catch { txt.innerText = "فشل الاتصال بالخادم الذكي."; }
         }
 
+        // 2. وظيفة التصحيح التلقائي (إصلاح الأخطاء فقط)
         async function autoFixCode() {
             const editor = document.getElementById('editor');
-            const loader = document.getElementById('loader');
-            if(!editor.value.trim()) return;
+            const loader = document.getElementById('fix-loader');
+            const code = editor.value.trim();
+            if(!code) return;
 
             loader.style.display = 'flex';
             try {
@@ -176,37 +205,40 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         messages: [
-                            {role:'system', content:'أنت مصحح أكواد بايثون. أعد كتابة الكود الذي يرسله الطالب بشكل صحيح تماماً. أرسل الكود فقط بدون أي شرح أو نص.'},
-                            {role:'user', content: editor.value}
+                            {role:'system', content:'أنت مصحح أكواد بايثون. أصلح فقط أخطاء القواعد (Syntax) في كود الطالب. لا تغير أسماء المتغيرات ولا تغير فكرة الكود. أرسل الكود المصلح فقط بدون أي شرح أو كلام إضافي.'},
+                            {role:'user', content: code}
                         ]
                     })
                 });
-                const fixedCode = await res.text();
-                // تنظيف الاستجابة من علامات Markdown إذا وجدت
-                editor.value = fixedCode.replace(/```python|```/g, '').trim();
-            } catch {
-                alert("تعذر الاتصال بالمساعد الذكي.");
-            } finally {
-                loader.style.display = 'none';
-            }
+                let result = await res.text();
+                editor.value = result.replace(/```python|```/g, '').trim();
+                document.getElementById('console').innerHTML = "<div style='color:var(--neon-cyan)'>>>> تم إصلاح القواعد! جرب التشغيل الآن.</div>";
+            } catch { alert("حدث خطأ أثناء التصحيح."); }
+            finally { loader.style.display = 'none'; }
         }
 
-        function toggleChat() { 
+        // 3. وظيفة الدردشة
+        function toggleChat() {
             const pop = document.getElementById('chat-popup');
-            pop.style.display = pop.style.display === 'flex' ? 'none' : 'flex'; 
+            pop.style.display = (pop.style.display === 'flex') ? 'none' : 'flex';
         }
 
         async function askBot() {
             const inp = document.getElementById('chat-in'), box = document.getElementById('chat-box');
-            if(!inp.value) return;
+            if(!inp.value.trim()) return;
+
             const q = inp.value; inp.value = "";
-            box.innerHTML += `<div style="color:var(--neon-cyan)">أنت: ${q}</div>`;
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role:'user', content: q}]})
-            });
-            box.innerHTML += `<div style="margin-top:5px; padding-bottom:10px;">تِقني: ${await res.text()}</div>`;
-            box.scrollTop = box.scrollHeight;
+            box.innerHTML += `<div style="color:var(--neon-cyan); margin:10px 0; text-align:left;">أنت: ${q}</div>`;
+            
+            try {
+                const res = await fetch('https://text.pollinations.ai/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({messages: [{role:'system', content:'أنت تِقني، مساعد تعليمي للأستاذ فيصل العريبي.'}, {role:'user', content: q}]})
+                });
+                box.innerHTML += `<div style="background:var(--glass); padding:10px; border-radius:10px; margin-top:5px;">تِقني: ${await res.text()}</div>`;
+                box.scrollTop = box.scrollHeight;
+            } catch { box.innerHTML += "<div>فشل الرد.</div>"; }
         }
     </script>
 </body>
