@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني AI الشاملة | أ. فيصل العريبي</title>
+    <title>منصة تِقني AI | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--dark-bg); color: #fff; overflow: hidden; }
 
-        /* --- 1. شاشة الترحيب الخيالية --- */
+        /* --- شاشة الترحيب --- */
         #page-welcome {
             position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000;
@@ -31,21 +31,23 @@
         
         .entry-btn {
             padding: 18px 50px; font-size: 1.4rem; font-weight: 900; color: #fff; background: transparent;
-            border: 2px solid var(--neon-cyan); border-radius: 50px; cursor: pointer; transition: 0.3s; position: relative; z-index: 10005;
+            border: 2px solid var(--neon-cyan); border-radius: 50px; cursor: pointer; transition: 0.3s; 
+            position: relative; z-index: 10005 !important; /* ضمان أولوية الضغط */
         }
-        .entry-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 40px var(--neon-cyan); }
+        .entry-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 40px var(--neon-cyan); transform: scale(1.05); }
+        .entry-btn:active { transform: scale(0.95); }
 
         /* --- نظام الصفحات --- */
         .page { position: fixed; inset: 0; display: none; flex-direction: column; background: var(--dark-bg); z-index: 10; }
         .page-active { display: flex; }
 
-        /* --- المحتوى (دمج الدروس والأنشطة) --- */
+        /* --- المحتوى (الوحدات والأنشطة) --- */
         .container { flex: 1; padding: 25px; overflow-y: auto; padding-bottom: 100px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.2); padding: 30px; border-radius: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .card:hover { border-color: var(--neon-cyan); transform: translateY(-5px); }
+        .card:hover { border-color: var(--neon-cyan); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
 
-        /* --- شريط الأزرار النصي الموزع --- */
+        /* --- شريط الأزرار الموزع --- */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
             background: var(--glass); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1);
@@ -62,13 +64,13 @@
             box-shadow: 0 0 15px var(--neon-gold); 
         }
 
-        /* --- المحرر والكونسول --- */
+        /* --- المحرر --- */
         .editor-wrapper { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
         #editor { flex: 1.5; background: #010409; color: #79c0ff; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #333; outline: none; direction: ltr; font-size: 1.1rem; }
         #console { flex: 1; background: #000; color: var(--neon-green); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; }
 
         /* --- البطاقات العائمة --- */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 9000; backdrop-filter: blur(10px); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 11000; backdrop-filter: blur(10px); }
         .modal { width: 85%; max-width: 500px; background: var(--glass); border: 2px solid var(--neon-cyan); padding: 30px; border-radius: 30px; text-align: center; }
         .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; color: var(--neon-gold); }
     </style>
@@ -79,7 +81,7 @@
         <div class="portal-glow"></div>
         <i class="fas fa-robot robot-head"></i>
         <h1 style="font-size: 3.5rem; margin-bottom: 10px; font-weight: 900; color: var(--neon-cyan);">تِقني AI</h1>
-        <p style="opacity: 0.7; letter-spacing: 5px; margin-bottom: 40px;">العالم الافتراضي للأستاذ فيصل العريبي</p>
+        <p style="opacity: 0.7; letter-spacing: 5px; margin-bottom: 40px;">بوابة أ. فيصل العريبي</p>
         <button class="entry-btn" onclick="showPage('page-hub')">دخول المنصة</button>
     </div>
 
@@ -89,10 +91,9 @@
             <div id="back-to-units" style="display: none;" class="btn-text" onclick="renderUnits()"><i class="fas fa-arrow-right"></i> رجوع للوحدات</div>
         </header>
         
-        <div class="container grid" id="hub-container">
-            </div>
+        <div class="container grid" id="hub-container"></div>
 
-        <div class="nav-bar" id="hub-nav">
+        <div class="nav-bar">
             <div class="btn-text danger" onclick="location.reload()">تسجيل الخروج</div>
             <div class="btn-text" style="color: var(--neon-gold)">أ. فيصل العريبي</div>
         </div>
@@ -101,7 +102,7 @@
     <div id="page-editor" class="page">
         <div class="editor-wrapper">
             <div style="position: relative; flex: 1.5;">
-                <div id="ai-loading" class="loader"><i class="fas fa-wand-magic-sparkles fa-spin fa-2x"></i><br>تِقني يفكر...</div>
+                <div id="ai-loading" class="loader"><i class="fas fa-magic fa-spin fa-2x"></i><br>تِقني يفكر...</div>
                 <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
             </div>
             <div id="console"></div>
@@ -110,12 +111,12 @@
         <div class="nav-bar">
             <div class="btn-group">
                 <div class="btn-text" onclick="showPage('page-hub')">تغيير النشاط</div>
-                <div class="btn-text danger" onclick="clearAll()">مسح الكود</div>
+                <div class="btn-text danger" onclick="clearAll()">مسح</div>
             </div>
             <div class="btn-group">
-                <div class="teacher-icon" onclick="aiTeacher()" title="المعلم الذكي"><i class="fas fa-magic"></i></div>
-                <div class="btn-text" style="color:var(--neon-cyan)" onclick="aiAnalyze()">تحليل الكود</div>
-                <div class="btn-text success" id="run-btn">تشغيل البرمجة</div>
+                <div class="teacher-icon" onclick="aiTeacher()"><i class="fas fa-wand-magic-sparkles"></i></div>
+                <div class="btn-text" style="color:var(--neon-cyan)" onclick="aiAnalyze()">تحليل</div>
+                <div class="btn-text success" id="run-btn">تشغيل</div>
             </div>
         </div>
     </div>
@@ -124,7 +125,7 @@
         <div class="modal">
             <h2 id="task-title" style="color: var(--neon-gold);"></h2>
             <div id="task-desc" style="text-align: right; margin: 25px 0; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;"></div>
-            <button class="entry-btn" style="width: 100%; font-size: 1.1rem;" onclick="launchLab()">ابدأ التحدي الآن</button>
+            <button class="entry-btn" style="width: 100%; font-size: 1.1rem; padding: 15px;" onclick="launchLab()">ابدأ البرمجة</button>
             <p style="margin-top: 20px; cursor: pointer; opacity: 0.5;" onclick="closeOverlays()">إلغاء</p>
         </div>
     </div>
@@ -143,18 +144,18 @@
             document["console"].text = ""
             def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try: exec(document["editor"].value, {"print": log, "input": window.prompt})
-            except Exception as e: document["console"].text = f"⚠️ خطأ:\n{e}"
+            except Exception as e: document["console"].text = f"❌ خطأ:\n{e}"
         document["run-btn"].bind("click", run_python)
     </script>
 
     <script>
-        const data = [
-            { id: 1, unit: 'الوحدة 1: لغة الآلة', title: 'تحية الروبوت', desc: 'اكتب كود يطبع عبارة "مرحباً بك في تِقني AI".' },
-            { id: 2, unit: 'الوحدة 1: لغة الآلة', title: 'حساب العمر', desc: 'عرف متغير باسم year واجعل قيمته 2025 ثم اطبعه.' },
-            { id: 3, unit: 'الوحدة 2: المنطق البرمجي', title: 'مستشعر الضوء', desc: 'استخدم if لطباعة "إضاءة" إذا كان المتغير light يساوي 1.' }
+        const activitiesData = [
+            { id: 1, unit: 'الوحدة 1: لغة الآلة', title: 'أمر الطباعة', desc: 'اطبع جملة "مرحباً بكم في عالم البرمجة".' },
+            { id: 2, unit: 'الوحدة 1: لغة الآلة', title: 'المتغيرات', desc: 'عرف متغير x بقيمة 10 واطبعه.' },
+            { id: 3, unit: 'الوحدة 2: الشروط', title: 'دالة IF', desc: 'اكتب كود يفحص إذا كان الرقم أكبر من 5.' }
         ];
         
-        const units = [...new Set(data.map(item => item.unit))];
+        const units = [...new Set(activitiesData.map(item => item.unit))];
         let activeTask = null;
 
         function showPage(id) {
@@ -171,7 +172,7 @@
                 <div class="card" onclick="renderActivities('${u}')">
                     <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--neon-cyan); margin-bottom: 15px;"></i>
                     <h3>${u}</h3>
-                    <small style="color:var(--neon-green)">عرض الأنشطة ←</small>
+                    <small style="color:var(--neon-green)">عرض الدروس ←</small>
                 </div>
             `).join('');
         }
@@ -180,17 +181,17 @@
             document.getElementById('hub-header-title').innerHTML = `<h2><i class="fas fa-tasks"></i> ${unitName}</h2>`;
             document.getElementById('back-to-units').style.display = 'block';
             const container = document.getElementById('hub-container');
-            const filtered = data.filter(a => a.unit === unitName);
+            const filtered = activitiesData.filter(a => a.unit === unitName);
             container.innerHTML = filtered.map(a => `
                 <div class="card" onclick="openTask(${a.id})">
                     <h3>${a.title}</h3>
-                    <small style="color:var(--neon-gold)">فتح التحدي <i class="fas fa-play"></i></small>
+                    <small style="color:var(--neon-gold)">بدء النشاط <i class="fas fa-play"></i></small>
                 </div>
             `).join('');
         }
 
         function openTask(id) {
-            activeTask = data.find(a => a.id === id);
+            activeTask = activitiesData.find(a => a.id === id);
             document.getElementById('task-title').innerText = activeTask.title;
             document.getElementById('task-desc').innerText = activeTask.desc;
             document.getElementById('task-overlay').style.display = 'flex';
@@ -208,7 +209,7 @@
             document.getElementById('ai-loading').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'Python expert. Complete the student code or fix it. Return ONLY code.'}, {role: 'user', content: document.getElementById('editor').value}]})
+                body: JSON.stringify({messages: [{role: 'system', content: 'Python tutor. Fix code. Return code only.'}, {role: 'user', content: document.getElementById('editor').value}]})
             });
             document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
             document.getElementById('ai-loading').style.display = 'none';
@@ -218,16 +219,15 @@
             document.getElementById('ai-loading').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'حلل كود الطالب باللغة العربية بأسلوب تعليمي مشجع.'}, {role: 'user', content: document.getElementById('editor').value}]})
+                body: JSON.stringify({messages: [{role: 'system', content: 'حلل الكود بالعربية بوضوح.'}, {role: 'user', content: document.getElementById('editor').value}]})
             });
-            const text = await res.text();
-            document.getElementById('ai-modal-title').innerText = "تحليل تِقني AI";
-            document.getElementById('ai-modal-body').innerText = text;
+            document.getElementById('ai-modal-title').innerText = "تحليل المعلم الذكي";
+            document.getElementById('ai-modal-body').innerText = await res.text();
             document.getElementById('ai-loading').style.display = 'none';
             document.getElementById('ai-overlay').style.display = 'flex';
         }
 
-        function clearAll() { if(confirm("هل تريد مسح كودك بالكامل؟")) document.getElementById('editor').value = ""; }
+        function clearAll() { if(confirm("مسح المحرر؟")) document.getElementById('editor').value = ""; }
     </script>
 </body>
 </html>
