@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة تِقني AI - العالم الافتراضي | أ. فيصل العريبي</title>
+    <title>تِقني AI - النسخة المعتمدة | أ. فيصل العريبي</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,263 +13,265 @@
 
     <style>
         :root {
-            --neon-p: #a855f7; --neon-c: #22d3ee; --neon-g: #10b981;
-            --gold: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.95);
+            --p-color: #a855f7; --c-color: #22d3ee; --g-color: #10b981;
+            --gold: #fbbf24; --bg: #020617; --glass: rgba(15, 23, 42, 0.96);
         }
 
-        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100vw; background: var(--bg); color: #fff; overflow: hidden; }
 
-        /* --- نظام الصفحات --- */
-        .page { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 10; padding-bottom: 80px; overflow-y: auto; }
+        /* --- نظام الصفحات المستقلة --- */
+        .page { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 10; background: var(--bg); }
         .page-active { display: flex; }
 
-        /* --- شاشة الترحيب الخيالية --- */
+        /* --- شاشة الترحيب (بوابة الخيال) --- */
         #welcome-page {
             background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
-            align-items: center; justify-content: center; z-index: 9999; display: flex;
+            align-items: center; justify-content: center; z-index: 9999;
         }
         .portal-light {
-            position: absolute; width: 300px; height: 300px; background: var(--neon-c);
-            filter: blur(120px); border-radius: 50%; opacity: 0.4; animation: pulse 4s infinite;
+            position: absolute; width: 300px; height: 300px; background: var(--c-color);
+            filter: blur(120px); border-radius: 50%; opacity: 0.3; animation: pulse 4s infinite;
+            pointer-events: none; /* منع اعتراض النقرات */
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.8); opacity: 0.6; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(2); opacity: 0.4; } }
 
-        /* --- التصميم المتجاوب --- */
-        .container { width: 92%; max-width: 1000px; margin: 20px auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.3); padding: 25px; border-radius: 20px; cursor: pointer; position: relative; overflow: hidden; }
-        .card:hover { border-color: var(--neon-c); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* --- التصميم العام --- */
+        .container { width: 90%; max-width: 1100px; margin: 20px auto; overflow-y: auto; flex: 1; padding-bottom: 100px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: var(--glass); border: 1px solid rgba(168, 85, 247, 0.2); padding: 30px; border-radius: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
+        .card:hover { border-color: var(--c-color); transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
 
-        /* --- شريط الأزرار المتطور --- */
+        /* --- شريط التحكم السفلي (توزيع الأزرار) --- */
         .bottom-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
-            background: var(--glass); backdrop-filter: blur(15px);
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
+            background: var(--glass); backdrop-filter: blur(20px);
             border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 5000;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 5000;
         }
-        .side-btns { display: flex; gap: 10px; }
-        .center-dock { display: flex; gap: 25px; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-group { display: flex; gap: 12px; flex: 1; }
+        .group-left { justify-content: flex-start; }
+        .group-right { justify-content: flex-end; }
         
-        .action-btn { width: 45px; height: 45px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .btn-ana { background: transparent; border: 1px solid var(--neon-c); color: var(--neon-c); }
+        .action-btn { width: 50px; height: 50px; border-radius: 15px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; transition: 0.2s; }
+        .action-btn:active { transform: scale(0.9); }
+        
+        .btn-ana { background: rgba(34, 211, 238, 0.1); border: 1px solid var(--c-color); color: var(--c-color); }
         .btn-fix { background: var(--gold); color: #000; }
-        .btn-run { background: var(--neon-g); color: #000; }
+        .btn-run { background: var(--g-color); color: #000; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
         .btn-clear { background: #ef4444; color: #fff; }
 
-        /* --- محرر الأكواد --- */
-        .editor-container { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
-        @media (min-width: 992px) { .editor-container { flex-direction: row; } }
-        #editor { flex: 1.5; background: #010409; color: #79c0ff; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #333; outline: none; direction: ltr; resize: none; font-size: 1rem; }
-        #console { flex: 1; background: #000; color: var(--neon-g); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; }
+        .center-nav { flex: 0.5; display: flex; justify-content: center; gap: 30px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 50px; }
+        .nav-item { text-align: center; font-size: 0.65rem; color: #94a3b8; cursor: pointer; }
+        .nav-item i { font-size: 1.4rem; display: block; }
+        .nav-item.active { color: var(--c-color); }
 
-        /* --- بطاقة النشاط العائمة --- */
-        .brief-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            display: none; align-items: center; justify-content: center; z-index: 8000; backdrop-filter: blur(10px);
-        }
-        .brief-card {
-            width: 90%; max-width: 500px; background: var(--glass); border: 2px solid var(--neon-p);
-            border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 0 50px var(--neon-p);
-        }
+        /* --- منطقة البرمجة --- */
+        .editor-wrapper { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
+        @media (min-width: 992px) { .editor-wrapper { flex-direction: row; } }
+        #editor { flex: 1.5; background: #010409; color: #79c0ff; border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #333; outline: none; direction: ltr; resize: none; font-size: 1.1rem; }
+        #console { flex: 1; background: #000; color: var(--g-color); border-radius: 20px; padding: 20px; font-family: 'Fira Code'; border: 1px solid #222; overflow-y: auto; direction: ltr; font-size: 0.95rem; }
 
         /* --- المساعد الذكي --- */
-        #bot-icon { position: fixed; bottom: 95px; right: 20px; width: 55px; height: 55px; background: var(--neon-p); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; box-shadow: 0 0 15px var(--neon-p); }
-        #chat-window { position: fixed; bottom: 160px; right: 20px; width: 300px; height: 400px; background: #0f172a; border: 1px solid var(--neon-p); border-radius: 20px; display: none; flex-direction: column; z-index: 4500; }
+        #bot-trigger { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--p-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 4000; cursor: pointer; box-shadow: 0 0 20px var(--p-color); }
+        #chat-panel { position: fixed; bottom: 170px; right: 20px; width: 320px; height: 450px; background: #0f172a; border: 1px solid var(--p-color); border-radius: 25px; display: none; flex-direction: column; z-index: 4500; overflow: hidden; box-shadow: 0 20px 50px #000; }
 
-        .loader { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; }
+        /* --- بطاقة النشاط العائمة --- */
+        .overlay-brief { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 8000; backdrop-filter: blur(15px); }
+        .brief-content { width: 85%; max-width: 500px; background: var(--glass); border: 1px solid var(--c-color); border-radius: 30px; padding: 35px; text-align: center; }
+
+        .loader-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; border-radius: 20px; color: var(--gold); }
     </style>
 </head>
-<body onload="brython(); initSystem();">
+<body onload="brython(); initApp();">
 
     <div id="welcome-page" class="page page-active">
         <div class="portal-light"></div>
-        <i class="fas fa-robot" style="font-size: 5rem; color: var(--neon-c); filter: drop-shadow(0 0 15px var(--neon-c)); animation: float 3s infinite ease-in-out;"></i>
-        <h1 style="font-size: 3rem; margin: 20px 0;">تِقني AI</h1>
-        <p style="opacity: 0.7; letter-spacing: 2px;">بوابتك التعليمية لعالم الروبوتات</p>
-        <button onclick="navTo('lessons-page')" style="margin-top: 30px; padding: 15px 50px; border-radius: 30px; border: 2px solid var(--neon-c); background: transparent; color: white; cursor: pointer; font-weight: 900;">دخول المنصة</button>
+        <i class="fas fa-robot" style="font-size: 6rem; color: var(--c-color); filter: drop-shadow(0 0 20px var(--c-color));"></i>
+        <h1 style="font-size: 3.5rem; margin: 20px 0; font-weight: 900;">تِقني AI</h1>
+        <p style="font-size: 1.2rem; opacity: 0.8; letter-spacing: 3px;">العالم الافتراضي للبرمجة</p>
+        <button onclick="navTo('lessons-page')" style="margin-top: 40px; padding: 20px 60px; border-radius: 40px; border: 2px solid var(--c-color); background: transparent; color: white; cursor: pointer; font-weight: 900; font-size: 1.3rem; z-index: 10000; position: relative;">دخول المنصة</button>
     </div>
 
     <div id="lessons-page" class="page">
-        <header style="padding: 20px; text-align: center; border-bottom: 1px solid #333;">
-            <h2><i class="fas fa-graduation-cap"></i> الوحدات الدراسية</h2>
+        <header style="padding: 30px; text-align: center;">
+            <h2 style="color: var(--c-color);"><i class="fas fa-layer-group"></i> الوحدات الدراسية</h2>
         </header>
         <div class="container grid" id="lessons-grid"></div>
     </div>
 
     <div id="activities-page" class="page">
         <header style="padding: 20px; display: flex; align-items: center; gap: 20px;">
-            <button class="action-btn btn-ana" onclick="navTo('lessons-page')"><i class="fas fa-arrow-right"></i></button>
-            <h2 id="current-unit-title">الأنشطة المتاحة</h2>
+            <button class="action-btn btn-ana" onclick="navTo('lessons-page')"><i class="fas fa-chevron-right"></i></button>
+            <h2 id="unit-header">الأنشطة</h2>
         </header>
         <div class="container grid" id="activities-grid"></div>
     </div>
 
     <div id="editor-page" class="page">
-        <div class="editor-container">
+        <div class="editor-wrapper">
             <div style="position: relative; flex: 1.5; display: flex; flex-direction: column;">
-                <div id="ai-loader" class="loader"><i class="fas fa-pen-nib fa-spin fa-3x" style="color: var(--gold);"></i></div>
-                <textarea id="editor" spellcheck="false"></textarea>
+                <div id="ai-loader" class="loader-overlay"><i class="fas fa-pen-fancy fa-spin fa-3x"></i></div>
+                <textarea id="editor" spellcheck="false" placeholder="# اكتب الكود هنا..."></textarea>
             </div>
             <div id="console"></div>
         </div>
     </div>
 
-    <div id="brief-overlay" class="brief-overlay">
-        <div class="brief-card">
-            <i class="fas fa-rocket" style="font-size: 3rem; color: var(--neon-c);"></i>
-            <h2 id="brief-title" style="color: var(--gold);"></h2>
-            <div id="brief-desc" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin: 20px 0; text-align: right; line-height: 1.6;"></div>
-            <button onclick="startCoding()" style="width: 100%; padding: 15px; border-radius: 15px; background: var(--neon-g); color: #000; border: none; font-weight: bold; cursor: pointer;">ابدأ البرمجة الآن</button>
-            <p onclick="closeBrief()" style="margin-top: 15px; cursor: pointer; opacity: 0.5;">إغلاق</p>
+    <div id="brief-modal" class="overlay-brief">
+        <div class="brief-content">
+            <i class="fas fa-bolt" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
+            <h2 id="m-title" style="margin-bottom: 20px;"></h2>
+            <div id="m-desc" style="text-align: right; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-bottom: 25px;"></div>
+            <button onclick="goToEditor()" style="width: 100%; padding: 18px; border-radius: 15px; background: var(--g-color); color: #000; border: none; font-weight: 900; cursor: pointer; font-size: 1.1rem;">بدأ البرمجة الآن</button>
+            <p onclick="closeModal()" style="margin-top: 20px; cursor: pointer; opacity: 0.5;">إلغاء</p>
         </div>
     </div>
 
     <div class="bottom-bar">
-        <div class="side-btns">
-            <button class="action-btn btn-ana" onclick="analyzeCode()" title="تحليل الذكاء الاصطناعي"><i class="fas fa-brain"></i></button>
-            <button class="action-btn btn-fix" onclick="smartTeacher()" title="المعلم الذكي"><i class="fas fa-pen-nib"></i></button>
+        <div class="btn-group group-right" style="order: 3;">
+            <button class="action-btn btn-ana" onclick="analyzeCode()"><i class="fas fa-brain"></i></button>
+            <button class="action-btn btn-fix" onclick="smartFix()"><i class="fas fa-pen-nib"></i></button>
         </div>
 
-        <div class="center-dock">
-            <div style="text-align: center; cursor: pointer;" onclick="navTo('lessons-page')"><i class="fas fa-home"></i><br><span style="font-size: 0.6rem;">الرئيسية</span></div>
-            <div style="text-align: center; cursor: pointer;" onclick="openAdmin()"><i class="fas fa-user-shield"></i><br><span style="font-size: 0.6rem;">الإدارة</span></div>
+        <div class="center-nav" style="order: 2;">
+            <div class="nav-item active" onclick="navTo('lessons-page')"><i class="fas fa-home"></i><span>الرئيسية</span></div>
+            <div class="nav-item" onclick="openAdmin()"><i class="fas fa-user-gear"></i><span>الإدارة</span></div>
         </div>
 
-        <div class="side-btns">
-            <button class="action-btn btn-run" id="run-btn" title="تشغيل"><i class="fas fa-play"></i></button>
-            <button class="action-btn btn-clear" onclick="clearEditor()" title="مسح"><i class="fas fa-trash"></i></button>
+        <div class="btn-group group-left" style="order: 1;">
+            <button class="action-btn btn-run" id="run-btn"><i class="fas fa-play"></i></button>
+            <button class="action-btn btn-clear" onclick="clearAll()"><i class="fas fa-trash-alt"></i></button>
         </div>
     </div>
 
-    <div id="bot-icon" onclick="toggleChat()"><i class="fas fa-robot"></i></div>
-    <div id="chat-window">
-        <div style="padding: 15px; background: var(--neon-p); font-weight: bold; display: flex; justify-content: space-between;">
-            <span>المساعد تِقني AI</span>
+    <div id="bot-trigger" onclick="toggleChat()"><i class="fas fa-robot"></i></div>
+    <div id="chat-panel">
+        <div style="padding: 15px; background: var(--p-color); font-weight: bold; display: flex; justify-content: space-between;">
+            <span>مساعد تِقني AI</span>
             <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
         </div>
-        <div id="chat-box" style="flex:1; padding:15px; overflow-y:auto; background:#020617; font-size:0.85rem;"></div>
+        <div id="chat-msgs" style="flex:1; padding:15px; overflow-y:auto; background:#020617; font-size:0.85rem; line-height:1.5;"></div>
         <div style="padding:10px; display:flex; gap:5px; background:#0f172a;">
-            <input type="text" id="chat-in" style="flex:1; background:#1e293b; border:none; color:white; padding:10px; border-radius:10px;">
-            <button onclick="askBot()" style="background:var(--neon-p); border:none; color:white; padding:10px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
+            <input type="text" id="chat-input" placeholder="اسألني أي شيء..." style="flex:1; background:#1e293b; border:none; color:white; padding:12px; border-radius:12px;">
+            <button onclick="sendToBot()" style="background:var(--p-color); border:none; color:white; width:45px; border-radius:12px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <script type="text/python">
         from browser import document, window
-        def run_it(ev):
+        def run_python_code(ev):
             document["console"].text = ""
-            def log(*a): document["console"].text += " ".join(map(str, a)) + "\n"
+            code = document["editor"].value
+            def log(*args): document["console"].text += " ".join(map(str, args)) + "\n"
             try:
-                exec(document["editor"].value, {"print": log, "input": window.prompt})
+                exec(code, {"print": log, "input": window.prompt})
             except Exception as e:
-                document["console"].text = f"❌ خطأ برمجي:\n{e}"
-        document["run-btn"].bind("click", run_it)
+                document["console"].text = f"⚠️ خطأ برمجـي:\n{str(e)}"
+        document["run-btn"].bind("click", run_python_code)
     </script>
 
     <script>
-        let db = [
-            { id: 1, unit: 'الوحدة 1: الأساسيات', title: 'مرحباً بالروبوت', desc: 'تعلم كيف تجعل الروبوت يتحدث. المطلوب: اطبع "أنا الروبوت تِقني جاهز للعمل".', code: 'print("أنا الروبوت تِقني جاهز للعمل")' },
-            { id: 2, unit: 'الوحدة 1: الأساسيات', title: 'تخزين الطاقة', desc: 'استخدم المتغيرات. المطلوب: عرف متغير اسمه energy وقيمته 100 ثم اطبعه.', code: 'energy = 100\nprint(energy)' },
-            { id: 3, unit: 'الوحدة 2: التحكم', title: 'مستشعر المسافة', desc: 'استخدم جملة if. المطلوب: إذا كانت المسافة d أقل من 10 اطبع "توقف".', code: 'd = 5\nif d < 10:\n    print("توقف")' }
+        let dataStore = [
+            { id: 1, unit: 'الوحدة 1: لغة الآلة', title: 'تحية الروبوت', desc: 'أهلاً بك في أول تحدي! المطلوب منك كتابة أمر برمجـي يطبع عبارة "أنا روبوت ذكي" ليتعرف الجميع عليك.' },
+            { id: 2, unit: 'الوحدة 1: لغة الآلة', title: 'خزان البيانات', desc: 'تعلم استخدام المتغيرات. قم بتعريف متغير باسم name وضع فيه اسمك، ثم اطبعه باستخدام print.' },
+            { id: 3, unit: 'الوحدة 2: التحكم الذكي', title: 'مستشعر الحركة', desc: 'استخدم جملة if الشرطية. إذا كان المتغير distance أقل من 5، اطبع "توقف"، وإلا اطبع "تحرك".' }
         ];
-        let currentActivity = null;
+        let activeActivity = null;
 
-        function initSystem() {
-            renderLessons();
-        }
+        function initApp() { renderLessons(); }
 
         function navTo(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
             document.getElementById(pageId).classList.add('page-active');
+            window.scrollTo(0,0);
         }
 
         function renderLessons() {
             const grid = document.getElementById('lessons-grid');
-            const units = [...new Set(db.map(x => x.unit))];
+            const units = [...new Set(dataStore.map(i => i.unit))];
             grid.innerHTML = units.map(u => `
                 <div class="card" onclick="renderActivities('${u}')">
-                    <i class="fas fa-folder-open" style="color:var(--neon-p); font-size: 2rem;"></i>
-                    <h3 style="margin-top:15px;">${u}</h3>
-                    <p style="opacity:0.6; font-size:0.8rem;">تتضمن هذه الوحدة تحديات برمجية ذكية.</p>
+                    <i class="fas fa-cube" style="font-size: 2.5rem; color: var(--p-color);"></i>
+                    <h3 style="margin-top:20px;">${u}</h3>
+                    <p style="opacity:0.6; font-size:0.8rem;">استكشف تحديات هذه الوحدة</p>
                 </div>
             `).join('');
         }
 
-        function renderActivities(unit) {
+        function renderActivities(unitName) {
             navTo('activities-page');
-            document.getElementById('current-unit-title').innerText = unit;
+            document.getElementById('unit-header').innerText = unitName;
             const grid = document.getElementById('activities-grid');
-            const filtered = db.filter(x => x.unit === unit);
+            const filtered = dataStore.filter(i => i.unit === unitName);
             grid.innerHTML = filtered.map(a => `
-                <div class="card" onclick="showBrief(${a.id})">
-                    <b style="color:var(--neon-c)">نشاط #${a.id}</b>
+                <div class="card" onclick="openBrief(${a.id})">
+                    <b style="color:var(--c-color)">تحدي #${a.id}</b>
                     <h3 style="margin:10px 0;">${a.title}</h3>
-                    <button class="btn-run" style="border:none; padding:5px 15px; border-radius:10px;">عرض المهمة</button>
+                    <div style="font-size:0.75rem; color:var(--g-color);">جاهز للانطلاق <i class="fas fa-chevron-left"></i></div>
                 </div>
             `).join('');
         }
 
-        function showBrief(id) {
-            currentActivity = db.find(x => x.id === id);
-            document.getElementById('brief-title').innerText = currentActivity.title;
-            document.getElementById('brief-desc').innerText = currentActivity.desc;
-            document.getElementById('brief-overlay').style.display = 'flex';
+        function openBrief(id) {
+            activeActivity = dataStore.find(i => i.id === id);
+            document.getElementById('m-title').innerText = activeActivity.title;
+            document.getElementById('m-desc').innerText = activeActivity.desc;
+            document.getElementById('brief-modal').style.display = 'flex';
         }
 
-        function closeBrief() { document.getElementById('brief-overlay').style.display = 'none'; }
+        function closeModal() { document.getElementById('brief-modal').style.display = 'none'; }
 
-        function startCoding() {
-            closeBrief();
+        function goToEditor() {
+            closeModal();
             navTo('editor-page');
-            document.getElementById('editor').value = `# ${currentActivity.title}\n# ${currentActivity.desc}\n\n`;
-            document.getElementById('console').innerText = ">>> بانتظار تشغيل الكود...";
+            document.getElementById('editor').value = `# نشاط: ${activeActivity.title}\n# المطلوب: ${activeActivity.desc}\n\n`;
+            document.getElementById('console').innerText = ">>> المحرك جاهز للتشغيل...";
         }
 
-        function clearEditor() {
+        function clearAll() {
             if(confirm("هل تريد مسح الكود والبدء من جديد؟")) document.getElementById('editor').value = "";
         }
 
-        async function smartTeacher() {
+        async function smartFix() {
             document.getElementById('ai-loader').style.display = 'flex';
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'Python Teacher. Fix code. ONLY code.'}, {role: 'user', content: document.getElementById('editor').value}]})
+                body: JSON.stringify({messages: [{role: 'system', content: 'Python expert. Fix student code. ONLY CODE.'}, {role: 'user', content: document.getElementById('editor').value}]})
             });
             document.getElementById('editor').value = (await res.text()).replace(/```python|```/g, '').trim();
             document.getElementById('ai-loader').style.display = 'none';
         }
 
         async function analyzeCode() {
-            const code = document.getElementById('editor').value;
-            alert("جاري التحليل... انتظر الرد من تِقني AI");
+            alert("جاري تحليل الكود... انتظر الرد");
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages: [{role: 'system', content: 'حلل الكود للطالب بالعربي بأسلوب بسيط.'}, {role: 'user', content: code}]})
+                body: JSON.stringify({messages: [{role: 'system', content: 'حلل كود الطالب بالعربي بأسلوب تعليمي بسيط.'}, {role: 'user', content: document.getElementById('editor').value}]})
             });
             alert(await res.text());
         }
 
         function toggleChat() {
-            const w = document.getElementById('chat-window');
-            w.style.display = (w.style.display === 'flex') ? 'none' : 'flex';
+            const p = document.getElementById('chat-panel');
+            p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        async function askBot() {
-            const inp = document.getElementById('chat-in'), box = document.getElementById('chat-box');
-            if(!inp.value) return;
-            const q = inp.value; inp.value = "";
-            box.innerHTML += `<div style="color:var(--neon-c); margin-bottom:10px;">أنت: ${q}</div>`;
+        async function sendToBot() {
+            const input = document.getElementById('chat-input'), box = document.getElementById('chat-msgs');
+            const q = input.value; if(!q) return;
+            input.value = "";
+            box.innerHTML += `<div style="color:var(--c-color); margin-bottom:10px; text-align:left;"><b>أنت:</b> ${q}</div>`;
             const res = await fetch('https://text.pollinations.ai/', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({messages: [{role:'user', content: q}]})
             });
-            box.innerHTML += `<div style="margin-bottom:15px; border-right:2px solid var(--neon-p); padding-right:10px;">تِقني: ${await res.text()}</div>`;
+            box.innerHTML += `<div style="margin-bottom:15px; border-right:3px solid var(--p-color); padding-right:10px;"><b>تِقني:</b> ${await res.text()}</div>`;
             box.scrollTop = box.scrollHeight;
         }
 
         function openAdmin() {
-            if(prompt("كلمة سر المعلم:") === "1234") alert("لوحة التحكم قيد التطوير..");
+            if(prompt("كلمة المرور:") === "1234") alert("مرحباً بك أستاذ فيصل في لوحة الإدارة.");
         }
     </script>
 </body>
